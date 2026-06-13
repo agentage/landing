@@ -1,5 +1,6 @@
 #!/bin/sh
-# Build once, run anywhere (landing + dashboard runtime images).
+# Build once, run anywhere. Landing has no dev environment - it serves
+# agentage.io directly, so SITE_FQDN defaults to the prod apex.
 #
 # Next.js inlines NEXT_PUBLIC_* into the client bundle and prerendered HTML at
 # `next build`, which used to force a separate image per environment. Instead
@@ -15,7 +16,7 @@
 # never in node_modules.
 set -eu
 
-fqdn=$(printf '%s' "${SITE_FQDN:-dev.agentage.io}" | sed 's|^https\{0,1\}://||; s|/*$||' | tr 'A-Z' 'a-z')
+fqdn=$(printf '%s' "${SITE_FQDN:-agentage.io}" | sed 's|^https\{0,1\}://||; s|/*$||' | tr 'A-Z' 'a-z')
 ga="${GA_MEASUREMENT_ID:-}"
 
 grep -rl 'site-fqdn\.sentinel\.invalid' /app/packages 2>/dev/null | while read -r f; do
@@ -24,6 +25,12 @@ done
 grep -rl '__GA_MEASUREMENT_ID__' /app/packages 2>/dev/null | while read -r f; do
   sed -i "s|__GA_MEASUREMENT_ID__|$ga|g" "$f"
 done
+
+# Export the resolved values so the dynamic routes (sitemap/robots/llms read
+# process.env.SITE_FQDN per request) match the baked ones - an unconfigured
+# container serves agentage.io end to end.
+export SITE_FQDN="$fqdn"
+export GA_MEASUREMENT_ID="$ga"
 
 echo "runtime-env: SITE_FQDN=$fqdn GA_MEASUREMENT_ID=$([ -n "$ga" ] && echo set || echo unset)"
 exec "$@"
