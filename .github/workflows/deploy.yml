@@ -1,17 +1,17 @@
 name: Deploy
 
-# Build -> e2e-gate (against the built prod image) -> deploy straight to prod.
-# Hardened: runs only on push to master / manual dispatch (never fork PRs);
-# the deploy job is gated on the protected `production` Environment AND a
-# DEPLOY_ENABLED repo variable, so merging this before secrets exist is inert
-# (build + gate still run and validate the image).
+# Build -> e2e-gate (against the built image) -> deploy to BOTH dev and prod in
+# parallel. The image is env-agnostic (runtime SITE_FQDN), so one build ships to
+# both; each environment supplies its own SSH host/key + SITE_FQDN. Hardened:
+# runs only on push to master / manual dispatch (never fork PRs); each deploy is
+# gated on its protected Environment AND the DEPLOY_ENABLED repo variable.
 on:
   push:
     branches: [master]
   workflow_dispatch:
 
 concurrency:
-  group: deploy-production
+  group: deploy-landing
   cancel-in-progress: false
 
 permissions:
@@ -40,16 +40,17 @@ jobs:
           context: .
           target: runner
           push: true
+          # Env-agnostic image (one digest for both dev + prod), so neutral tags.
           tags: |
-            ${{ env.IMAGE }}:prod-${{ github.sha }}
-            ${{ env.IMAGE }}:prod-latest
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest
           build-args: |
             COMMIT_SHA=${{ github.sha }}
           cache-from: type=gha,scope=landing
           cache-to: type=gha,mode=max,scope=landing
 
   e2e-gate:
-    name: 🎭 E2E gate (prod image)
+    name: 🎭 E2E gate (built image)
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -75,18 +76,18 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      # Run the just-built image with no SITE_FQDN - it must default to the prod
-      # apex (agentage.io). Asserts against that host: validates the exact
-      # artifact AND that an unconfigured container serves prod, as it ships.
-      - name: Start prod image
+      # Run the built image with no SITE_FQDN - it must default to the prod apex
+      # (agentage.io). Validates the exact artifact AND that an unconfigured
+      # container serves prod, which is what ships.
+      - name: Start image
         run: |
-          docker run -d --name landing -p 3100:3000 "${IMAGE}:prod-${GITHUB_SHA}"
+          docker run -d --name landing -p 3100:3000 "${IMAGE}:${GITHUB_SHA}"
           for i in $(seq 1 30); do
             [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3100/)" = "200" ] && break
             sleep 1
           done
           curl -fsS -o /dev/null http://localhost:3100/ || { docker logs landing; exit 1; }
-      - name: E2E vs prod image
+      - name: E2E vs image
         env:
           LANDING_BASE_URL: http://localhost:3100
           LANDING_EXPECTED_HOST: agentage.io
@@ -102,13 +103,16 @@ jobs:
           retention-days: 7
 
   deploy:
-    name: 🚀 Deploy to prod
+    name: 🚀 Deploy (${{ matrix.environment }})
     needs: e2e-gate
-    # Inert until DEPLOY_ENABLED is set (after the deploy key + secrets land).
     if: vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment: production
+    environment: ${{ matrix.environment }}
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [development, production]
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-ssh
@@ -117,8 +121,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
       - name: Render compose
         env:
-          SITE_FQDN: ${{ vars.SITE_FQDN || 'agentage.io' }}
-          IMAGE_TAG: prod-${{ github.sha }}
+          SITE_FQDN: ${{ vars.SITE_FQDN }}
+          IMAGE_TAG: ${{ github.sha }}
           GA_MEASUREMENT_ID: ${{ vars.GA_MEASUREMENT_ID }}
         run: |
           envsubst '${SITE_FQDN} ${IMAGE_TAG} ${GA_MEASUREMENT_ID}' < docker-compose.yml > docker-compose.deploy.yml
@@ -135,7 +139,7 @@ jobs:
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /opt/agentage/landing && docker stack deploy -c docker-compose.yml agentage-landing --with-registry-auth"
       - name: Wait + live smoke
         env:
-          SITE_FQDN: ${{ vars.SITE_FQDN || 'agentage.io' }}
+          SITE_FQDN: ${{ vars.SITE_FQDN }}
         run: |
           for i in $(seq 1 40); do
             [ "$(curl -s -o /dev/null -w '%{http_code}' "https://${SITE_FQDN}/")" = "200" ] && break
@@ -144,6 +148,12 @@ jobs:
           echo "Smoke: https://${SITE_FQDN}/"
           curl -fsS "https://${SITE_FQDN}/" | grep -q "For every AI" || { echo "::error::apex missing hero copy"; exit 1; }
           robots=$(curl -fsS "https://${SITE_FQDN}/robots.txt")
-          echo "$robots" | grep -qi "Sitemap:" || { echo "::error::prod robots missing Sitemap"; exit 1; }
-          echo "$robots" | grep -qiE '^\s*Disallow:\s*/\s*$' && { echo "::error::prod robots blanket-disallow"; exit 1; }
-          echo "✅ prod serving + indexable"
+          case "$SITE_FQDN" in
+            dev.*)
+              echo "$robots" | grep -qiE 'Disallow:[[:space:]]*/' || { echo "::error::dev must be noindex"; exit 1; }
+              echo "✅ dev serving + noindex" ;;
+            *)
+              echo "$robots" | grep -qi "Sitemap:" || { echo "::error::prod robots missing Sitemap"; exit 1; }
+              echo "$robots" | grep -qiE '^[[:space:]]*Disallow:[[:space:]]*/[[:space:]]*$' && { echo "::error::prod robots blanket-disallow"; exit 1; }
+              echo "✅ prod serving + indexable" ;;
+          esac
