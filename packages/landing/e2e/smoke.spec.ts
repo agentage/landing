@@ -1,0 +1,97 @@
+import { test, expect } from '@playwright/test';
+
+test.describe('Landing — SSR', { tag: '@smoke' }, () => {
+  test('home is server-rendered (hero in raw HTML, no JS)', async ({ request }) => {
+    const res = await request.get('/');
+    expect(res.status()).toBe(200);
+    const html = await res.text();
+    // Hero copy + terminal content must be present in the server response itself.
+    expect(html).toContain('For every AI');
+    expect(html).toContain('npx @agentage/cli setup');
+    expect(html).toContain('memory.agentage.io');
+  });
+});
+
+test.describe('Landing — Home', { tag: '@smoke' }, () => {
+  test('hero renders', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('h1')).toContainText('One memory.');
+    await expect(page.locator('h1')).toContainText('For every AI');
+    await expect(page.getByText('npx @agentage/cli setup')).toBeVisible();
+    await expect(page.getByText('memory.agentage.io')).toBeVisible();
+  });
+
+  test('waitlist form is present', async ({ page }) => {
+    await page.goto('/');
+    // Two waitlist forms render (hero + final CTA) — assert the first is usable.
+    await expect(page.locator('input[type="email"][name="email"]').first()).toBeVisible();
+    await expect(
+      page.locator('button[type="submit"]', { hasText: 'Join the waitlist' }).first()
+    ).toBeVisible();
+  });
+});
+
+test.describe('Landing — Header', { tag: '@smoke' }, () => {
+  test('logo links to home', async ({ page }) => {
+    await page.goto('/');
+    const logo = page.locator('header a').first();
+    await expect(logo).toContainText('Age');
+    await expect(logo).toHaveAttribute('href', '/');
+  });
+
+  test('desktop nav links are visible', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto('/');
+    const nav = page.locator('header nav').first();
+    await expect(nav.locator('a', { hasText: 'Home' })).toBeVisible();
+    await expect(nav.locator('a', { hasText: 'Docs' })).toBeVisible();
+    await expect(nav.locator('a', { hasText: 'Dashboard' })).toBeVisible();
+    await expect(nav.locator('a', { hasText: 'GitHub' })).toBeVisible();
+  });
+
+  test('GitHub link opens in a new tab', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto('/');
+    const gh = page.locator('header nav a', { hasText: 'GitHub' }).first();
+    await expect(gh).toHaveAttribute('target', '_blank');
+    await expect(gh).toHaveAttribute('rel', /noopener/);
+  });
+
+  test('mobile hamburger opens the menu', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/');
+    const toggle = page.locator('button[aria-label="Toggle menu"]');
+    await expect(toggle).toBeVisible();
+    await toggle.click();
+    await expect(page.locator('nav').nth(1).locator('a', { hasText: 'Docs' })).toBeVisible();
+  });
+});
+
+test.describe('Landing — Footer', { tag: '@smoke' }, () => {
+  test('footer shows the tagline copyright', async ({ page }) => {
+    await page.goto('/');
+    const footer = page.locator('footer');
+    await expect(footer).toContainText('Agentage');
+    await expect(footer).toContainText('One memory. Every AI. Owned by you.');
+  });
+
+  test('footer Dashboard link uses a relative path', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('footer a', { hasText: 'Dashboard' })).toHaveAttribute(
+      'href',
+      '/dashboard'
+    );
+  });
+});
+
+test.describe('Landing — Routes', { tag: '@smoke' }, () => {
+  test('/docs renders', async ({ page }) => {
+    await page.goto('/docs');
+    await expect(page.locator('h1')).toContainText('Get started');
+  });
+
+  test('/dashboard renders', async ({ page }) => {
+    await page.goto('/dashboard');
+    await expect(page.locator('h1')).toContainText('Dashboard');
+  });
+});

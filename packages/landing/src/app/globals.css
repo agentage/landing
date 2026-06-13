@@ -1,0 +1,238 @@
+@import 'tailwindcss';
+@import '@agentage/design-system/theme.css';
+@source "../**/*.{ts,tsx}";
+@source "../../node_modules/@agentage/design-system/src/**/*.{ts,tsx}";
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Gradient text — warm gold sweep using DS primitives */
+.text-gradient-gold {
+  background: linear-gradient(
+    135deg,
+    var(--color-gold-300),
+    var(--color-gold-400),
+    var(--color-gold-300)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Gradient divider — fades from transparent through border color */
+.divider-gradient {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--color-border), transparent);
+}
+
+/* Blinking terminal caret (hero) */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Engineering blueprint grid (faint amber lines) behind the hero terminal */
+.blueprint-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklch, var(--color-primary) 8%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--color-primary) 8%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 45%, #000 55%, transparent);
+  mask-image: radial-gradient(ellipse 60% 55% at 50% 45%, #000 55%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-anim {
+    animation: none !important;
+  }
+}
+
+/* ── Long-form article prose (/blog) ───────────────────────────────
+   Plain CSS over DS tokens — no @tailwindcss/typography dependency.
+   Renders gray-matter markdown via next-mdx-remote + rehype-pretty-code. */
+.prose-blog {
+  color: var(--color-muted-foreground);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.prose-blog > :first-child {
+  margin-top: 0;
+}
+
+.prose-blog p {
+  margin: 1.25em 0;
+}
+
+.prose-blog h2,
+.prose-blog h3,
+.prose-blog h4 {
+  color: var(--color-foreground);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  scroll-margin-top: 6rem;
+  line-height: 1.3;
+}
+
+.prose-blog h2 {
+  margin: 2.5em 0 0.75em;
+  font-size: 1.5rem;
+}
+
+.prose-blog h3 {
+  margin: 2em 0 0.5em;
+  font-size: 1.25rem;
+}
+
+.prose-blog h4 {
+  margin: 1.75em 0 0.5em;
+  font-size: 1.0625rem;
+}
+
+.prose-blog a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.prose-blog a:hover {
+  color: color-mix(in oklch, var(--color-primary) 80%, var(--color-foreground));
+}
+
+.prose-blog strong {
+  color: var(--color-foreground);
+  font-weight: 650;
+}
+
+.prose-blog ul,
+.prose-blog ol {
+  margin: 1.25em 0;
+  padding-left: 1.5em;
+}
+
+.prose-blog ul {
+  list-style: disc;
+}
+
+.prose-blog ol {
+  list-style: decimal;
+}
+
+.prose-blog li {
+  margin: 0.5em 0;
+}
+
+.prose-blog li::marker {
+  color: var(--color-primary);
+}
+
+.prose-blog blockquote {
+  margin: 1.5em 0;
+  border-left: 3px solid var(--color-primary);
+  padding: 0.25em 0 0.25em 1.25em;
+  color: var(--color-foreground);
+  font-style: italic;
+}
+
+.prose-blog hr {
+  margin: 2.5em 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Inline code only — code inside <pre> is themed by shiki */
+.prose-blog :not(pre) > code {
+  background: var(--color-muted);
+  color: var(--color-foreground);
+  border-radius: 0.375rem;
+  padding: 0.15em 0.4em;
+  font-size: 0.875em;
+}
+
+.prose-blog pre {
+  margin: 1.5em 0;
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-sidebar);
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.prose-blog pre code {
+  display: grid;
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
+.prose-blog pre code [data-line] {
+  padding: 0 0.1rem;
+}
+
+.prose-blog :is(h2, h3, h4) .heading-anchor {
+  margin-left: -1.1em;
+  padding-right: 0.35em;
+  color: var(--color-primary);
+  opacity: 0;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.prose-blog :is(h2, h3, h4):hover .heading-anchor {
+  opacity: 0.6;
+}
+
+/* Keyboard focus must reveal the otherwise-invisible anchor (WCAG 2.4.7) */
+.prose-blog :is(h2, h3, h4) .heading-anchor:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* Wrapper scrolls on overflow so the <table> keeps its table semantics */
+.prose-blog .table-wrap {
+  margin: 1.75em 0;
+  overflow-x: auto;
+}
+
+.prose-blog table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.prose-blog th,
+.prose-blog td {
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.prose-blog th {
+  background: var(--color-sidebar);
+  color: var(--color-foreground);
+  font-weight: 600;
+}
+
+.prose-blog img {
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border);
+}
