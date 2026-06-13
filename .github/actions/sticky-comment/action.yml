@@ -1,0 +1,41 @@
+name: Sticky PR comment
+description: Create or update a single github-actions[bot] PR comment, keyed by a hidden marker.
+
+inputs:
+  marker:
+    description: Hidden HTML marker identifying the comment, e.g. <!-- ci-verify-bot -->.
+    required: true
+  body:
+    description: Comment markdown. The marker is prepended automatically if absent.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/github-script@v9
+      # Pass marker/body via env, not string interpolation, so bodies with
+      # backticks/quotes/newlines can't break the script.
+      env:
+        STICKY_MARKER: ${{ inputs.marker }}
+        STICKY_BODY: ${{ inputs.body }}
+      with:
+        script: |
+          const marker = process.env.STICKY_MARKER;
+          const raw = process.env.STICKY_BODY ?? '';
+          const body = raw.startsWith(marker) ? raw : `${marker}\n${raw}`;
+          const { data: comments } = await github.rest.issues.listComments({
+            ...context.repo,
+            issue_number: context.issue.number,
+          });
+          const prev = comments.find(
+            (c) => c.user.login === 'github-actions[bot]' && c.body.startsWith(marker)
+          );
+          if (prev) {
+            await github.rest.issues.updateComment({ ...context.repo, comment_id: prev.id, body });
+          } else {
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+          }
