@@ -141,12 +141,15 @@ jobs:
         env:
           SITE_FQDN: ${{ vars.SITE_FQDN }}
         run: |
+          # Wait until the apex actually serves THIS landing (the hero), not just
+          # any 200 - dev shares the host with other stacks, so Traefik can take a
+          # moment to route to the new landing router.
           for i in $(seq 1 40); do
-            [ "$(curl -s -o /dev/null -w '%{http_code}' "https://${SITE_FQDN}/")" = "200" ] && break
+            curl -fsS "https://${SITE_FQDN}/" 2>/dev/null | grep -q "For every AI" && { ok=1; break; }
             sleep 5
           done
           echo "Smoke: https://${SITE_FQDN}/"
-          curl -fsS "https://${SITE_FQDN}/" | grep -q "For every AI" || { echo "::error::apex missing hero copy"; exit 1; }
+          [ -n "${ok:-}" ] || { echo "::error::apex never served the landing hero"; exit 1; }
           robots=$(curl -fsS "https://${SITE_FQDN}/robots.txt")
           case "$SITE_FQDN" in
             dev.*)
