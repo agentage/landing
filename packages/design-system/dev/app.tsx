@@ -1039,7 +1039,7 @@ const DataDisplayPage = () => {
                   <InlineCode>{r.id}</InlineCode>
                 </TableCell>
                 <TableCell className="font-medium">{r.agent}</TableCell>
-                <TableCell className="text-muted-foreground">{r.machine ?? '—'}</TableCell>
+                <TableCell className="text-muted-foreground">{r.machine ?? '-'}</TableCell>
                 <TableCell>
                   <Badge variant={runStateColor(r.state)}>{r.state}</Badge>
                 </TableCell>
@@ -1305,18 +1305,18 @@ const FeedbackPage = () => {
 
       <S title="Alert">
         <div className="space-y-2 max-w-lg">
-          <Alert onClose={() => {}}>Default — neutral information.</Alert>
+          <Alert onClose={() => {}}>Default - neutral information.</Alert>
           <Alert variant="info" icon={<InfoIcon />} onClose={() => {}}>
-            Info — with icon and close button.
+            Info - with icon and close button.
           </Alert>
           <Alert variant="success" onClose={() => {}}>
-            Success — operation completed.
+            Success - operation completed.
           </Alert>
           <Alert variant="warning" onClose={() => {}}>
-            Warning — check configuration.
+            Warning - check configuration.
           </Alert>
           <Alert variant="destructive" onClose={() => {}}>
-            Error — something went wrong.
+            Error - something went wrong.
           </Alert>
         </div>
       </S>
@@ -1763,12 +1763,12 @@ const NavTypoPage = () => {
 
       <S title="Heading">
         <div className="space-y-4">
-          <Heading as="h1">Heading 1 — Page Title</Heading>
+          <Heading as="h1">Heading 1 - Page Title</Heading>
           <Heading as="h2" description="With supporting description">
-            Heading 2 — Section
+            Heading 2 - Section
           </Heading>
-          <Heading as="h3">Heading 3 — Subsection</Heading>
-          <Heading as="h4">Heading 4 — Label</Heading>
+          <Heading as="h3">Heading 3 - Subsection</Heading>
+          <Heading as="h4">Heading 4 - Label</Heading>
         </div>
       </S>
 
@@ -1873,7 +1873,7 @@ const SiteDocsPage = () => {
     <>
       <Heading
         as="h1"
-        description="Markdown rendering, copy buttons, removable chips, footers, top bars, and doc sidebars — added for the mcpxhub merge gap-fill."
+        description="Markdown rendering, copy buttons, removable chips, footers, top bars, and doc sidebars - added for the mcpxhub merge gap-fill."
       >
         Site & Docs
       </Heading>
@@ -2078,7 +2078,7 @@ const CardsPage = () => (
       Cards
     </Heading>
 
-    <S title="Gauge Card — threshold zones">
+    <S title="Gauge Card - threshold zones">
       <p className="-mt-2 text-xs text-muted-foreground">
         Semicircle gauge with optional green/yellow/red threshold zones. Use when crossing a limit
         matters (capacity, error rate, latency).
@@ -2109,7 +2109,7 @@ const CardsPage = () => (
       </div>
     </S>
 
-    <S title="Donut Card — part of whole">
+    <S title="Donut Card - part of whole">
       <p className="-mt-2 text-xs text-muted-foreground">
         For composition (storage breakdown, traffic source mix). Pair donut with a legend; center
         label is optional.
@@ -2140,7 +2140,7 @@ const CardsPage = () => (
       </div>
     </S>
 
-    <S title="Score Card — semantic bands">
+    <S title="Score Card - semantic bands">
       <p className="-mt-2 text-xs text-muted-foreground">
         0..max with colored bands. Designed for NPS, CSAT, health scores. Marker shows the current
         position; band pill labels which zone you're in.
@@ -2181,7 +2181,7 @@ const CardsPage = () => (
       </div>
     </S>
 
-    <S title="Funnel Card — conversion stages">
+    <S title="Funnel Card - conversion stages">
       <p className="-mt-2 text-xs text-muted-foreground">
         Vertical funnel with per-stage drop-off %. Bar width is proportional to the top of the
         funnel.
@@ -2210,7 +2210,7 @@ const CardsPage = () => (
       </div>
     </S>
 
-    <S title="Heatmap Card — activity & cohorts">
+    <S title="Heatmap Card - activity & cohorts">
       <p className="-mt-2 text-xs text-muted-foreground">
         Grid where cell intensity encodes value. Use for activity-by-time, cohort retention,
         error-by-route.
@@ -2240,7 +2240,7 @@ const CardsPage = () => (
       </div>
     </S>
 
-    <S title="Multi-Stat Card — grouped figures">
+    <S title="Multi-Stat Card - grouped figures">
       <p className="-mt-2 text-xs text-muted-foreground">
         Several tightly related stats in one card with a shared header. Avoids 4-up visual noise.
       </p>
@@ -2266,7 +2266,7 @@ const CardsPage = () => (
       </div>
     </S>
 
-    <S title="Ranked List Card — top-N">
+    <S title="Ranked List Card - top-N">
       <p className="-mt-2 text-xs text-muted-foreground">
         Rank + label + value. Use for top agents, busiest machines, hottest queries.
       </p>

@@ -5,7 +5,7 @@ const TITLE = 'text-xs text-muted-foreground';
 const DESC = 'text-xs text-muted-foreground mt-3';
 
 /* ============================================================================
- * GaugeCard — semicircle gauge w/ optional threshold zones
+ * GaugeCard - semicircle gauge w/ optional threshold zones
  * Use when threshold/utilization matters (capacity, error rate, latency).
  * ========================================================================= */
 
@@ -86,7 +86,7 @@ export const GaugeCard = ({
 };
 
 /* ============================================================================
- * DonutCard — donut chart for part-of-whole
+ * DonutCard - donut chart for part-of-whole
  * Use when showing composition (storage breakdown, traffic source mix).
  * ========================================================================= */
 
@@ -180,7 +180,7 @@ export const DonutCard = ({
 };
 
 /* ============================================================================
- * ScoreCard — 0..max score with optional colored bands (NPS, CSAT, health).
+ * ScoreCard - 0..max score with optional colored bands (NPS, CSAT, health).
  * ========================================================================= */
 
 export interface ScoreBand {
@@ -260,7 +260,7 @@ export const ScoreCard = ({
 };
 
 /* ============================================================================
- * FunnelCard — vertical conversion funnel with per-stage drop-off %.
+ * FunnelCard - vertical conversion funnel with per-stage drop-off %.
  * ========================================================================= */
 
 export interface FunnelStage {
@@ -328,7 +328,7 @@ export const FunnelCard = ({
 };
 
 /* ============================================================================
- * HeatmapCard — grid with intensity colors. Activity-by-day-hour, cohorts.
+ * HeatmapCard - grid with intensity colors. Activity-by-day-hour, cohorts.
  * ========================================================================= */
 
 export interface HeatmapCardProps {
@@ -403,7 +403,7 @@ export const HeatmapCard = ({
 };
 
 /* ============================================================================
- * MultiStatCard — multiple stats side-by-side w/ shared header & dividers.
+ * MultiStatCard - multiple stats side-by-side w/ shared header & dividers.
  * ========================================================================= */
 
 export interface MultiStat {
@@ -453,7 +453,7 @@ export const MultiStatCard = ({
 );
 
 /* ============================================================================
- * RankedListCard — top-N list with rank, optional icon, value.
+ * RankedListCard - top-N list with rank, optional icon, value.
  * ========================================================================= */
 
 export interface RankedItem {

@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 // (`<App />`). It is a client component, but Next server-renders the default
 // ("Foundations") state into the initial HTML.
 
-test.describe('Showcase — smoke', () => {
+test.describe('Showcase - smoke', () => {
   test('home is server-rendered (default page in raw HTML)', async ({ request }) => {
     const res = await request.get('/');
     expect(res.status()).toBe(200);

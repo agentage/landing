@@ -1,4 +1,4 @@
-# Agentage Memory — landing site
+# Agentage Memory - landing site
 
 The public marketing site for **Agentage Memory** ("one memory, every AI"), plus the design
 system it's built on. The product itself lives at **[agentage.io](https://agentage.io)**; this
@@ -8,10 +8,10 @@ repository is just the website.
 
 ```
 packages/
-├── shared/          # @agentage/shared — site-origin + environment helpers
-├── design-system/   # @agentage/design-system — OKLCH design tokens + React components
-├── landing/         # @agentage/landing — the Next.js marketing site (port 3000)
-└── showcase/        # @agentage/showcase — design-system playground (port 3011)
+├── shared/          # @agentage/shared - site-origin + environment helpers
+├── design-system/   # @agentage/design-system - OKLCH design tokens + React components
+├── landing/         # @agentage/landing - the Next.js marketing site (port 3000)
+└── showcase/        # @agentage/showcase - design-system playground (port 3011)
 ```
 
 ## Prerequisites
@@ -72,7 +72,7 @@ It covers the public site URL, optional analytics, and the search-console verifi
 ## Contributing
 
 1. Fork / branch, make your change.
-2. Run **`npm run verify`** — it must pass before a PR (this is the merge gate).
+2. Run **`npm run verify`** - it must pass before a PR (this is the merge gate).
 3. Open a pull request describing the change.
 
 ## License

@@ -77,7 +77,7 @@ export const SelectValue = SelectPrimitive.Value;
 export interface SelectTriggerProps extends React.ComponentPropsWithoutRef<
   typeof SelectPrimitive.Trigger
 > {
-  /** Compact height (h-7, text-xs) — for filter rows. Default false renders the form-input height. */
+  /** Compact height (h-7, text-xs) - for filter rows. Default false renders the form-input height. */
   compact?: boolean;
 }
 

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Landing — SSR', { tag: '@smoke' }, () => {
+test.describe('Landing - SSR', { tag: '@smoke' }, () => {
   test('home is server-rendered (hero in raw HTML, no JS)', async ({ request }) => {
     const res = await request.get('/');
     expect(res.status()).toBe(200);
@@ -12,7 +12,7 @@ test.describe('Landing — SSR', { tag: '@smoke' }, () => {
   });
 });
 
-test.describe('Landing — Home', { tag: '@smoke' }, () => {
+test.describe('Landing - Home', { tag: '@smoke' }, () => {
   test('hero renders', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('h1')).toContainText('One memory.');
@@ -23,7 +23,7 @@ test.describe('Landing — Home', { tag: '@smoke' }, () => {
 
   test('waitlist form is present', async ({ page }) => {
     await page.goto('/');
-    // Two waitlist forms render (hero + final CTA) — assert the first is usable.
+    // Two waitlist forms render (hero + final CTA) - assert the first is usable.
     await expect(page.locator('input[type="email"][name="email"]').first()).toBeVisible();
     await expect(
       page.locator('button[type="submit"]', { hasText: 'Join the waitlist' }).first()
@@ -31,7 +31,7 @@ test.describe('Landing — Home', { tag: '@smoke' }, () => {
   });
 });
 
-test.describe('Landing — Header', { tag: '@smoke' }, () => {
+test.describe('Landing - Header', { tag: '@smoke' }, () => {
   test('logo links to home', async ({ page }) => {
     await page.goto('/');
     const logo = page.locator('header a').first();
@@ -67,7 +67,7 @@ test.describe('Landing — Header', { tag: '@smoke' }, () => {
   });
 });
 
-test.describe('Landing — Footer', { tag: '@smoke' }, () => {
+test.describe('Landing - Footer', { tag: '@smoke' }, () => {
   test('footer shows the tagline copyright', async ({ page }) => {
     await page.goto('/');
     const footer = page.locator('footer');
@@ -84,7 +84,7 @@ test.describe('Landing — Footer', { tag: '@smoke' }, () => {
   });
 });
 
-test.describe('Landing — Routes', { tag: '@smoke' }, () => {
+test.describe('Landing - Routes', { tag: '@smoke' }, () => {
   test('/docs renders', async ({ page }) => {
     await page.goto('/docs');
     await expect(page.locator('h1')).toContainText('Get started');

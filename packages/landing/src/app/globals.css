@@ -7,7 +7,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Gradient text — warm gold sweep using DS primitives */
+/* Gradient text - warm gold sweep using DS primitives */
 .text-gradient-gold {
   background: linear-gradient(
     135deg,
@@ -20,7 +20,7 @@ html {
   color: transparent;
 }
 
-/* Gradient divider — fades from transparent through border color */
+/* Gradient divider - fades from transparent through border color */
 .divider-gradient {
   height: 1px;
   background: linear-gradient(to right, transparent, var(--color-border), transparent);
@@ -62,7 +62,7 @@ html {
 }
 
 /* ── Long-form article prose (/blog) ───────────────────────────────
-   Plain CSS over DS tokens — no @tailwindcss/typography dependency.
+   Plain CSS over DS tokens - no @tailwindcss/typography dependency.
    Renders gray-matter markdown via next-mdx-remote + rehype-pretty-code. */
 .prose-blog {
   color: var(--color-muted-foreground);
@@ -155,7 +155,7 @@ html {
   border-top: 1px solid var(--color-border);
 }
 
-/* Inline code only — code inside <pre> is themed by shiki */
+/* Inline code only - code inside <pre> is themed by shiki */
 .prose-blog :not(pre) > code {
   background: var(--color-muted);
   color: var(--color-foreground);

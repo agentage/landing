@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for working in this repository — the Agentage Memory landing site + design system.
+Guidance for working in this repository - the Agentage Memory landing site + design system.
 
 ## Layout
 
@@ -8,14 +8,14 @@ npm-workspaces monorepo, 4 packages:
 
 | Package                   | Role                              | Port |
 | ------------------------- | --------------------------------- | ---- |
-| `@agentage/shared`        | site-origin + environment helpers | —    |
-| `@agentage/design-system` | OKLCH tokens + React components   | —    |
+| `@agentage/shared`        | site-origin + environment helpers | -    |
+| `@agentage/design-system` | OKLCH tokens + React components   | -    |
 | `@agentage/landing`       | Next.js marketing site            | 3000 |
 | `@agentage/showcase`      | design-system playground          | 3011 |
 
 ## Dev
 
-`npm install`, then `npm run dev` (site on :3000) or `npm run dev:showcase` (:3011). Both build `shared` + `design-system` first — the site consumes the design system's CSS tokens and `shared` as built output. Re-run the `dev` script after editing either lib.
+`npm install`, then `npm run dev` (site on :3000) or `npm run dev:showcase` (:3011). Both build `shared` + `design-system` first - the site consumes the design system's CSS tokens and `shared` as built output. Re-run the `dev` script after editing either lib.
 
 ## Testing
 

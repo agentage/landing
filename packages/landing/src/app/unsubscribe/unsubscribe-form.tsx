@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 
 type Status = 'idle' | 'working' | 'done' | 'error';
 
-// Removal happens on an explicit click (POST), never on page load — so email
+// Removal happens on an explicit click (POST), never on page load - so email
 // scanners that prefetch the link can't unsubscribe people by accident.
 export function UnsubscribeForm() {
   const params = useSearchParams();

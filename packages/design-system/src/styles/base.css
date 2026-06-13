@@ -1,5 +1,5 @@
 /* ============================================================================
- * Agentage Design System — Base Styles
+ * Agentage Design System - Base Styles
  *
  * Global resets, defaults, and opinionated base styles.
  * Consumers opt in by importing theme.css.
@@ -24,7 +24,7 @@ body {
   line-height: var(--leading-normal);
 }
 
-/* Headings — consistent tight tracking to match the design language. */
+/* Headings - consistent tight tracking to match the design language. */
 h1,
 h2,
 h3 {

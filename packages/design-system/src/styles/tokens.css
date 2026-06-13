@@ -1,5 +1,5 @@
 /* ============================================================================
- * Agentage Design System — Semantic Tokens
+ * Agentage Design System - Semantic Tokens
  *
  * Tier 2: Purpose-based tokens that reference primitives.
  * Dark theme is the default. Light overrides below.
@@ -23,7 +23,7 @@
 
   --color-primary: oklch(0.78 0.155 72);
   --color-primary-foreground: oklch(0.085 0.013 277);
-  /* Soft amber wash — the reserved background for active/selected/pinned state. */
+  /* Soft amber wash - the reserved background for active/selected/pinned state. */
   --color-primary-soft: oklch(0.78 0.155 72 / 0.12);
 
   --color-secondary: oklch(0.17 0.018 277);
@@ -51,7 +51,7 @@
    * passes WCAG-AA on bg-sidebar at text-xs. */
   --color-status-offline: oklch(0.7 0.014 256);
 
-  /* ---- Tag Colors (resource-class accents — agents/runs/schedules cards) ---- */
+  /* ---- Tag Colors (resource-class accents - agents/runs/schedules cards) ---- */
 
   --color-tag-agents: oklch(0.623 0.19 259.1);
   --color-tag-runs: oklch(0.705 0.191 47.7);
