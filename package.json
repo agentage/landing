@@ -1,0 +1,49 @@
+{
+  "name": "landing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "build:libs": "npm run build -w @agentage/shared && npm run build -w @agentage/design-system",
+    "dev": "npm run build:libs && npm run dev -w @agentage/landing",
+    "dev:landing": "npm run build:libs && npm run dev -w @agentage/landing",
+    "dev:showcase": "npm run build:libs && npm run dev -w @agentage/showcase",
+    "build": "npm run build:libs && npm run build -w @agentage/landing && npm run build -w @agentage/showcase",
+    "type-check": "npm run build:libs && npm run type-check --workspaces --if-present",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:e2e": "playwright test --config=packages/landing/e2e/playwright.config.ts",
+    "test:e2e:smoke": "playwright test --config=packages/landing/e2e/playwright.config.ts --grep @smoke",
+    "test:e2e:showcase": "playwright test --config=packages/showcase/e2e/playwright.config.ts",
+    "verify": "npm run build:libs && npm run type-check && npm run lint && npm run format:check && npm run test && npm run build"
+  },
+  "author": "Volodymyr Vreshch <vreshch@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentage/landing.git"
+  },
+  "devDependencies": {
+    "@next/eslint-plugin-next": "^16.2.9",
+    "@playwright/test": "latest",
+    "@types/node": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "@vitest/coverage-v8": "latest",
+    "eslint": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-plugin-prettier": "latest",
+    "prettier": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}

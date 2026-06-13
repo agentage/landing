@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+package-lock.json
+*.snap
+*.tsbuildinfo
+.claude
+**/.next
+packages/landing/public/email
