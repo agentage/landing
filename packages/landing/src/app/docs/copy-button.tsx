@@ -5,7 +5,7 @@ import { Check, Copy } from 'lucide-react';
 
 // Local mirror of @agentage/design-system CopyButton (same API surface:
 // text/label/successLabel/duration). Landing must not import the DS JS barrel
-// (client-only module scope breaks `next build` prerender — see lib/utils.ts),
+// (client-only module scope breaks `next build` prerender - see lib/utils.ts),
 // and the DS exports map exposes no per-component subpath.
 export function CopyButton({
   text,

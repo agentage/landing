@@ -7,7 +7,7 @@ import {
   CLAUDE_CODE_COMMAND,
 } from '../../lib/mcp-docs';
 
-// llms.txt (https://llmstxt.org) — dynamic so the runtime SITE_FQDN is read per request.
+// llms.txt (https://llmstxt.org) - dynamic so the runtime SITE_FQDN is read per request.
 export const dynamic = 'force-dynamic';
 
 export async function GET() {

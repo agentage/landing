@@ -1,5 +1,5 @@
 /**
- * Landing — SEO / social / PWA (@p0). Canonical + OG/Twitter unfurl, icons +
+ * Landing - SEO / social / PWA (@p0). Canonical + OG/Twitter unfurl, icons +
  * manifest, the Google Limited-Use disclosure, host-aware robots, and a valid
  * sitemap. Ported from the deployed-site gate, adapted to the local build
  * (host = the target under test; robots is noindex unless pointed at prod).
@@ -7,7 +7,7 @@
 import { test, expect } from '@playwright/test';
 import { body, pick, targetHost, isProdTarget } from './support';
 
-test.describe('Landing — SEO/PWA', { tag: '@p0' }, () => {
+test.describe('Landing - SEO/PWA', { tag: '@p0' }, () => {
   test('home canonical + og:url point at the target host', async ({ request }) => {
     const html = await body(request, '/');
     const canon = pick(html, /<link rel="canonical" href="([^"]+)"/i);

@@ -1,5 +1,9 @@
 name: CI
 
+# PR validation: one sticky comment reports every check (type-check, lint,
+# format, unit, build, e2e) so the PR shows a single rollup status. Modelled on
+# agentage/web's verify job; adjusted for this project (no DB migrations / merge
+# queue, e2e folded in). master pushes run the same checks without the comment.
 on:
   pull_request:
   push:
@@ -11,49 +15,93 @@ concurrency:
 
 jobs:
   verify:
-    name: ✅ Verify
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write # sticky verify comment (PRs only)
     steps:
       - uses: actions/checkout@v6
+      - name: Comment in progress
+        # PR-only: a push has no PR to comment on.
+        if: github.event_name == 'pull_request'
+        uses: ./.github/actions/sticky-comment
+        with:
+          marker: '<!-- ci-verify-bot -->'
+          body: |
+            ⏳ **CI - Verify IN PROGRESS**
+
+            **Commit:** `${{ github.event.pull_request.head.sha }}` · **Branch:** `${{ github.head_ref }}`
+
+            - ⏳ Type check
+            - ⏳ Lint
+            - ⏳ Format check
+            - ⏳ Unit tests
+            - ⏳ Build
+            - ⏳ Landing e2e
+            - ⏳ Showcase e2e
+
+            🔗 [View workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
       - uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: ${{ vars.NODE_VERSION || '22' }}
           cache: 'npm'
-      - run: npm ci
-      - name: Verify (type-check + lint + format + test + build)
-        run: npm run verify
 
-  e2e:
-    name: 🎭 E2E
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
+      - name: Install dependencies
+        id: install
+        run: npm ci
 
+      # shared + design-system must build before type-check/build consume them
+      # (mirrors `npm run verify`). A failure here cascades into Type check / Build.
+      - name: Build shared libs
+        if: always() && steps.install.outcome == 'success'
+        run: npm run build:libs
+
+      # Browsers for the e2e rows. Cache hit -> system deps only (not cacheable).
       - name: Cache Playwright browsers
         id: pw-cache
+        if: always() && steps.install.outcome == 'success'
         uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-chromium-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - name: Install Playwright chromium (browser + system deps)
-        if: steps.pw-cache.outputs.cache-hit != 'true'
+        if: always() && steps.install.outcome == 'success' && steps.pw-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
       - name: Install Playwright system deps (browser cached)
-        if: steps.pw-cache.outputs.cache-hit == 'true'
+        if: always() && steps.install.outcome == 'success' && steps.pw-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
-      # Each suite's webServer builds the libs + starts its own app, then tears
-      # it down (reuseExistingServer is off under CI).
-      - name: Landing e2e (smoke + @p0 + @full)
+      # Each check runs regardless of earlier failures (always()) so the comment
+      # reports every row, not just up to the first red.
+      - name: Type check
+        id: type-check
+        if: always() && steps.install.outcome == 'success'
+        run: npm run type-check
+      - name: Lint
+        id: lint
+        if: always() && steps.install.outcome == 'success'
+        run: npm run lint
+      - name: Format check
+        id: format
+        if: always() && steps.install.outcome == 'success'
+        run: npm run format:check
+      - name: Unit tests
+        id: test
+        if: always() && steps.install.outcome == 'success'
+        run: npm run test
+      - name: Build
+        id: build
+        if: always() && steps.install.outcome == 'success'
+        run: npm run build
+      - name: Landing e2e
+        id: e2e
+        if: always() && steps.install.outcome == 'success'
         run: npm run test:e2e
       - name: Showcase e2e
+        id: e2e-showcase
+        if: always() && steps.install.outcome == 'success'
         run: npm run test:e2e:showcase
 
       - name: Upload Playwright report
@@ -65,3 +113,23 @@ jobs:
             playwright-report/
             packages/*/test-results/
           retention-days: 7
+
+      - name: Comment result
+        if: always() && github.event_name == 'pull_request'
+        uses: ./.github/actions/sticky-comment
+        with:
+          marker: '<!-- ci-verify-bot -->'
+          body: |
+            ${{ (steps.type-check.outcome == 'success' && steps.lint.outcome == 'success' && steps.format.outcome == 'success' && steps.test.outcome == 'success' && steps.build.outcome == 'success' && steps.e2e.outcome == 'success' && steps.e2e-showcase.outcome == 'success') && '✅ **CI - Verify PASSED**' || '❌ **CI - Verify FAILED**' }}
+
+            **Commit:** `${{ github.event.pull_request.head.sha }}` · **Branch:** `${{ github.head_ref }}`
+
+            - ${{ steps.type-check.outcome == 'success' && '✅' || (steps.type-check.outcome == 'skipped' && '⏭️' || '❌') }} Type check
+            - ${{ steps.lint.outcome == 'success' && '✅' || (steps.lint.outcome == 'skipped' && '⏭️' || '❌') }} Lint
+            - ${{ steps.format.outcome == 'success' && '✅' || (steps.format.outcome == 'skipped' && '⏭️' || '❌') }} Format check
+            - ${{ steps.test.outcome == 'success' && '✅' || (steps.test.outcome == 'skipped' && '⏭️' || '❌') }} Unit tests
+            - ${{ steps.build.outcome == 'success' && '✅' || (steps.build.outcome == 'skipped' && '⏭️' || '❌') }} Build
+            - ${{ steps.e2e.outcome == 'success' && '✅' || (steps.e2e.outcome == 'skipped' && '⏭️' || '❌') }} Landing e2e
+            - ${{ steps.e2e-showcase.outcome == 'success' && '✅' || (steps.e2e-showcase.outcome == 'skipped' && '⏭️' || '❌') }} Showcase e2e
+
+            🔗 [View workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})

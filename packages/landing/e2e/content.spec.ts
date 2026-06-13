@@ -1,5 +1,5 @@
 /**
- * Landing — content + a11y + blog (@full). Section inventory, docs guidance,
+ * Landing - content + a11y + blog (@full). Section inventory, docs guidance,
  * blog unfurl + richness, 404s, accessibility basics, JSON-LD, unsubscribe,
  * legal canonicals. Ported from the deployed-site full suite; deployment-only
  * checks (GA-on-prod, www→apex redirect, sentinel audit) are intentionally
@@ -8,7 +8,7 @@
 import { test, expect } from '@playwright/test';
 import { body, pick } from './support';
 
-test.describe('Landing — content/a11y', { tag: '@full' }, () => {
+test.describe('Landing - content/a11y', { tag: '@full' }, () => {
   test('home sections render', async ({ request }) => {
     const html = await body(request, '/');
     for (const marker of [

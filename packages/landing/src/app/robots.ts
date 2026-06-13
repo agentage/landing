@@ -17,7 +17,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
 
   const host = getSiteUrl();
 
-  // Explicitly welcome the major AI crawlers — a named opt-in for an AI-memory product.
+  // Explicitly welcome the major AI crawlers - a named opt-in for an AI-memory product.
   const AI_BOTS = [
     'GPTBot',
     'OAI-SearchBot',

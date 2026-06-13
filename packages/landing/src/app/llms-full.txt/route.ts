@@ -2,7 +2,7 @@ import { SITE_NAME, SITE_TAGLINE, getSiteUrl } from '../../lib/site';
 import { getAllPosts, getPost, formatPostDate } from '../../lib/blog';
 import { getDocsMarkdown } from '../../lib/mcp-docs';
 
-// llms-full.txt — the whole public corpus in one fetch, for agents that prefer
+// llms-full.txt - the whole public corpus in one fetch, for agents that prefer
 // a single document over crawling. Dynamic so runtime SITE_FQDN is respected.
 export const dynamic = 'force-dynamic';
 

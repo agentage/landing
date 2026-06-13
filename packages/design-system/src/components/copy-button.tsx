@@ -68,7 +68,7 @@ export const CopyButton = ({
       setCopied(true);
       setTimeout(() => setCopied(false), duration);
     } catch {
-      // swallow — caller can supply their own onClick fallback
+      // swallow - caller can supply their own onClick fallback
     }
   };
 
