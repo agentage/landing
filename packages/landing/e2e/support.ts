@@ -7,8 +7,12 @@ export const TIMEOUTS = {
 } as const;
 
 // Host of the target under test (the local build by default). Host-aware
-// assertions (canonical, og:url, sitemap <loc>, robots) branch on it.
+// assertions (canonical, og:url, sitemap <loc>, robots) branch on it. Override
+// with LANDING_EXPECTED_HOST when the server renders a different public origin
+// than where it's reached - e.g. the prod image in CI, hit on localhost but
+// serving SITE_FQDN=agentage.io.
 export const targetHost = (): string =>
+  process.env.LANDING_EXPECTED_HOST ??
   new URL(process.env.LANDING_BASE_URL ?? 'http://localhost:3000').host;
 
 // True only when pointed at the production apex (not localhost / a dev. host).

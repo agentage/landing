@@ -1,0 +1,67 @@
+# Landing site, deployed as its own Swarm stack (agentage-landing) onto the
+# shared traefik-public network. Distinct router/middleware names (landing-*)
+# so it coexists with any other stack; the apex router runs at priority 25 to
+# take over the apex during the cutover from web's landing service (priority 20).
+services:
+  landing:
+    image: ghcr.io/agentage/landing/site:${IMAGE_TAG}
+    cap_drop:
+      - ALL
+    networks:
+      - traefik-public
+    environment:
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
+      - NODE_ENV=production
+      # Runtime origin for sitemap/robots/llms + the single prod/dev signal
+      # (agentage.io => indexable, dev./unset => noindex). Not the build-baked NEXT_PUBLIC_*.
+      - SITE_FQDN=${SITE_FQDN}
+      # GA4 id, substituted into the bundle at start (empty = analytics off).
+      - GA_MEASUREMENT_ID=${GA_MEASUREMENT_ID}
+      # MCP-registry domain proof served at /.well-known/mcp-registry-auth.
+      - 'MCP_REGISTRY_AUTH=v=MCPv1; k=ed25519; p=cksw7lCnQyXzAvA0ei34404Hla71nJD585WQ0zt2IO0='
+    deploy:
+      update_config:
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        # Apex (priority 25 > web landing's 20, so this takes over at cutover).
+        - traefik.http.routers.landing-apex-https.rule=Host(`${SITE_FQDN}`)
+        - traefik.http.routers.landing-apex-https.priority=25
+        - traefik.http.routers.landing-apex-https.entrypoints=https
+        - traefik.http.routers.landing-apex-https.tls=true
+        - traefik.http.routers.landing-apex-https.tls.certresolver=letsencrypt
+        - traefik.http.routers.landing-apex-https.middlewares=landing-secure-headers
+        - traefik.http.services.landing.loadbalancer.server.port=3000
+        - traefik.http.middlewares.landing-secure-headers.headers.stsSeconds=31536000
+        - traefik.http.middlewares.landing-secure-headers.headers.stsIncludeSubdomains=true
+        - traefik.http.middlewares.landing-secure-headers.headers.contentTypeNosniff=true
+        - traefik.http.middlewares.landing-secure-headers.headers.customFrameOptionsValue=SAMEORIGIN
+        - traefik.http.middlewares.landing-secure-headers.headers.referrerPolicy=strict-origin-when-cross-origin
+        # www -> apex 308 redirect (preserves path). $$ escapes the backref
+        # through envsubst + docker stack deploy, leaving Traefik a literal ${1}.
+        - traefik.http.routers.landing-www-https.rule=Host(`www.${SITE_FQDN}`)
+        - traefik.http.routers.landing-www-https.priority=26
+        - traefik.http.routers.landing-www-https.entrypoints=https
+        - traefik.http.routers.landing-www-https.tls=true
+        - traefik.http.routers.landing-www-https.tls.certresolver=letsencrypt
+        - traefik.http.routers.landing-www-https.service=landing
+        - traefik.http.routers.landing-www-https.middlewares=landing-secure-headers,landing-www-redirect
+        - traefik.http.middlewares.landing-www-redirect.redirectregex.regex=^https://www\.(.+)
+        - traefik.http.middlewares.landing-www-redirect.redirectregex.replacement=https://$${1}
+        - traefik.http.middlewares.landing-www-redirect.redirectregex.permanent=true
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+
+networks:
+  traefik-public:
+    external: true
