@@ -14,4 +14,4 @@ export function getSiteUrl(): string {
 export const SITE_NAME = 'Agentage Memory';
 export const SITE_TAGLINE = 'One memory. Every AI. Owned by you.';
 export const GITHUB_URL = 'https://github.com/agentage';
-export const CONTACT_EMAIL = 'vreshch@gmail.com';
+export const CONTACT_EMAIL = 'support@agentage.io';
