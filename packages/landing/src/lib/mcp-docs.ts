@@ -7,6 +7,16 @@ export const MCP_ENDPOINT_URL = `https://${MCP_ENDPOINT}`;
 export const MCP_AUTH_NOTE =
   'OAuth 2.1 with PKCE and dynamic client registration - sign in once in the browser, no API key.';
 
+// One-line positioning, shared by the docs page header + the markdown mirrors. Leads with
+// the differentiator: cross-vendor (names the clients) + files-first ownership.
+export const DOCS_INTRO =
+  'Connect any MCP client to one shared markdown memory through a single endpoint. Sign in with OAuth and Claude, ChatGPT, Cursor, and your other AI tools read and write the same notes - plain markdown you own and can export anytime.';
+
+// What the tools do NOT do: they fire only on memory-relevant requests, never on ordinary
+// questions. Documents the negative behavior reviewers probe (no spurious tool calls).
+export const TOOL_SCOPE_NOTE =
+  'The memory tools run only when your request is about your notes - everyday questions like facts, math, or writing are answered normally, without touching your memory.';
+
 export const MCP_TOOLS: ReadonlyArray<readonly [string, string]> = [
   ['memory__search', 'Find notes by keyword across the whole memory.'],
   ['memory__read', 'Read a note by path.'],
@@ -116,7 +126,7 @@ export function getDocsMarkdown(siteUrl: string): string {
 
   return `# Agentage Memory - Docs
 
-Connect any MCP client straight to one shared markdown memory through a single MCP endpoint - no CLI needed. Sign in with OAuth and your AI tools read and write the same notes.
+${DOCS_INTRO}
 
 ## Connect
 
@@ -134,6 +144,8 @@ ${tools}
 ## Example prompts
 
 ${examples}
+
+${TOOL_SCOPE_NOTE}
 
 ## Limitations
 

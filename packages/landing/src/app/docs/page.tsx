@@ -4,10 +4,12 @@ import {
   CHATGPT_CONNECTORS_URL,
   CLAUDE_CODE_COMMAND,
   CLAUDE_CONNECTORS_URL,
+  DOCS_INTRO,
   EXAMPLE_PROMPTS,
   LIMITATIONS,
   MCP_ENDPOINT_URL,
   MCP_TOOLS,
+  TOOL_SCOPE_NOTE,
   VSCODE_MCP_JSON,
 } from '../../lib/mcp-docs';
 import { CopyButton } from './copy-button';
@@ -135,11 +137,7 @@ export default function DocsPage() {
       <header className="max-w-2xl">
         <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-primary">Docs</p>
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Get started</h1>
-        <p className="mt-4 text-muted-foreground">
-          Connect any MCP client straight to one shared markdown memory through a single MCP
-          endpoint - no CLI needed. Sign in with OAuth and your AI tools read and write the same
-          notes.
-        </p>
+        <p className="mt-4 text-muted-foreground">{DOCS_INTRO}</p>
       </header>
 
       <Section title="Connect directly to memory.agentage.io" badge="Live">
@@ -249,7 +247,7 @@ export default function DocsPage() {
 
       <Section title="Example prompts">
         <p className="-mt-2 mb-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          Ask in plain language - Claude picks the right tools. A few to try once connected:
+          Ask in plain language - your AI picks the right tools. A few to try once connected:
         </p>
         <ul className="space-y-4">
           {EXAMPLE_PROMPTS.map(({ prompt, outcome, tools }) => (
@@ -265,6 +263,9 @@ export default function DocsPage() {
             </li>
           ))}
         </ul>
+        <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          {TOOL_SCOPE_NOTE}
+        </p>
       </Section>
 
       <Section title="Limitations">
