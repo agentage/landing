@@ -76,33 +76,62 @@ export const VSCODE_MCP_JSON = `{
   }
 }`;
 
+// One-click "Add to <client>" deeplinks - prefill the server, then the user
+// confirms and signs in (one step shorter than the manual paste).
+export const CLAUDE_ADD_URL = `https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=${encodeURIComponent(
+  'agentage Memory'
+)}&connectorUrl=${encodeURIComponent(MCP_ENDPOINT_URL)}`;
+
+export const VSCODE_ADD_URL = `vscode:mcp/install?${encodeURIComponent(
+  JSON.stringify({ name: 'agentage-memory', type: 'http', url: MCP_ENDPOINT_URL })
+)}`;
+
+// Cursor encodes the server config as base64 JSON in its deeplink.
+const CURSOR_CONFIG_B64 =
+  typeof Buffer !== 'undefined'
+    ? Buffer.from(JSON.stringify({ url: MCP_ENDPOINT_URL })).toString('base64')
+    : btoa(JSON.stringify({ url: MCP_ENDPOINT_URL }));
+export const CURSOR_ADD_URL = `cursor://anysphere.cursor-deeplink/mcp/install?name=agentage-memory&config=${CURSOR_CONFIG_B64}`;
+
 export const CLIENT_GUIDES: ReadonlyArray<{
   client: string;
   steps: readonly string[];
 }> = [
   {
     client: 'Claude Code',
-    steps: [`Run \`${CLAUDE_CODE_COMMAND}\``, 'Run `/mcp` and complete the OAuth sign-in.'],
+    steps: [
+      `Run \`${CLAUDE_CODE_COMMAND}\``,
+      'Run `/mcp` and complete the OAuth sign-in.',
+      'A connector you add in Claude.ai also syncs here automatically.',
+    ],
   },
   {
     client: 'Claude (claude.ai & Desktop)',
     steps: [
-      `Open [Settings > Connectors](${CLAUDE_CONNECTORS_URL}) > Add custom connector.`,
-      `Paste \`${MCP_ENDPOINT_URL}\` and sign in when prompted.`,
+      `One-click: [Add to Claude](${CLAUDE_ADD_URL}) - opens with the server prefilled; review, confirm, and sign in.`,
+      `Or manually: Settings > Connectors > Add custom connector, paste \`${MCP_ENDPOINT_URL}\`.`,
     ],
   },
   {
     client: 'VS Code',
     steps: [
-      'Add the server to `.vscode/mcp.json` (or run the `MCP: Add Server` command):',
+      `One-click: [Install in VS Code](${VSCODE_ADD_URL}).`,
+      'Or add the server to `.vscode/mcp.json` (or run the `MCP: Add Server` command):',
       `\`\`\`json\n${VSCODE_MCP_JSON}\n\`\`\``,
       'VS Code opens the browser for the OAuth sign-in on first use.',
     ],
   },
   {
+    client: 'Cursor',
+    steps: [
+      `One-click: [Add to Cursor](${CURSOR_ADD_URL}), then sign in when prompted.`,
+      `Or add \`{ "url": "${MCP_ENDPOINT_URL}" }\` to \`~/.cursor/mcp.json\`.`,
+    ],
+  },
+  {
     client: 'ChatGPT',
     steps: [
-      `Open [Settings > Connectors](${CHATGPT_CONNECTORS_URL}) > Add custom connector (paid plans; enable Developer mode under Advanced if the option is hidden).`,
+      `Open [Settings > Apps & Connectors](${CHATGPT_CONNECTORS_URL}) > Advanced settings > enable Developer Mode > Create (paid plans, not Free; ChatGPT has no one-click link, so add it by hand).`,
       `Paste \`${MCP_ENDPOINT_URL}\` and sign in when prompted.`,
     ],
   },

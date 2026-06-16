@@ -2,14 +2,17 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
   CHATGPT_CONNECTORS_URL,
+  CLAUDE_ADD_URL,
   CLAUDE_CODE_COMMAND,
   CLAUDE_CONNECTORS_URL,
+  CURSOR_ADD_URL,
   DOCS_INTRO,
   EXAMPLE_PROMPTS,
   LIMITATIONS,
   MCP_ENDPOINT_URL,
   MCP_TOOLS,
   TOOL_SCOPE_NOTE,
+  VSCODE_ADD_URL,
   VSCODE_MCP_JSON,
 } from '../../lib/mcp-docs';
 import { CopyButton } from './copy-button';
@@ -131,6 +134,19 @@ function ClientCard({ title, children }: { title: string; children: React.ReactN
   );
 }
 
+function AddButton({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 transition-colors hover:bg-primary/90"
+    >
+      {children} ↗
+    </a>
+  );
+}
+
 export default function DocsPage() {
   return (
     <article className="mx-auto max-w-5xl space-y-8 px-6 py-20 md:py-24">
@@ -160,21 +176,11 @@ export default function DocsPage() {
               complete the OAuth sign-in.
             </p>
           </ClientCard>
-          <ClientCard title="VS Code">
-            <p className="mb-3 text-sm text-muted-foreground">
-              Add the server to{' '}
-              <code className="rounded bg-muted px-1.5 py-0.5 text-[13px]">.vscode/mcp.json</code>{' '}
-              (or run the{' '}
-              <code className="rounded bg-muted px-1.5 py-0.5 text-[13px]">MCP: Add Server</code>{' '}
-              command):
-            </p>
-            <Terminal
-              title=".vscode/mcp.json"
-              copy={VSCODE_MCP_JSON}
-              lines={VSCODE_MCP_JSON.split('\n').map((t) => ({ t }))}
-            />
-          </ClientCard>
           <ClientCard title="Claude (claude.ai & Desktop)">
+            <AddButton href={CLAUDE_ADD_URL}>Add to Claude</AddButton>
+            <p className="mb-4 mt-3 text-sm text-muted-foreground">
+              Opens with the server prefilled - confirm and sign in. Or add it manually:
+            </p>
             <Steps
               items={[
                 {
@@ -201,11 +207,36 @@ export default function DocsPage() {
               ]}
             />
           </ClientCard>
+          <ClientCard title="VS Code">
+            <AddButton href={VSCODE_ADD_URL}>Install in VS Code</AddButton>
+            <p className="mb-3 mt-4 text-sm text-muted-foreground">
+              One click installs it, or add the server to{' '}
+              <code className="rounded bg-muted px-1.5 py-0.5 text-[13px]">.vscode/mcp.json</code>{' '}
+              (or run the{' '}
+              <code className="rounded bg-muted px-1.5 py-0.5 text-[13px]">MCP: Add Server</code>{' '}
+              command):
+            </p>
+            <Terminal
+              title=".vscode/mcp.json"
+              copy={VSCODE_MCP_JSON}
+              lines={VSCODE_MCP_JSON.split('\n').map((t) => ({ t }))}
+            />
+          </ClientCard>
+          <ClientCard title="Cursor">
+            <AddButton href={CURSOR_ADD_URL}>Add to Cursor</AddButton>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Installs the server in Cursor, then sign in when prompted. Or add{' '}
+              <code className="rounded bg-muted px-1.5 py-0.5 text-[13px]">{`{ "url": "${MCP_ENDPOINT_URL}" }`}</code>{' '}
+              to{' '}
+              <code className="rounded bg-muted px-1.5 py-0.5 text-[13px]">~/.cursor/mcp.json</code>
+              .
+            </p>
+          </ClientCard>
           <ClientCard title="ChatGPT">
             <Steps
               items={[
                 {
-                  title: 'Settings → Connectors → Add custom connector',
+                  title: 'Apps & Connectors → Advanced → Developer Mode → Create',
                   body: (
                     <>
                       Open{' '}
@@ -215,9 +246,10 @@ export default function DocsPage() {
                         rel="noreferrer"
                         className="text-primary underline underline-offset-4 hover:text-primary/80"
                       >
-                        ChatGPT Settings → Connectors
+                        ChatGPT Settings → Apps &amp; Connectors
                       </a>{' '}
-                      - paid plans; enable Developer mode under Advanced if the option is hidden.
+                      - paid plans (not Free). Enable Developer Mode under Advanced, then Create.
+                      ChatGPT has no one-click link, so add it by hand.
                     </>
                   ),
                 },

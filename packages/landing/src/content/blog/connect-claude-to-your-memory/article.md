@@ -28,7 +28,7 @@ You need one URL. It is the same memory connector for every Claude surface:
 https://memory.agentage.io/mcp
 ```
 
-**Claude.ai (web) or Claude Desktop** - open [Settings > Connectors > Add custom connector](https://claude.ai/customize/connectors?modal=add-custom-connector), paste the URL, and click Connect.
+**Claude.ai (web) or Claude Desktop** - click [Add to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=agentage%20Memory&connectorUrl=https%3A%2F%2Fmemory.agentage.io%2Fmcp). It opens Claude with the connector prefilled - just click Connect and sign in. (Or by hand: Settings > Connectors > Add custom connector, paste the URL.)
 
 **Claude Code** - run one command in your terminal:
 
@@ -52,7 +52,7 @@ Agentage Memory is different. Your memory is a set of plain markdown files that 
 
 Use whichever Claude you already work in:
 
-- **Claude.ai or Claude Desktop:** open [Settings > Connectors > Add custom connector](https://claude.ai/customize/connectors?modal=add-custom-connector), then paste `https://memory.agentage.io/mcp`.
+- **Claude.ai or Claude Desktop:** click [Add to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=agentage%20Memory&connectorUrl=https%3A%2F%2Fmemory.agentage.io%2Fmcp) - it opens with the connector prefilled, then click Connect. (Or by hand: Settings > Connectors > Add custom connector, paste `https://memory.agentage.io/mcp`.)
 - **Claude Code:** run `claude mcp add --transport http memory https://memory.agentage.io/mcp`.
 
 ### 2. Authorize in your browser
@@ -135,7 +135,7 @@ About two minutes. You add the connector once - paste the URL in Claude.ai or Cl
 
 One connector, about two minutes, and the next chat already knows.
 
-- **Claude.ai or Claude Desktop:** open [Settings > Connectors > Add custom connector](https://claude.ai/customize/connectors?modal=add-custom-connector), then paste `https://memory.agentage.io/mcp`.
+- **Claude.ai or Claude Desktop:** click [Add to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=agentage%20Memory&connectorUrl=https%3A%2F%2Fmemory.agentage.io%2Fmcp) - it opens with the connector prefilled, then click Connect. (Or by hand: Settings > Connectors > Add custom connector, paste `https://memory.agentage.io/mcp`.)
 - **Claude Code:** `claude mcp add --transport http memory https://memory.agentage.io/mcp`
 
 Write a note, open a new chat, ask Claude what it remembers. When it answers, your memory is connected - and it is yours to keep.
