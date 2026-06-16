@@ -3,14 +3,23 @@
 import { useState } from 'react';
 import {
   CHATGPT_CONNECTORS_URL,
+  CLAUDE_ADD_URL,
   CLAUDE_CODE_COMMAND,
-  CLAUDE_CONNECTORS_URL,
+  CURSOR_ADD_URL,
   MCP_ENDPOINT_URL,
+  VSCODE_ADD_URL,
   VSCODE_MCP_JSON,
 } from '../lib/mcp-docs';
 import { CopyButton } from './docs/copy-button';
 
-type Step = { text?: string; snippet?: string; link?: string; linkLabel?: string };
+type Step = {
+  text?: string;
+  snippet?: string;
+  link?: string;
+  linkLabel?: string;
+  cta?: string;
+  ctaLabel?: string;
+};
 type Tab = { key: string; label: string; steps: readonly Step[] };
 
 const USE_STEP = 'Ask it to save or recall a note - every AI you connect shares the same memory.';
@@ -29,26 +38,40 @@ const TABS: readonly Tab[] = [
     key: 'claude',
     label: 'Claude.ai',
     steps: [
-      { link: CLAUDE_CONNECTORS_URL, linkLabel: 'Open Claude.ai connectors' },
-      { text: 'Add a custom connector, paste the endpoint, and sign in.' },
+      { cta: CLAUDE_ADD_URL, ctaLabel: 'Add to Claude' },
+      {
+        text: 'Opens Claude.ai with the server prefilled - review, confirm, and sign in. Works in Claude Desktop too.',
+      },
       { text: USE_STEP },
     ],
   },
   {
-    key: 'cursor',
-    label: 'Cursor / VS Code',
+    key: 'vscode',
+    label: 'VS Code',
     steps: [
+      { cta: VSCODE_ADD_URL, ctaLabel: 'Install in VS Code' },
       { snippet: VSCODE_MCP_JSON },
-      { text: 'It opens the browser to sign in on first use.' },
+      {
+        text: 'One click installs it, or add the JSON to .vscode/mcp.json. Opens the browser to sign in.',
+      },
+    ],
+  },
+  {
+    key: 'cursor',
+    label: 'Cursor',
+    steps: [
+      { cta: CURSOR_ADD_URL, ctaLabel: 'Add to Cursor' },
+      { text: 'Installs the server in Cursor, then sign in when prompted.' },
+      { text: USE_STEP },
     ],
   },
   {
     key: 'chatgpt',
     label: 'ChatGPT',
     steps: [
-      { link: CHATGPT_CONNECTORS_URL, linkLabel: 'Open ChatGPT connectors' },
+      { link: CHATGPT_CONNECTORS_URL, linkLabel: 'Open ChatGPT Apps & Connectors' },
       {
-        text: 'Add a custom connector (paid plan + Developer mode), paste the endpoint, and sign in.',
+        text: 'In Advanced settings, enable Developer Mode, click Create, paste the endpoint, and sign in (paid plans, not Free - ChatGPT has no one-click link yet).',
       },
       { text: USE_STEP },
     ],
@@ -69,6 +92,18 @@ function EndpointSlice() {
 }
 
 function StepBody({ step }: { step: Step }) {
+  if (step.cta) {
+    return (
+      <a
+        href={step.cta}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-[12px] font-semibold text-primary-foreground shadow-sm shadow-primary/20 transition-colors hover:bg-primary/90"
+      >
+        {step.ctaLabel} ↗
+      </a>
+    );
+  }
   if (step.snippet) {
     return (
       <div className="flex items-start gap-2 rounded-lg border border-border/60 bg-[#0b0b0e] p-3">
