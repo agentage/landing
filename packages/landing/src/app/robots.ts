@@ -1,15 +1,13 @@
 import type { MetadataRoute } from 'next';
-import { environment } from '@agentage/shared';
+import { isNoindexHost } from '@agentage/shared';
 import { getSiteUrl } from '../lib/site';
 
-// Only the production deployment is indexable; the env is derived per request from the
-// same runtime SITE_FQDN that drives the URLs below (one prod/dev signal, not APP_ENV).
+// Indexable by default; only a positively-identified non-prod host (localhost / dev.) is
+// de-indexed. Fail-open so a missing runtime SITE_FQDN can't silently de-index prod.
 export const dynamic = 'force-dynamic';
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
-  const isProduction = environment(process.env.SITE_FQDN) === 'production';
-
-  if (!isProduction) {
+  if (isNoindexHost(process.env.SITE_FQDN)) {
     return {
       rules: { userAgent: '*', disallow: '/' },
     };
