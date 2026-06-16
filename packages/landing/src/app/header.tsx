@@ -6,11 +6,14 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { GITHUB_URL } from '../lib/site';
 
-const navLinks = [
+// `hard`: render a plain <a> so the browser does a full-page navigation. The
+// platform routes /dashboard (and /app paths) to the real dashboard app; a Next
+// <Link> would soft-navigate to the landing's own /dashboard stub instead.
+const navLinks: { label: string; href: string; hard?: boolean }[] = [
   { label: 'Home', href: '/' },
   { label: 'Docs', href: '/docs' },
   { label: 'Blog', href: '/blog' },
-  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Dashboard', href: '/dashboard', hard: true },
   { label: 'GitHub', href: GITHUB_URL },
 ];
 
@@ -48,32 +51,33 @@ export function Header() {
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map(({ href, label }) => {
+          {navLinks.map(({ href, label, hard }) => {
             const isActive =
               href === '/'
                 ? pathname === '/'
                 : pathname === href || pathname.startsWith(`${href}/`);
             const isExternal = href.startsWith('http');
 
-            return isExternal ? (
-              <a
-                key={href}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative px-3 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
-              >
-                {label}
-              </a>
-            ) : (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  'group relative px-3 py-2 text-sm font-medium transition-colors duration-200',
-                  isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-                )}
-              >
+            if (isExternal) {
+              return (
+                <a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative px-3 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
+                >
+                  {label}
+                </a>
+              );
+            }
+
+            const className = cn(
+              'group relative px-3 py-2 text-sm font-medium transition-colors duration-200',
+              isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+            );
+            const inner = (
+              <>
                 {label}
                 <span
                   className={cn(
@@ -81,6 +85,16 @@ export function Header() {
                     isActive ? 'bg-primary' : 'scale-x-0 bg-primary/60 group-hover:scale-x-100'
                   )}
                 />
+              </>
+            );
+
+            return hard ? (
+              <a key={href} href={href} className={className}>
+                {inner}
+              </a>
+            ) : (
+              <Link key={href} href={href} className={className}>
+                {inner}
               </Link>
             );
           })}
@@ -123,7 +137,7 @@ export function Header() {
         )}
       >
         <nav className="px-6 pb-4 pt-2">
-          {navLinks.map(({ href, label }) => {
+          {navLinks.map(({ href, label, hard }) => {
             const isActive =
               href === '/'
                 ? pathname === '/'
@@ -133,8 +147,15 @@ export function Header() {
               'block rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200',
               isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
             );
-            return isExternal ? (
-              <a key={href} href={href} target="_blank" rel="noopener noreferrer" className={cls}>
+            if (isExternal) {
+              return (
+                <a key={href} href={href} target="_blank" rel="noopener noreferrer" className={cls}>
+                  {label}
+                </a>
+              );
+            }
+            return hard ? (
+              <a key={href} href={href} className={cls} onClick={() => setMobileOpen(false)}>
                 {label}
               </a>
             ) : (

@@ -9,7 +9,9 @@ import {
   Database,
   Lock,
 } from 'lucide-react';
-import { WaitlistForm } from './waitlist-form';
+import Link from 'next/link';
+import { ConnectBlock } from './connect-block';
+import { NewsletterForm } from './newsletter-form';
 
 const problems = [
   {
@@ -33,7 +35,7 @@ const steps = [
   {
     icon: Plug,
     title: 'Connect once',
-    body: 'Add Agentage Memory as an MCP connector in Claude, ChatGPT, Cursor, or Claude Code. One command or one click - no config, no plumbing.',
+    body: 'Paste memory.agentage.io/mcp into Claude, ChatGPT, Cursor, or Claude Code. Signing in once creates your account - no API keys, no config, no plumbing.',
   },
   {
     icon: Share2,
@@ -42,8 +44,8 @@ const steps = [
   },
   {
     icon: FileText,
-    title: 'Files stay yours',
-    body: 'Your memory mirrors to plain markdown on your machine. Open it in Obsidian, edit it by hand, export the whole thing anytime. You own it.',
+    title: 'Yours to keep',
+    body: 'Your memory is plain markdown, stored in the EU and exportable anytime. No black-box vector store, no lock-in - it stays readable long after a tool changes.',
   },
 ];
 
@@ -51,7 +53,7 @@ const features = [
   {
     icon: FileText,
     title: 'Files first',
-    body: 'Plain markdown with YAML frontmatter - readable, editable, and yours to keep forever. Obsidian-native, not a black-box vector store.',
+    body: 'Plain markdown with YAML frontmatter - readable, exportable, and yours to keep forever. Not a black-box vector store.',
   },
   {
     icon: Share2,
@@ -61,12 +63,12 @@ const features = [
   {
     icon: Lock,
     title: 'Owned, not rented',
-    body: 'Your own per-tenant store in the cloud plus a local mirror you control. Export anytime. Zero lock-in.',
+    body: 'Your own memory in the cloud, EU-hosted and exportable anytime. Markdown you keep, not a format you rent. Zero lock-in.',
   },
   {
     icon: ShieldCheck,
     title: 'Private by design',
-    body: 'EU-resident by architecture, local-first, multi-region from day one. Your data stays in your region.',
+    body: 'EU-resident by architecture. Your data stays in your region, never a black box owned by someone else.',
   },
   {
     icon: Search,
@@ -95,67 +97,45 @@ const contrast = [
   },
 ];
 
-const heroLines = [
-  { p: '$', t: 'npx @agentage/cli setup', cmd: true },
-  { t: 'linking Claude        ✓' },
-  { t: 'linking ChatGPT       ✓' },
-  { t: 'linking Cursor        ✓' },
-  { t: 'linking Claude Code   ✓' },
-  { t: 'one memory, every AI - memory.agentage.io', ok: true },
-];
-
 export default function HomePage() {
   return (
     <>
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden py-20 md:py-24">
+      {/* ── Hero (benefit-led, two-column split) ── */}
+      <section className="relative overflow-hidden py-20 md:py-28">
         <div className="blueprint-grid pointer-events-none absolute inset-0" aria-hidden="true" />
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <p className="mb-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            One memory · every AI · owned by you
-          </p>
-          <h1 className="text-5xl font-bold leading-[1.08] tracking-tight md:text-7xl">
-            One memory. <br />
-            <span className="text-gradient-gold">For every AI</span>.
-          </h1>
-          <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            No plumbing. One connector links Claude, ChatGPT, Cursor, and Claude Code to a single
-            markdown memory you own - mirrored to plain files on your machine.
-          </p>
-
-          {/* terminal */}
-          <div className="mx-auto mt-12 max-w-xl overflow-hidden rounded-xl border border-border bg-[#0b0b0e] text-left shadow-2xl shadow-black/40">
-            <div className="flex items-center gap-1.5 border-b border-border/60 px-4 py-2.5">
-              <span className="size-2.5 rounded-full bg-destructive/70" />
-              <span className="size-2.5 rounded-full bg-warning/70" />
-              <span className="size-2.5 rounded-full bg-success/70" />
-              <span className="ml-2 font-mono text-[11px] text-muted-foreground">
-                zsh - agentage
-              </span>
+        <div className="relative mx-auto grid max-w-5xl items-center gap-12 px-6 md:grid-cols-2">
+          {/* Left: the pitch */}
+          <div className="text-center md:text-left">
+            <p className="mb-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              One memory. Every AI. Owned by you.
+            </p>
+            <h1 className="text-5xl font-bold leading-[1.08] tracking-tight md:text-6xl">
+              Your memory, <br />
+              <span className="text-gradient-gold">in every AI</span>.
+            </h1>
+            <p className="mx-auto mt-6 max-w-md text-lg leading-relaxed text-muted-foreground md:mx-0">
+              One markdown memory you own, shared across Claude, ChatGPT, Cursor, and Claude Code.
+              Paste one URL - signing in creates your account. EU-hosted, export anytime.
+            </p>
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row md:items-start">
+              <Link
+                href="/#connect"
+                className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-7 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90"
+              >
+                Connect your AI
+              </Link>
+              <Link
+                href="/docs"
+                className="inline-flex h-12 items-center justify-center rounded-lg border border-border px-6 text-sm font-medium text-foreground transition-colors hover:bg-card/50"
+              >
+                See the docs
+              </Link>
             </div>
-            <pre className="px-4 py-4 font-mono text-[13px] leading-relaxed">
-              {heroLines.map((l, i) => (
-                <div key={i}>
-                  {l.cmd && <span className="text-primary">{l.p} </span>}
-                  {!l.cmd && !l.ok && <span className="text-muted-foreground">{'↳ '}</span>}
-                  <span
-                    className={
-                      l.ok ? 'text-success' : l.cmd ? 'text-foreground' : 'text-muted-foreground'
-                    }
-                  >
-                    {l.t}
-                  </span>
-                </div>
-              ))}
-              <span
-                className="hero-anim inline-block h-4 w-2 translate-y-0.5 bg-primary"
-                style={{ animation: 'blink 1.1s step-end infinite' }}
-              />
-            </pre>
           </div>
 
-          <div className="mt-12">
-            <WaitlistForm id="waitlist" autoFocus location="hero" />
+          {/* Right: connect (setup = sign-up) */}
+          <div id="connect" className="scroll-mt-24">
+            <ConnectBlock />
           </div>
         </div>
       </section>
@@ -294,14 +274,32 @@ export default function HomePage() {
       <section className="py-20 md:py-24">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <h2 className="text-3xl font-bold tracking-tight md:text-5xl">
-            Be first to <span className="text-gradient-gold">own your AI’s memory</span>.
+            Own <span className="text-gradient-gold">your AI’s memory</span>.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-muted-foreground">
-            Join the waitlist. We’ll reach out as connectors open up, starting with the tools you
-            tell us you use.
+            One endpoint. Every AI. Sign in once and your memory follows you across every tool.
           </p>
-          <div className="mt-10">
-            <WaitlistForm location="footer" />
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <Link
+              href="/#connect"
+              className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-8 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90"
+            >
+              Connect your AI
+            </Link>
+            <Link
+              href="/docs"
+              className="text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+            >
+              or see the full setup docs →
+            </Link>
+          </div>
+
+          {/* Demoted email path: product news, not a launch waitlist. */}
+          <div className="mx-auto mt-16 max-w-md border-t border-border/40 pt-10">
+            <p className="mb-5 text-sm text-muted-foreground">
+              Not ready to connect? Get product news and new-connector drops.
+            </p>
+            <NewsletterForm id="waitlist" location="footer" />
           </div>
         </div>
       </section>
