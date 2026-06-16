@@ -2,12 +2,11 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { trackEvent } from './analytics';
 
-const TOOLS = ['Claude', 'ChatGPT', 'Cursor', 'Claude Code'];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const SUCCESS = "You're on the list - we'll reach out as spots open up.";
+const SUCCESS = "You're subscribed - product news and new connectors, no spam.";
 const INVALID = 'Enter a valid email address.';
-const RETRY = 'Something went wrong saving your spot. Please try again.';
+const RETRY = 'Something went wrong. Please try again.';
 
 type Status = 'idle' | 'pending' | 'success' | 'error';
 
@@ -33,7 +32,7 @@ function context() {
   });
 }
 
-export function WaitlistForm({
+export function NewsletterForm({
   id,
   autoFocus = false,
   location = 'hero',
@@ -54,11 +53,10 @@ export function WaitlistForm({
       if (autoFocus) input.focus({ preventScroll: true });
       return;
     }
-    // Arrived via the #waitlist anchor (e.g. from a blog cover). Defer past the
-    // browser's native fragment scroll + hero animation/hydration, then center
-    // the input and focus it. Uses 'instant': the page sets CSS
-    // scroll-behavior: smooth, under which a programmatic 'smooth' scrollIntoView
-    // silently no-ops in Chrome.
+    // Arrived via the anchor (e.g. from a blog cover). Defer past the browser's
+    // native fragment scroll, then center and focus. 'instant' because the page
+    // sets scroll-behavior: smooth, under which a programmatic 'smooth'
+    // scrollIntoView silently no-ops in Chrome.
     const t = setTimeout(() => {
       input.scrollIntoView({ behavior: 'instant', block: 'center' });
       input.focus({ preventScroll: true });
@@ -77,20 +75,21 @@ export function WaitlistForm({
       setMessage(INVALID);
       return;
     }
-    const tools = data.getAll('tools').map(String).filter(Boolean);
 
     setStatus('pending');
     try {
-      // Relative /api hits the API (same-origin in prod, next.config rewrite in dev).
+      // Relative /api hits the email-list endpoint (same-origin in prod, next.config
+      // rewrite in dev). Reuses /api/waitlist - the product launched, so this list
+      // is now product news + new-connector updates rather than a launch waitlist.
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email, ...(tools.length ? { tools } : {}), ...context() }),
+        body: JSON.stringify({ email, list: 'news', ...context() }),
       });
       if (res.ok) {
         setStatus('success');
         setMessage(SUCCESS);
-        trackEvent('waitlist_signup', { location });
+        trackEvent('news_signup', { location });
       } else {
         setStatus('error');
         setMessage(res.status === 400 ? INVALID : RETRY);
@@ -130,21 +129,12 @@ export function WaitlistForm({
           disabled={status === 'pending'}
           className="inline-flex h-12 items-center justify-center rounded-lg bg-primary px-6 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 disabled:opacity-60 sm:h-11"
         >
-          {status === 'pending' ? 'Joining…' : 'Join the waitlist'}
+          {status === 'pending' ? 'Subscribing…' : 'Get news'}
         </button>
       </div>
-      <fieldset className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        <legend className="mb-1 w-full text-center">Which AI tools do you use weekly?</legend>
-        {TOOLS.map((t) => (
-          <label key={t} className="inline-flex cursor-pointer items-center gap-1.5">
-            <input type="checkbox" name="tools" value={t} className="accent-primary" />
-            {t}
-          </label>
-        ))}
-      </fieldset>
       {status === 'error' && <p className="text-center text-xs text-destructive">{message}</p>}
       <p className="text-center text-[11px] text-muted-foreground">
-        EU-hosted · no spam · export your data anytime.
+        EU-hosted · no spam · unsubscribe anytime.
       </p>
     </form>
   );

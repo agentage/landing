@@ -5,29 +5,29 @@ test.describe('Landing - SSR', { tag: '@smoke' }, () => {
     const res = await request.get('/');
     expect(res.status()).toBe(200);
     const html = await res.text();
-    // Hero copy + terminal content must be present in the server response itself.
-    expect(html).toContain('For every AI');
-    expect(html).toContain('npx @agentage/cli setup');
-    expect(html).toContain('memory.agentage.io');
+    // Hero copy + connect block must be present in the server response itself.
+    expect(html).toContain('in every AI');
+    expect(html).toContain('memory.agentage.io/mcp');
+    expect(html).toContain('Claude Code');
   });
 });
 
 test.describe('Landing - Home', { tag: '@smoke' }, () => {
   test('hero renders', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('h1')).toContainText('One memory.');
-    await expect(page.locator('h1')).toContainText('For every AI');
-    await expect(page.getByText('npx @agentage/cli setup')).toBeVisible();
-    await expect(page.getByText('memory.agentage.io')).toBeVisible();
+    await expect(page.locator('h1')).toContainText('Your memory,');
+    await expect(page.locator('h1')).toContainText('in every AI');
+    await expect(page.getByRole('link', { name: 'Connect your AI' }).first()).toBeVisible();
+    await expect(page.getByText('https://memory.agentage.io/mcp').first()).toBeVisible();
   });
 
-  test('waitlist form is present', async ({ page }) => {
+  test('connect block + newsletter are present', async ({ page }) => {
     await page.goto('/');
-    // Two waitlist forms render (hero + final CTA) - assert the first is usable.
-    await expect(page.locator('input[type="email"][name="email"]').first()).toBeVisible();
-    await expect(
-      page.locator('button[type="submit"]', { hasText: 'Join the waitlist' }).first()
-    ).toBeVisible();
+    // Setup-first: the tabbed connect block is the primary action; the email path is
+    // the demoted "Get news" newsletter.
+    await expect(page.getByRole('button', { name: 'Claude Code' })).toBeVisible();
+    await expect(page.locator('input[type="email"][name="email"]')).toBeVisible();
+    await expect(page.locator('button[type="submit"]', { hasText: 'Get news' })).toBeVisible();
   });
 });
 
