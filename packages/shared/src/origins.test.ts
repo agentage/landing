@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { links, environment } from './origins.js';
+import { links, environment, isNoindexHost } from './origins.js';
 
 describe('links', () => {
   it('derives the site origin from a prod apex', () => {
@@ -28,5 +28,19 @@ describe('environment', () => {
     expect(environment('localhost:3000')).toBe('development');
     expect(environment('')).toBe('development');
     expect(environment(undefined)).toBe('development');
+  });
+});
+
+describe('isNoindexHost', () => {
+  it('noindexes only positively-identified non-prod hosts', () => {
+    for (const v of ['localhost', 'localhost:3000', '127.0.0.1', 'dev.agentage.io']) {
+      expect(isNoindexHost(v), v).toBe(true);
+    }
+  });
+
+  it('fails open: an empty / unknown FQDN stays indexable (never silently de-indexes prod)', () => {
+    for (const v of [undefined, '', 'agentage.io', 'https://agentage.io/', 'www.agentage.io']) {
+      expect(isNoindexHost(v), String(v)).toBe(false);
+    }
   });
 });

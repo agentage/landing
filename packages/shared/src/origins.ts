@@ -36,3 +36,9 @@ export const environment = (siteFqdn?: string): Env => {
   if (isLocal(host) || host.startsWith('dev.')) return 'development';
   return 'production';
 };
+
+/** robots noindex gate - fail-open: only localhost / a `dev.` host is de-indexed, never an empty/unknown FQDN, so a missing SITE_FQDN can't silently de-index prod. */
+export const isNoindexHost = (siteFqdn?: string): boolean => {
+  const host = normalize(siteFqdn);
+  return host.startsWith('localhost') || host.startsWith('127.0.0.1') || host.startsWith('dev.');
+};
