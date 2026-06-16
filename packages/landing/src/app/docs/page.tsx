@@ -133,7 +133,7 @@ function ClientCard({ title, children }: { title: string; children: React.ReactN
 
 export default function DocsPage() {
   return (
-    <article className="mx-auto max-w-4xl space-y-8 px-6 py-20 md:py-24">
+    <article className="mx-auto max-w-5xl space-y-8 px-6 py-20 md:py-24">
       <header className="max-w-2xl">
         <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-primary">Docs</p>
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Get started</h1>

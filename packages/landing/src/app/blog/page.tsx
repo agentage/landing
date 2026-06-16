@@ -46,10 +46,10 @@ function GridCard({ post }: { post: BlogPostMeta }) {
       href={`/blog/${post.slug}`}
       className="group flex w-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/40"
     >
-      <CoverFrame url={post.coverUrl} alt={post.title} className="aspect-[16/9]" />
-      <div className="flex flex-1 flex-col gap-2 p-6">
+      <CoverFrame url={post.coverUrl} alt={post.title} className="aspect-[1200/630]" />
+      <div className="flex min-w-0 flex-1 flex-col gap-2 p-6">
         <Meta post={post} />
-        <h2 className="text-lg font-bold leading-snug tracking-tight text-foreground">
+        <h2 className="line-clamp-2 text-lg font-bold leading-snug tracking-tight text-foreground">
           {post.title}
         </h2>
         {post.subtitle && (
@@ -66,7 +66,7 @@ export default async function BlogIndexPage() {
   const posts = await getAllPosts();
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-20 md:py-24">
+    <div className="mx-auto max-w-5xl px-6 py-20 md:py-24">
       <header className="mb-12 max-w-2xl">
         <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-primary">Blog</p>
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Build-in-public notes</h1>
@@ -79,7 +79,7 @@ export default async function BlogIndexPage() {
       {posts.length === 0 ? (
         <p className="text-muted-foreground">No posts yet - first one is on the way.</p>
       ) : (
-        <ul className="grid gap-6 sm:grid-cols-2">
+        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <li key={post.slug} className="flex">
               <GridCard post={post} />

@@ -75,12 +75,9 @@ test.describe('Landing - Footer', { tag: '@smoke' }, () => {
     await expect(footer).toContainText('One memory. Every AI. Owned by you.');
   });
 
-  test('footer Dashboard link uses a relative path', async ({ page }) => {
+  test('footer Docs link uses a relative path', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('footer a', { hasText: 'Dashboard' })).toHaveAttribute(
-      'href',
-      '/dashboard'
-    );
+    await expect(page.locator('footer a', { hasText: 'Docs' })).toHaveAttribute('href', '/docs');
   });
 });
 

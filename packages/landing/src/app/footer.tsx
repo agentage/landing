@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { GITHUB_URL } from '../lib/site';
 
 export function Footer() {
   return (
@@ -16,26 +15,6 @@ export function Footer() {
               className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
             >
               Docs
-            </Link>
-            <Link
-              href="/blog"
-              className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
-            >
-              Blog
-            </Link>
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
-            >
-              GitHub
-            </a>
-            <Link
-              href="/dashboard"
-              className="text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
-            >
-              Dashboard
             </Link>
             <Link
               href="/contacts"
