@@ -4,16 +4,16 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { GITHUB_URL } from '../lib/site';
+import { GITHUB_URL, DASHBOARD_URL } from '../lib/site';
 
 // `hard`: render a plain <a> so the browser does a full-page navigation. The
-// platform routes /dashboard (and /app paths) to the real dashboard app; a Next
-// <Link> would soft-navigate to the landing's own /dashboard stub instead.
+// dashboard lives on its own host (dashboard.<fqdn>); a Next <Link> would try to
+// soft-navigate within the landing.
 const navLinks: { label: string; href: string; hard?: boolean }[] = [
   { label: 'Home', href: '/' },
   { label: 'Docs', href: '/docs' },
   { label: 'Blog', href: '/blog' },
-  { label: 'Dashboard', href: '/dashboard', hard: true },
+  { label: 'Dashboard', href: DASHBOARD_URL, hard: true },
   { label: 'GitHub', href: GITHUB_URL },
 ];
 

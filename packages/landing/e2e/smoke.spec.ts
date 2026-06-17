@@ -86,9 +86,4 @@ test.describe('Landing - Routes', { tag: '@smoke' }, () => {
     await page.goto('/docs');
     await expect(page.locator('h1')).toContainText('Get started');
   });
-
-  test('/dashboard renders', async ({ page }) => {
-    await page.goto('/dashboard');
-    await expect(page.locator('h1')).toContainText('Dashboard');
-  });
 });

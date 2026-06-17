@@ -6,6 +6,20 @@ describe('links', () => {
     expect(links('agentage.io').site).toBe('https://agentage.io');
   });
 
+  it('derives the dashboard + API hosts as subdomains', () => {
+    const l = links('agentage.io');
+    expect(l.dashboard).toBe('https://dashboard.agentage.io');
+    expect(l.api).toBe('https://api.agentage.io/api');
+    const dev = links('dev.agentage.io');
+    expect(dev.dashboard).toBe('https://dashboard.dev.agentage.io');
+    expect(dev.api).toBe('https://api.dev.agentage.io/api');
+  });
+
+  it('splits dashboard + API by port for local dev', () => {
+    expect(links('localhost').dashboard).toBe('http://localhost:3002');
+    expect(links('localhost').api).toBe('http://localhost:3001/api');
+  });
+
   it('tolerates a scheme / trailing slash on the input', () => {
     expect(links('https://agentage.io/').site).toBe('https://agentage.io');
   });
