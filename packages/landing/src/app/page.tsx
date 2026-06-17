@@ -105,7 +105,7 @@ export default function HomePage() {
         <div className="blueprint-grid pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="relative mx-auto grid max-w-5xl items-center gap-12 px-6 md:grid-cols-2">
           {/* Left: the pitch */}
-          <div className="text-center md:text-left">
+          <div className="min-w-0 text-center md:text-left">
             <p className="mb-5 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
               One memory. Every AI. Owned by you.
             </p>
@@ -134,7 +134,7 @@ export default function HomePage() {
           </div>
 
           {/* Right: connect (setup = sign-up) */}
-          <div id="connect" className="scroll-mt-24">
+          <div id="connect" className="min-w-0 scroll-mt-24">
             <ConnectBlock />
           </div>
         </div>
