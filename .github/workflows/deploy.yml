@@ -145,7 +145,7 @@ jobs:
           # any 200 - dev shares the host with other stacks, so Traefik can take a
           # moment to route to the new landing router.
           for i in $(seq 1 40); do
-            curl -fsS "https://${SITE_FQDN}/" 2>/dev/null | grep -q "For every AI" && { ok=1; break; }
+            curl -fsS "https://${SITE_FQDN}/" 2>/dev/null | grep -q "One memory" && { ok=1; break; }
             sleep 5
           done
           echo "Smoke: https://${SITE_FQDN}/"
