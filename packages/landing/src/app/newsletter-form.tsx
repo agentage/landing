@@ -122,7 +122,7 @@ export function NewsletterForm({
           required
           placeholder="you@work.com"
           autoComplete="email"
-          className="h-12 flex-1 rounded-lg border border-border bg-background px-4 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/40 sm:h-11 sm:text-sm"
+          className="h-12 rounded-lg border border-border bg-background px-4 text-base text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/40 sm:h-11 sm:flex-1 sm:text-sm"
         />
         <button
           type="submit"
