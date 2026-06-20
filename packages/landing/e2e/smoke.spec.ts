@@ -84,6 +84,6 @@ test.describe('Landing - Footer', { tag: '@smoke' }, () => {
 test.describe('Landing - Routes', { tag: '@smoke' }, () => {
   test('/docs renders', async ({ page }) => {
     await page.goto('/docs');
-    await expect(page.locator('h1')).toContainText('Get started');
+    await expect(page.locator('h1')).toContainText('Agentage Memory');
   });
 });

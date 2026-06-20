@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getSiteUrl } from '../lib/site';
 import { getAllPosts } from '../lib/blog';
+import { docSlugs } from '../docs/registry';
 
 // Dynamic so the runtime SITE_FQDN is read per request, not baked at build.
 export const dynamic = 'force-dynamic';
@@ -16,6 +17,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // Every docs sub-page (Overview is /docs below; these are the rest).
+  const docEntries: MetadataRoute.Sitemap = docSlugs().map((slug) => ({
+    url: `${baseUrl}/docs/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }));
+
   return [
     {
       url: baseUrl,
@@ -29,6 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    ...docEntries,
     {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
