@@ -110,7 +110,7 @@ export function DocArticle({ doc }: { doc: DocPage }): React.JSX.Element {
       </header>
       {doc.sections.map((section) => (
         <section key={section.id} id={section.id} className="mb-10 scroll-mt-20">
-          <h2 className="mb-3 border-b border-border pb-2 text-xl font-semibold tracking-tight text-foreground">
+          <h2 className="mb-3 text-xl font-semibold tracking-tight text-foreground">
             {section.title}
           </h2>
           {section.blocks.map((block, i) => (
