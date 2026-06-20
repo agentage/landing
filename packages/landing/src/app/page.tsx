@@ -101,7 +101,7 @@ export default function HomePage() {
   return (
     <>
       {/* ── Hero (benefit-led, two-column split) ── */}
-      <section className="relative overflow-hidden py-20 md:py-28">
+      <section className="relative overflow-hidden pb-20 md:pb-28">
         <div className="blueprint-grid pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="relative mx-auto grid max-w-5xl items-center gap-12 px-6 md:grid-cols-2">
           {/* Left: the pitch */}

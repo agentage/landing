@@ -5,6 +5,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Keep anchored content clear of the sticky header (~76px) plus a small gap. */
+  scroll-padding-top: 5.5rem;
 }
 
 /* Gradient text - warm gold sweep using DS primitives */

@@ -66,7 +66,7 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   };
 
   return (
-    <article className="mx-auto max-w-5xl px-6 py-20 md:py-24">
+    <article className="mx-auto max-w-5xl px-6 pb-20 md:pb-24">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
