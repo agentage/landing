@@ -101,7 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }}
         />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pt-4">{children}</main>
         <Footer />
         <Analytics />
       </body>

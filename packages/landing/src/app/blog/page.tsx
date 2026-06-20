@@ -66,7 +66,7 @@ export default async function BlogIndexPage() {
   const posts = await getAllPosts();
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-20 md:py-24">
+    <div className="mx-auto max-w-5xl px-6 pb-20 md:pb-24">
       <header className="mb-12 max-w-2xl">
         <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-primary">Blog</p>
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Build-in-public notes</h1>
