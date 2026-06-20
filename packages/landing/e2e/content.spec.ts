@@ -21,8 +21,8 @@ test.describe('Landing - content/a11y', { tag: '@full' }, () => {
   });
 
   test('docs shows connector guidance', async ({ request }) => {
-    const html = await body(request, '/docs');
-    for (const token of ['memory.agentage.io', 'ChatGPT', 'Obsidian']) {
+    const html = await body(request, '/docs/mcp-server');
+    for (const token of ['memory.agentage.io', 'ChatGPT', 'Cursor']) {
       expect(html, token).toContain(token);
     }
   });
