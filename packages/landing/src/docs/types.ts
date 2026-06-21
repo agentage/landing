@@ -51,6 +51,8 @@ export interface DocPage {
   title: string;
   /** One-line intro under the H1. */
   lede: string;
+  /** Page-specific SEO keywords (merged with the shared docs keywords). */
+  keywords?: string[];
   sections: DocSection[];
 }
 

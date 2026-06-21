@@ -8,6 +8,14 @@ export const mcpServerDoc: DocPage = {
   slug: 'mcp-server',
   title: 'MCP server',
   lede: 'One cloud endpoint that every AI tool connects to over the Model Context Protocol. Sign in with OAuth - no API key - and read and write your memory through six tools.',
+  keywords: [
+    'MCP server',
+    'MCP endpoint',
+    'Streamable HTTP MCP',
+    'OAuth 2.1 MCP',
+    'memory tools',
+    'memory__search',
+  ],
   sections: [
     {
       id: 'endpoint',

@@ -85,6 +85,19 @@ VS Code opens the browser for the OAuth sign-in on first use.`,
 
 Paste \`${ENDPOINT}\` and sign in when prompted.`,
   },
+  {
+    slug: 'grok',
+    nav: 'Grok',
+    title: 'Grok',
+    lede: 'Add Agentage Memory to Grok by pasting the MCP server URL.',
+    setup: `In Grok, add a custom MCP server and paste the endpoint URL:
+
+\`\`\`text
+${ENDPOINT}
+\`\`\`
+
+Grok opens the browser for the OAuth sign-in on first use - no API key.`,
+  },
 ];
 
 const clientHref = (slug: string): string => `/docs/${slug}`;
@@ -93,6 +106,7 @@ export const clientDocs: DocPage[] = CLIENTS.map((c) => ({
   slug: c.slug,
   title: c.title,
   lede: c.lede,
+  keywords: [c.nav, `${c.nav} MCP`, `connect ${c.nav}`, `${c.nav} memory`, `${c.nav} MCP server`],
   sections: [
     {
       id: 'setup',
