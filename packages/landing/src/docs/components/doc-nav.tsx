@@ -10,6 +10,7 @@ import {
   Code,
   MousePointerClick,
   Bot,
+  Sparkles,
   Wrench,
   BookOpen,
   Search,
@@ -29,6 +30,7 @@ const ICONS: Record<string, LucideIcon> = {
   'VS Code': Code,
   Cursor: MousePointerClick,
   ChatGPT: Bot,
+  Grok: Sparkles,
   CLI: Terminal,
   'MCP tools': Wrench,
 };

@@ -6,6 +6,13 @@ export const overviewDoc: DocPage = {
   slug: '',
   title: 'Agentage Memory',
   lede: 'One memory. Every AI. Owned by you. A shared markdown memory that all of your AI tools read and write through a single MCP endpoint.',
+  keywords: [
+    'one memory every AI',
+    'cross-vendor AI memory',
+    'files-first memory',
+    'own your AI memory',
+    'Claude ChatGPT Cursor memory',
+  ],
   sections: [
     {
       id: 'what-it-is',

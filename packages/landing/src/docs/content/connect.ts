@@ -8,6 +8,14 @@ export const connectDoc: DocPage = {
   slug: 'connect',
   title: 'Connect any MCP client',
   lede: 'A vendor-neutral guide to wiring any MCP-capable agent to Agentage Memory. The same endpoint and OAuth flow work everywhere - no API key.',
+  keywords: [
+    'connect MCP client',
+    'add MCP server',
+    'MCP setup',
+    'OAuth MCP',
+    'how to connect MCP',
+    'MCP server URL',
+  ],
   sections: [
     {
       id: 'basics',
