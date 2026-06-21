@@ -2,6 +2,8 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import matter from 'gray-matter';
 
+export type BlogFaqItem = { question: string; answer: string };
+
 export type BlogFrontmatter = {
   title: string;
   subtitle?: string;
@@ -14,6 +16,7 @@ export type BlogFrontmatter = {
   readingTime?: string;
   author?: string;
   draft?: boolean;
+  faq?: BlogFaqItem[];
 };
 
 export type BlogPostMeta = {
@@ -29,6 +32,7 @@ export type BlogPostMeta = {
   coverUrl?: string;
   ogImageUrl?: string;
   draft: boolean;
+  faq?: BlogFaqItem[];
 };
 
 export type BlogPost = BlogPostMeta & {
@@ -90,6 +94,7 @@ async function readPostFile(slug: string): Promise<BlogPost> {
     coverUrl,
     ogImageUrl,
     draft: fm.draft ?? false,
+    faq: fm.faq,
     content,
   };
 }

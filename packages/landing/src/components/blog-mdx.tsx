@@ -1,4 +1,9 @@
-import type { HTMLAttributes, ImgHTMLAttributes, TableHTMLAttributes } from 'react';
+import type {
+  AnchorHTMLAttributes,
+  HTMLAttributes,
+  ImgHTMLAttributes,
+  TableHTMLAttributes,
+} from 'react';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { BlogPre } from './blog-pre';
 import remarkGfm from 'remark-gfm';
@@ -19,6 +24,29 @@ const autolinkOptions = {
 };
 
 const components = {
+  // A markdown link to an app deep link (e.g. obsidian://...) renders as a
+  // prominent install button; everything else stays a normal prose link.
+  a: ({ href = '', children, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) => {
+    if (href.startsWith('obsidian://')) {
+      return (
+        // Inline color/decoration beat the higher-specificity .prose-blog a rule
+        // (amber text + underline) so the button stays dark-on-amber, no underline.
+        <a
+          {...props}
+          href={href}
+          style={{ color: '#0b0b0d', textDecoration: 'none' }}
+          className="my-3 inline-flex items-center gap-2 rounded-lg bg-[#f59e0b] px-5 py-3 text-[15px] font-semibold shadow-sm transition-opacity hover:opacity-90"
+        >
+          {children}
+        </a>
+      );
+    }
+    return (
+      <a {...props} href={href}>
+        {children}
+      </a>
+    );
+  },
   img: (props: ImgHTMLAttributes<HTMLImageElement>) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img
