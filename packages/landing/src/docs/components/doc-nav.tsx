@@ -23,6 +23,7 @@ import { docsNav } from '../nav';
 const ICONS: Record<string, LucideIcon> = {
   Overview: BookOpen,
   'MCP server': Plug,
+  'Any client': Plug,
   'Claude Code': Terminal,
   Claude: MessageSquare,
   'VS Code': Code,

@@ -12,9 +12,9 @@ export const docsNav: DocNavGroup[] = [
     ],
   },
   {
-    // One item per client - connect them one by one.
+    // Generic guide first, then one item per client.
     title: 'Connect your client',
-    items: clientNavItems,
+    items: [{ label: 'Any client', slug: 'connect' }, ...clientNavItems],
   },
   {
     title: 'Reference',
