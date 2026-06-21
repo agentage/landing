@@ -2,6 +2,10 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  async redirects() {
+    // Short link to the generic connect guide.
+    return [{ source: '/connect', destination: '/docs/connect', permanent: true }];
+  },
   async rewrites() {
     // The waitlist/unsubscribe calls now hit the API host directly (api.<fqdn>/api,
     // cross-origin) - see lib/site.ts - so no same-origin /api proxy is needed here.
