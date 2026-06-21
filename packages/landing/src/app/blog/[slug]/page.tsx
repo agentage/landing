@@ -65,12 +65,33 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
     ...(post.ogImageUrl ? { image: `${SITE_URL}${post.ogImageUrl}` } : {}),
   };
 
+  // Emit FAQPage structured data when a post declares an faq array, so the Q&A
+  // is eligible for rich results. Answers must match the visible FAQ text.
+  const faqJsonLd =
+    post.faq && post.faq.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: post.faq.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: { '@type': 'Answer', text: item.answer },
+          })),
+        }
+      : null;
+
   return (
     <article className="mx-auto max-w-5xl px-6 pb-20 md:pb-24">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       <Link
         href="/blog"
         className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
