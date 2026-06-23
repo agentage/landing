@@ -13,6 +13,7 @@ export type BlogFrontmatter = {
   tags?: string[];
   cover?: string;
   ogImage?: string;
+  thumbnail?: string;
   readingTime?: string;
   author?: string;
   draft?: boolean;
@@ -31,6 +32,7 @@ export type BlogPostMeta = {
   author: string;
   coverUrl?: string;
   ogImageUrl?: string;
+  thumbnailUrl?: string;
   draft: boolean;
   faq?: BlogFaqItem[];
 };
@@ -80,6 +82,9 @@ async function readPostFile(slug: string): Promise<BlogPost> {
 
   const coverUrl = resolveAssetUrl(slug, fm.cover);
   const ogImageUrl = resolveAssetUrl(slug, fm.ogImage) ?? coverUrl;
+  // Index/list thumbnail. Lets a post use an animated cover on its own page
+  // while the listing stays a static image. Falls back to the cover.
+  const thumbnailUrl = resolveAssetUrl(slug, fm.thumbnail) ?? coverUrl;
 
   return {
     slug,
@@ -93,6 +98,7 @@ async function readPostFile(slug: string): Promise<BlogPost> {
     author: fm.author ?? DEFAULT_AUTHOR,
     coverUrl,
     ogImageUrl,
+    thumbnailUrl,
     draft: fm.draft ?? false,
     faq: fm.faq,
     content,

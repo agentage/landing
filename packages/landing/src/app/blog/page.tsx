@@ -46,7 +46,11 @@ function GridCard({ post }: { post: BlogPostMeta }) {
       href={`/blog/${post.slug}`}
       className="group flex w-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/40"
     >
-      <CoverFrame url={post.coverUrl} alt={post.title} className="aspect-[1200/630]" />
+      <CoverFrame
+        url={post.thumbnailUrl ?? post.coverUrl}
+        alt={post.title}
+        className="aspect-[1200/630]"
+      />
       <div className="flex min-w-0 flex-1 flex-col gap-2 p-6">
         <Meta post={post} />
         <h2 className="line-clamp-2 text-lg font-bold leading-snug tracking-tight text-foreground">
