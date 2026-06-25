@@ -56,7 +56,9 @@ export function Header() {
               href === '/'
                 ? pathname === '/'
                 : pathname === href || pathname.startsWith(`${href}/`);
-            const isExternal = href.startsWith('http');
+            // `hard` links (e.g. Dashboard on its own subdomain) navigate in the
+            // current window; only non-hard external links open a new tab.
+            const isExternal = href.startsWith('http') && !hard;
 
             if (isExternal) {
               return (
@@ -142,7 +144,7 @@ export function Header() {
               href === '/'
                 ? pathname === '/'
                 : pathname === href || pathname.startsWith(`${href}/`);
-            const isExternal = href.startsWith('http');
+            const isExternal = href.startsWith('http') && !hard;
             const cls = cn(
               'block rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200',
               isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
