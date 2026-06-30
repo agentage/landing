@@ -60,7 +60,7 @@ CI (`.github/workflows/ci.yml`) runs `verify` and both e2e suites on every PR an
 
 ## Configuration
 
-All environment variables are optional for local development. To customise, copy the example and
+All environment variables are optional for local development. To customize, copy the example and
 edit it:
 
 ```bash
