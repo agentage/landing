@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,49 @@ const navLinks: { label: string; href: string; hard?: boolean }[] = [
   { label: 'Dashboard', href: DASHBOARD_URL, hard: true },
   { label: 'GitHub', href: GITHUB_URL },
 ];
+
+const navState = (href: string, hard: boolean | undefined, pathname: string) => ({
+  isActive: href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`),
+  // `hard` links (e.g. Dashboard on its own subdomain) navigate in the current
+  // window; only non-hard external links open a new tab.
+  isExternal: href.startsWith('http') && !hard,
+});
+
+// Picks the right element for a nav entry: new-tab <a> for external, full-page
+// <a> for `hard`, Next <Link> otherwise. onClick applies only to in-app links
+// (used by the mobile menu to close itself); external new-tab links skip it.
+function NavItem({
+  href,
+  hard,
+  isExternal,
+  className,
+  onClick,
+  children,
+}: {
+  href: string;
+  hard?: boolean;
+  isExternal: boolean;
+  className: string;
+  onClick?: () => void;
+  children: ReactNode;
+}) {
+  if (isExternal) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+        {children}
+      </a>
+    );
+  }
+  return hard ? (
+    <a href={href} className={className} onClick={onClick}>
+      {children}
+    </a>
+  ) : (
+    <Link href={href} className={className} onClick={onClick}>
+      {children}
+    </Link>
+  );
+}
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -52,52 +95,31 @@ export function Header() {
         {/* Desktop nav */}
         <nav className="hidden items-center gap-1 md:flex">
           {navLinks.map(({ href, label, hard }) => {
-            const isActive =
-              href === '/'
-                ? pathname === '/'
-                : pathname === href || pathname.startsWith(`${href}/`);
-            // `hard` links (e.g. Dashboard on its own subdomain) navigate in the
-            // current window; only non-hard external links open a new tab.
-            const isExternal = href.startsWith('http') && !hard;
-
-            if (isExternal) {
-              return (
-                <a
-                  key={href}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative px-3 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
-                >
-                  {label}
-                </a>
-              );
-            }
-
-            const className = cn(
-              'group relative px-3 py-2 text-sm font-medium transition-colors duration-200',
-              isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-            );
-            const inner = (
-              <>
+            const { isActive, isExternal } = navState(href, hard, pathname);
+            const className = isExternal
+              ? 'group relative px-3 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground'
+              : cn(
+                  'group relative px-3 py-2 text-sm font-medium transition-colors duration-200',
+                  isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                );
+            return (
+              <NavItem
+                key={href}
+                href={href}
+                hard={hard}
+                isExternal={isExternal}
+                className={className}
+              >
                 {label}
-                <span
-                  className={cn(
-                    'absolute inset-x-3 -bottom-[1px] h-[2px] rounded-lg transition-all duration-300',
-                    isActive ? 'bg-primary' : 'scale-x-0 bg-primary/60 group-hover:scale-x-100'
-                  )}
-                />
-              </>
-            );
-
-            return hard ? (
-              <a key={href} href={href} className={className}>
-                {inner}
-              </a>
-            ) : (
-              <Link key={href} href={href} className={className}>
-                {inner}
-              </Link>
+                {!isExternal && (
+                  <span
+                    className={cn(
+                      'absolute inset-x-3 -bottom-[1px] h-[2px] rounded-lg transition-all duration-300',
+                      isActive ? 'bg-primary' : 'scale-x-0 bg-primary/60 group-hover:scale-x-100'
+                    )}
+                  />
+                )}
+              </NavItem>
             );
           })}
         </nav>
@@ -140,30 +162,22 @@ export function Header() {
       >
         <nav className="px-6 pb-4 pt-2">
           {navLinks.map(({ href, label, hard }) => {
-            const isActive =
-              href === '/'
-                ? pathname === '/'
-                : pathname === href || pathname.startsWith(`${href}/`);
-            const isExternal = href.startsWith('http') && !hard;
+            const { isActive, isExternal } = navState(href, hard, pathname);
             const cls = cn(
               'block rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200',
               isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
             );
-            if (isExternal) {
-              return (
-                <a key={href} href={href} target="_blank" rel="noopener noreferrer" className={cls}>
-                  {label}
-                </a>
-              );
-            }
-            return hard ? (
-              <a key={href} href={href} className={cls} onClick={() => setMobileOpen(false)}>
+            return (
+              <NavItem
+                key={href}
+                href={href}
+                hard={hard}
+                isExternal={isExternal}
+                className={cls}
+                onClick={() => setMobileOpen(false)}
+              >
                 {label}
-              </a>
-            ) : (
-              <Link key={href} href={href} className={cls} onClick={() => setMobileOpen(false)}>
-                {label}
-              </Link>
+              </NavItem>
             );
           })}
         </nav>
