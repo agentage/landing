@@ -1,5 +1,5 @@
 import type { DocPage } from '../types';
-import { MCP_ENDPOINT_URL as ENDPOINT } from '@/lib/mcp-docs';
+import { MCP_ENDPOINT_URL as ENDPOINT, MCP_AUTH_ORIGIN } from '@/lib/mcp-docs';
 import { clientLinksMd } from './clients';
 
 // Generic "connect any MCP client / agent" guide - vendor-neutral, for clients
@@ -27,7 +27,7 @@ export const connectDoc: DocPage = {
         },
         {
           type: 'p',
-          md: '- **Endpoint** - `https://memory.agentage.io/mcp`\n- **Transport** - Streamable HTTP\n- **Auth** - OAuth 2.1 (PKCE + dynamic client registration); sign in once in the browser, no API key.',
+          md: `- **Endpoint** - \`${ENDPOINT}\`\n- **Transport** - Streamable HTTP\n- **Auth** - OAuth 2.1 (PKCE + dynamic client registration); sign in once in the browser, no API key.`,
         },
       ],
     },
@@ -50,7 +50,7 @@ export const connectDoc: DocPage = {
             },
             {
               title: 'Sign in',
-              body: 'The client opens a browser to **auth.agentage.io**. Approve access (magic-link, or GitHub / Google / Microsoft). No token ever touches the client config.',
+              body: `The client opens a browser to **${MCP_AUTH_ORIGIN}**. Approve access (magic-link, or GitHub / Google / Microsoft). No token ever touches the client config.`,
             },
             {
               title: 'Verify',

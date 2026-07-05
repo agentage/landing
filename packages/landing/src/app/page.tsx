@@ -10,6 +10,7 @@ import {
   Lock,
 } from 'lucide-react';
 import Link from 'next/link';
+import { MCP_ENDPOINT } from '@/lib/mcp-docs';
 import { ConnectBlock } from './connect-block';
 import { NewsletterForm } from './newsletter-form';
 
@@ -35,7 +36,7 @@ const steps = [
   {
     icon: Plug,
     title: 'Connect once',
-    body: 'Paste memory.agentage.io/mcp into Claude, ChatGPT, Cursor, or Claude Code. Signing in once creates your account - no API keys, no config, no plumbing.',
+    body: `Paste ${MCP_ENDPOINT} into Claude, ChatGPT, Cursor, or Claude Code. Signing in once creates your account - no API keys, no config, no plumbing.`,
   },
   {
     icon: Share2,

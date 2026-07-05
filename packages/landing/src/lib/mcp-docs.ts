@@ -4,6 +4,10 @@
 export const MCP_ENDPOINT = 'memory.agentage.io/mcp';
 export const MCP_ENDPOINT_URL = `https://${MCP_ENDPOINT}`;
 
+// OAuth AS host the client opens on first connect (fixed service, same in every
+// environment - not derived from the landing site's FQDN).
+export const MCP_AUTH_ORIGIN = 'auth.agentage.io';
+
 export const MCP_AUTH_NOTE =
   'OAuth 2.1 with PKCE and dynamic client registration - sign in once in the browser, no API key.';
 
