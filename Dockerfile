@@ -9,23 +9,20 @@ RUN apk add --no-cache libc6-compat
 FROM base AS deps
 COPY package*.json ./
 COPY packages/shared/package*.json ./packages/shared/
-COPY packages/design-system/package*.json ./packages/design-system/
 COPY packages/landing/package*.json ./packages/landing/
-COPY packages/showcase/package*.json ./packages/showcase/
 RUN npm ci && npm cache clean --force
 
-# Build shared -> design-system -> landing. Sentinels, not real values: static
-# metadata + the client bundle bake these; the entrypoint substitutes at start.
+# Build shared -> landing (@agentage/design-system comes from npm, already in
+# node_modules). Sentinels, not real values: static metadata + the client bundle
+# bake these; the entrypoint substitutes at start.
 FROM base AS build
 ENV NEXT_PUBLIC_SITE_FQDN=site-fqdn.sentinel.invalid
 ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=__GA_MEASUREMENT_ID__
 COPY --from=deps /app/node_modules ./node_modules
 COPY package*.json ./
 COPY packages/shared/ ./packages/shared/
-COPY packages/design-system/ ./packages/design-system/
 COPY packages/landing/ ./packages/landing/
 RUN npm run build -w @agentage/shared \
-  && npm run build -w @agentage/design-system \
   && npm run build -w @agentage/landing
 
 # Runtime: Next.js standalone server.
