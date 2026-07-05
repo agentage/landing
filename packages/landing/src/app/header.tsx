@@ -4,7 +4,7 @@ import { useState, useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { GITHUB_URL, DASHBOARD_URL } from '../lib/site';
+import { GITHUB_URL, DASHBOARD_URL, CATALOG_URL } from '../lib/site';
 
 // `hard`: render a plain <a> so the browser does a full-page navigation. The
 // dashboard lives on its own host (dashboard.<fqdn>); a Next <Link> would try to
@@ -13,6 +13,7 @@ const navLinks: { label: string; href: string; hard?: boolean }[] = [
   { label: 'Home', href: '/' },
   { label: 'Docs', href: '/docs' },
   { label: 'Blog', href: '/blog' },
+  { label: 'Catalog', href: CATALOG_URL, hard: true },
   { label: 'Dashboard', href: DASHBOARD_URL, hard: true },
   { label: 'GitHub', href: GITHUB_URL },
 ];
