@@ -11,6 +11,13 @@ export const SITE_URL = links(process.env.NEXT_PUBLIC_SITE_FQDN).site;
 export const API_URL = links(process.env.NEXT_PUBLIC_SITE_FQDN).api;
 export const DASHBOARD_URL = links(process.env.NEXT_PUBLIC_SITE_FQDN).dashboard;
 
+// The MCP catalog is its own host (catalog.<fqdn>) under /mcp. No `catalog` origin
+// in shared links() yet, so derive it from the apex - build-baked per environment,
+// same as DASHBOARD_URL (prod -> catalog.agentage.io, dev -> catalog.dev.agentage.io).
+export const CATALOG_URL = SITE_URL.startsWith('https://')
+  ? `${SITE_URL.replace('https://', 'https://catalog.')}/mcp`
+  : `${SITE_URL}/mcp`;
+
 // Runtime origin from SITE_FQDN so dynamic routes (robots/sitemap/llms) emit the
 // correct URLs without a rebuild.
 export function getSiteUrl(): string {
