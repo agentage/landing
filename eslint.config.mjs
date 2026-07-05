@@ -13,8 +13,6 @@ export default [
       '.claude/**',
       '**/*.d.ts',
       '**/*.js',
-      'packages/design-system/dev/**',
-      'packages/showcase/.next/**',
       'packages/landing/.next/**',
     ],
   },
@@ -63,7 +61,7 @@ export default [
     },
   },
   {
-    files: ['packages/landing/src/**/*.{ts,tsx}', 'packages/showcase/src/**/*.{ts,tsx}'],
+    files: ['packages/landing/src/**/*.{ts,tsx}'],
     plugins: {
       '@next/next': nextPlugin,
     },

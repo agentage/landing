@@ -1,27 +1,27 @@
 # CLAUDE.md
 
-Guidance for working in this repository - the Agentage Memory landing site + design system.
+Guidance for working in this repository - the Agentage Memory landing site.
 
 ## Layout
 
-npm-workspaces monorepo, 4 packages:
+npm-workspaces monorepo, 2 packages:
 
-| Package                   | Role                              | Port |
-| ------------------------- | --------------------------------- | ---- |
-| `@agentage/shared`        | site-origin + environment helpers | -    |
-| `@agentage/design-system` | OKLCH tokens + React components   | -    |
-| `@agentage/landing`       | Next.js marketing site            | 3000 |
-| `@agentage/showcase`      | design-system playground          | 3011 |
+| Package             | Role                              | Port |
+| ------------------- | --------------------------------- | ---- |
+| `@agentage/shared`  | site-origin + environment helpers | -    |
+| `@agentage/landing` | Next.js marketing site            | 3000 |
+
+The design system lives in its own repo (`agentage/design-system`) and is consumed from npm as `@agentage/design-system` - the site imports its OKLCH token CSS (`@agentage/design-system/theme.css`), not its JS.
 
 ## Dev
 
-`npm install`, then `npm run dev` (site on :3000) or `npm run dev:showcase` (:3011). Both build `shared` + `design-system` first - the site consumes the design system's CSS tokens and `shared` as built output. Re-run the `dev` script after editing either lib.
+`npm install`, then `npm run dev` (site on :3000). `dev` builds `shared` first - the site consumes it as built output. Re-run `dev` after editing `shared`.
 
 ## Testing
 
 - Unit: Vitest (`npm run test`, in `verify`).
-- E2E: Playwright. `npm run test:e2e` (landing) + `npm run test:e2e:showcase` - each auto-starts its own server. Landing tests are tagged `@smoke` / `@p0` (SEO/PWA) / `@full` (content/a11y); `test:e2e:smoke` runs the smoke tier. Set `LANDING_BASE_URL` to point at a deployed site (host-aware assertions branch local/dev vs prod).
-- CI: `.github/workflows/ci.yml` runs `verify` + both e2e suites on PR and push to `master`.
+- E2E: Playwright. `npm run test:e2e` auto-starts its own server. Landing tests are tagged `@smoke` / `@p0` (SEO/PWA) / `@full` (content/a11y); `test:e2e:smoke` runs the smoke tier. Set `LANDING_BASE_URL` to point at a deployed site (host-aware assertions branch local/dev vs prod).
+- CI: `.github/workflows/ci.yml` runs `verify` + the landing e2e suite on PR and push to `master`.
 
 ## Stack
 
