@@ -87,7 +87,9 @@ const STRUCTURED_DATA = {
       operatingSystem: 'Any',
       description: DESCRIPTION,
       url: SITE_URL,
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      // Freemium: free to start, paid tiers above. AggregateOffer/lowPrice states
+      // "from $0" without asserting free-only or advertising prices not shown on-page.
+      offers: { '@type': 'AggregateOffer', lowPrice: '0', priceCurrency: 'USD' },
     },
   ],
 };
