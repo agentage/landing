@@ -29,9 +29,8 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     'Applebot-Extended',
     'CCBot',
   ];
-  // /mcp is the separate mcp-catalog stack (served at agentage.io/mcp); keep it
-  // out of the index until the catalog has real content.
-  const disallow = ['/api/', '/dashboard/', '/mcp'];
+  // /mcp isn't blocked: a Disallow would strand the mcp-catalog's SEO when it ships.
+  const disallow = ['/api/', '/dashboard/'];
 
   return {
     rules: [
