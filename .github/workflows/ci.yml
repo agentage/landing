@@ -21,7 +21,7 @@ jobs:
       contents: read
       pull-requests: write # sticky verify comment (PRs only)
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Comment in progress
         # PR-only: a push has no PR to comment on.
         if: github.event_name == 'pull_request'
@@ -62,7 +62,7 @@ jobs:
       - name: Cache Playwright browsers
         id: pw-cache
         if: always() && steps.install.outcome == 'success'
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-chromium-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
