@@ -45,7 +45,7 @@ ENV COMMIT_SHA=$COMMIT_SHA
 ENV BUILD_TIME=$BUILD_TIME
 EXPOSE 3000
 HEALTHCHECK --interval=15s --timeout=5s --retries=3 \
-  CMD wget -q --spider http://localhost:3000/ || exit 1
+  CMD wget -q --spider http://localhost:3000/health || exit 1
 COPY --chmod=755 docker/runtime-env.sh /runtime-env.sh
 USER node
 ENTRYPOINT ["/runtime-env.sh"]
