@@ -66,6 +66,40 @@ export const mcpToolsDoc: DocPage = {
       ],
     },
     {
+      id: 'addressing',
+      title: 'Addressing multiple memories',
+      blocks: [
+        {
+          type: 'p',
+          md: 'Own more than one vault? Prefix any path with `@<vault>` to address a specific one. The `@` lives inside the existing `path` and `folder` arguments, so the six tool schemas are unchanged.',
+        },
+        {
+          type: 'code',
+          language: 'json',
+          code: `memory__write { "path": "@work/notes/plan.md", "body": "..." }
+memory__read  { "path": "@work/notes/plan.md" }`,
+          caption:
+            'An @<vault>/ prefix routes the call into that vault; returned paths come back @-prefixed so they round-trip.',
+        },
+        {
+          type: 'code',
+          language: 'json',
+          code: `memory__search { "query": "roadmap", "folder": "@work" }`,
+          caption:
+            'folder: "@<vault>" scopes a search or list to one whole vault; hits come back @-prefixed.',
+        },
+        {
+          type: 'p',
+          md: '- A bare path (no `@`) addresses your default memory, unchanged.\n- `memory__list` with no folder lists each of your vaults as an `@<vault>/` root folder.\n- A bare `@<vault>` names a vault, not a file: `memory__read` / `write` / `edit` / `delete` reject it, while `memory__search` / `list` treat it as whole-vault scope.\n- Vault names are 1-64 characters from `A-Z a-z 0-9 _ -`.',
+        },
+        {
+          type: 'callout',
+          variant: 'info',
+          md: 'An unscoped `memory__search` (no `@`) covers your default memory only. To search another vault, scope it with `folder: "@<vault>"`.',
+        },
+      ],
+    },
+    {
       id: 'try-it',
       title: 'Try it',
       blocks: [
