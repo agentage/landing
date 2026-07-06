@@ -76,17 +76,21 @@ export const mcpToolsDoc: DocPage = {
         {
           type: 'code',
           language: 'json',
-          code: `memory__write { "path": "@work/notes/plan.md", "body": "..." }
-memory__read  { "path": "@work/notes/plan.md" }`,
+          code: `memory__write { "path": "@<vault-name>/notes/plan.md", "body": "..." }
+memory__read  { "path": "@<vault-name>/notes/plan.md" }
+
+memory__write { "path": "@work/notes/plan.md", "body": "..." }`,
           caption:
-            'The first segment after @ is the vault name (here: work); the rest is the path inside it. Returned paths come back @-prefixed so they round-trip.',
+            'The first segment after @ is the vault name; the rest is the path inside that vault. The last line shows a vault named work. Returned paths come back @-prefixed so they round-trip.',
         },
         {
           type: 'code',
           language: 'json',
-          code: `memory__search { "query": "roadmap", "folder": "@work" }`,
+          code: `memory__search { "query": "roadmap", "folder": "@<vault-name>" }
+
+memory__search { "query": "roadmap", "folder": "@work" }`,
           caption:
-            'folder: "@<vault>" scopes a search or list to one whole vault; hits come back @-prefixed.',
+            'folder: "@<vault-name>" scopes a search or list to one whole vault; hits come back @-prefixed.',
         },
         {
           type: 'p',
