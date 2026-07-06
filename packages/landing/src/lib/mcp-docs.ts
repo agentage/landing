@@ -11,16 +11,24 @@ export const MCP_AUTH_ORIGIN = 'auth.agentage.io';
 export const MCP_AUTH_NOTE =
   'OAuth 2.1 with PKCE and dynamic client registration - sign in once in the browser, no API key.';
 
-// --- REST API (v1, vault list) --------------------------------------------
-// Single source of truth for the read-only REST endpoint documented at
+// --- REST API (v1) --------------------------------------------------------
+// Single source of truth for the read-only REST endpoints documented at
 // /docs/rest-api. Reuses the same OAuth token as the MCP server.
 export const REST_API_BASE_URL = 'https://api.agentage.io';
 export const REST_API_VERSION = 'v1';
-export const REST_VAULTS_PATH = `/${REST_API_VERSION}/vaults`;
-export const REST_VAULTS_ENDPOINT = `${REST_API_BASE_URL}${REST_VAULTS_PATH}`;
 export const REST_RATE_LIMIT_PER_MIN = 60;
 export const REST_AUTH_NOTE =
   'OAuth 2.1 bearer token - the same token issued when you connect any MCP client. No API key.';
+
+// The six live read-only endpoints, for the compact llms-full.txt REST section.
+export const REST_LIVE_ENDPOINTS: ReadonlyArray<readonly [string, string]> = [
+  ['GET /v1/vaults', 'List the vaults your token can see.'],
+  ['GET /v1/vaults/{vault}', 'Vault stats: counts, size, last activity.'],
+  ['GET /v1/vaults/{vault}/notes', 'List notes, paginated, optionally by folder.'],
+  ['GET /v1/vaults/{vault}/notes/{path}', 'Read one note: frontmatter + markdown body.'],
+  ['GET /v1/vaults/{vault}/search', 'Keyword search, ranked, snippets only.'],
+  ['GET /v1/vaults/{vault}/export', 'Stream the vault as a cloneable git bundle.'],
+];
 
 // --- CLI (@agentage/cli) --------------------------------------------------
 // Single source of truth for the CLI facts documented at /docs/cli.
@@ -200,6 +208,10 @@ export function getDocsMarkdown(siteUrl: string): string {
 
   const limitations = LIMITATIONS.map((l) => `- ${l}`).join('\n');
 
+  const restEndpoints = REST_LIVE_ENDPOINTS.map(([sig, desc]) => `- \`${sig}\`: ${desc}`).join(
+    '\n'
+  );
+
   return `# Agentage Memory - Docs
 
 ${DOCS_INTRO}
@@ -222,6 +234,14 @@ ${tools}
 ${examples}
 
 ${TOOL_SCOPE_NOTE}
+
+## REST API
+
+A read-only HTTP surface at \`${REST_API_BASE_URL}\`. Auth: ${REST_AUTH_NOTE} Rate limited to ${REST_RATE_LIMIT_PER_MIN} requests per minute per IP.
+
+${restEndpoints}
+
+Full reference: ${siteUrl}/docs/rest-api
 
 ## Limitations
 
