@@ -1,7 +1,8 @@
 // Endpoint reference for the interactive list on /docs/rest-api. Transcribed
 // from the approved prototype at
-// _archive/proto/api-reference-page/index.html - one live endpoint plus the
-// north-star draft contracts. The base URL comes from lib/mcp-docs.ts.
+// _archive/proto/api-reference-page/index.html - the six live read-only
+// endpoints plus the north-star draft write contracts. Base URL from
+// lib/mcp-docs.ts.
 
 import { REST_API_BASE_URL } from './mcp-docs';
 import type { EndpointArg, EndpointGroup } from '@/docs/types';
@@ -103,8 +104,7 @@ export const API_ENDPOINTS: EndpointGroup[] = [
       {
         method: 'GET',
         path: '/v1/vaults/{vault}',
-        status: 'planned',
-        wave: 2,
+        status: 'live',
         summary: 'Vault stats',
         description: 'Stats for one vault: counts, size and last activity.',
         params: [
@@ -126,6 +126,8 @@ export const API_ENDPOINTS: EndpointGroup[] = [
           { status: '401', meaning: 'missing or invalid token' },
           { status: '403', meaning: 'vault not granted to this token' },
           { status: '404', meaning: 'no such vault' },
+          { status: '429', meaning: 'rate limit exceeded' },
+          { status: '503', meaning: 'auth service unavailable, retry' },
         ],
       },
     ],
@@ -136,8 +138,7 @@ export const API_ENDPOINTS: EndpointGroup[] = [
       {
         method: 'GET',
         path: '/v1/vaults/{vault}/notes',
-        status: 'planned',
-        wave: 2,
+        status: 'live',
         summary: 'List notes',
         description: 'Paginated listing of notes, optionally scoped to a folder.',
         params: [
@@ -160,6 +161,11 @@ export const API_ENDPOINTS: EndpointGroup[] = [
           { name: 'notes', type: 'array', description: 'One object per note.' },
           ...NOTE_FIELDS.map((f) => ({ ...f, name: `notes[].${f.name}` })),
           {
+            name: 'notes[].excerpt',
+            type: 'string',
+            description: 'First lines of the body, match context.',
+          },
+          {
             name: 'nextCursor',
             type: 'string | null',
             description: 'Pass back as cursor for the next page.',
@@ -169,13 +175,14 @@ export const API_ENDPOINTS: EndpointGroup[] = [
           { status: '401', meaning: 'missing or invalid token' },
           { status: '403', meaning: 'vault not granted' },
           { status: '404', meaning: 'no such vault' },
+          { status: '429', meaning: 'rate limit exceeded' },
+          { status: '503', meaning: 'auth service unavailable, retry' },
         ],
       },
       {
         method: 'GET',
         path: '/v1/vaults/{vault}/notes/{path}',
-        status: 'planned',
-        wave: 2,
+        status: 'live',
         summary: 'Read a note',
         description: 'Full note by path: frontmatter, markdown body and metadata.',
         params: [
@@ -200,6 +207,8 @@ export const API_ENDPOINTS: EndpointGroup[] = [
           { status: '401', meaning: 'missing or invalid token' },
           { status: '403', meaning: 'vault not granted' },
           { status: '404', meaning: 'no such note' },
+          { status: '429', meaning: 'rate limit exceeded' },
+          { status: '503', meaning: 'auth service unavailable, retry' },
         ],
       },
       {
@@ -298,8 +307,7 @@ export const API_ENDPOINTS: EndpointGroup[] = [
       {
         method: 'GET',
         path: '/v1/vaults/{vault}/search',
-        status: 'planned',
-        wave: 2,
+        status: 'live',
         summary: 'Search notes',
         description:
           'Lexical search over the vault (git-native, literal keyword matching), ranked by match count. Returns paths and snippets, never full bodies.',
@@ -333,13 +341,14 @@ export const API_ENDPOINTS: EndpointGroup[] = [
           { status: '400', meaning: 'missing q' },
           { status: '401', meaning: 'missing or invalid token' },
           { status: '403', meaning: 'vault not granted' },
+          { status: '429', meaning: 'rate limit exceeded' },
+          { status: '503', meaning: 'auth service unavailable, retry' },
         ],
       },
       {
         method: 'GET',
         path: '/v1/vaults/{vault}/export',
-        status: 'planned',
-        wave: 2,
+        status: 'live',
         summary: 'Export the vault as a git bundle',
         description:
           'Streams a cloneable git bundle of the whole vault: full history, plain markdown, yours. Content-Type application/x-git-bundle.',
@@ -360,6 +369,8 @@ git clone memory.bundle my-memory`,
           { status: '401', meaning: 'missing or invalid token' },
           { status: '403', meaning: 'vault not granted' },
           { status: '404', meaning: 'no such vault' },
+          { status: '429', meaning: 'rate limit exceeded' },
+          { status: '503', meaning: 'auth service unavailable, retry' },
         ],
       },
     ],
