@@ -5,6 +5,7 @@ import { connectDoc } from './content/connect';
 import { clientDocs } from './content/clients';
 import { restApiDoc } from './content/rest-api';
 import { mcpToolsDoc } from './content/mcp-tools';
+import { cliDoc } from './content/cli';
 
 // Every doc page, keyed by slug. Add a page = import it + add it here; the route
 // and sitemap pick it up automatically (nav is wired in nav.ts).
@@ -15,6 +16,7 @@ const PAGES: DocPage[] = [
   ...clientDocs,
   restApiDoc,
   mcpToolsDoc,
+  cliDoc,
 ];
 
 const BY_SLUG = new Map(PAGES.map((p) => [p.slug, p]));
