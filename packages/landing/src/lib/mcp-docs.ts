@@ -11,6 +11,17 @@ export const MCP_AUTH_ORIGIN = 'auth.agentage.io';
 export const MCP_AUTH_NOTE =
   'OAuth 2.1 with PKCE and dynamic client registration - sign in once in the browser, no API key.';
 
+// --- REST API (v1, vault list) --------------------------------------------
+// Single source of truth for the read-only REST endpoint documented at
+// /docs/rest-api. Reuses the same OAuth token as the MCP server.
+export const REST_API_BASE_URL = 'https://api.agentage.io';
+export const REST_API_VERSION = 'v1';
+export const REST_VAULTS_PATH = `/${REST_API_VERSION}/vaults`;
+export const REST_VAULTS_ENDPOINT = `${REST_API_BASE_URL}${REST_VAULTS_PATH}`;
+export const REST_RATE_LIMIT_PER_MIN = 60;
+export const REST_AUTH_NOTE =
+  'OAuth 2.1 bearer token - the same token issued when you connect any MCP client. No API key.';
+
 // One-line positioning, shared by the docs page header + the markdown mirrors. Leads with
 // the differentiator: cross-vendor (names the clients) + files-first ownership.
 export const DOCS_INTRO =
