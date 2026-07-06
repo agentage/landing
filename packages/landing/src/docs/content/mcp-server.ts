@@ -1,5 +1,6 @@
 import type { DocPage } from '../types';
 import { MCP_ENDPOINT_URL as ENDPOINT } from '@/lib/mcp-docs';
+import { MCP_TOOL_GROUPS } from '@/lib/mcp-tool-contracts';
 import { clientLinksMd } from './clients';
 
 // MCP server page - the hub: endpoint, how to pick a client, tools, limitations.
@@ -54,7 +55,11 @@ export const mcpServerDoc: DocPage = {
       blocks: [
         {
           type: 'p',
-          md: 'Once connected, every client gets the same six memory operations:\n\n| Tool | What it does |\n| --- | --- |\n| `memory__search` | Find notes by keyword across the whole memory. |\n| `memory__read` | Read a note by path. |\n| `memory__write` | Create or replace a note. |\n| `memory__edit` | Apply a targeted edit to a note. |\n| `memory__list` | Browse the folder tree - subfolders with file counts, two levels deep. |\n| `memory__delete` | Remove a note (recoverable soft-delete). |',
+          md: 'Once connected, every client gets the same six memory operations. Click a tool to expand its contract - arguments, an example call, and the JSON it returns (also at the [MCP tools reference](/docs/mcp-tools)):',
+        },
+        {
+          type: 'tools',
+          groups: MCP_TOOL_GROUPS,
         },
         {
           type: 'callout',

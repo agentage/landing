@@ -73,6 +73,44 @@ export interface EndpointGroup {
   items: Endpoint[];
 }
 
+/** Badge color bucket for an MCP tool, mapped from its verb semantics. */
+export type ToolBadgeColor = 'read' | 'write' | 'edit' | 'delete';
+
+export interface ToolArg {
+  /** Argument key, e.g. `query` or `old_str`. */
+  name: string;
+  /** Type + constraints, e.g. "string", "integer, 1-50". */
+  type: string;
+  /** Requiredness + default, e.g. "required", "optional, default 20". */
+  required: string;
+  description: string;
+}
+
+export interface ToolContract {
+  /** Full tool key, e.g. `memory__search`. */
+  name: string;
+  /** Short verb shown on the badge, e.g. "search". */
+  verb: string;
+  /** Badge color bucket. */
+  color: ToolBadgeColor;
+  /** One-line summary shown on the collapsed row. */
+  summary: string;
+  description: string;
+  /** One-line behavior note, shown when it clarifies a non-obvious contract. */
+  behavior?: string;
+  args: ToolArg[];
+  /** Example input JSON. */
+  input: string;
+  /** Result JSON. */
+  result: string;
+}
+
+export interface ToolGroup {
+  /** Group heading, e.g. "Read", "Write". */
+  group: string;
+  items: ToolContract[];
+}
+
 export type DocBlock =
   | { type: 'p'; md: string }
   | { type: 'code'; code: string; language?: string; caption?: string }
@@ -80,7 +118,9 @@ export type DocBlock =
   | { type: 'clienttabs'; tabs: ClientTab[] }
   | { type: 'callout'; variant: CalloutVariant; title?: string; md: string }
   | { type: 'steps'; steps: Step[] }
-  | { type: 'endpoints'; groups: EndpointGroup[] };
+  | { type: 'endpoints'; groups: EndpointGroup[] }
+  | { type: 'tools'; groups: ToolGroup[] }
+  | { type: 'diagram' };
 
 export interface DocSection {
   /** Anchor id - also the table-of-contents target. */
