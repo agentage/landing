@@ -9,7 +9,12 @@ import type { EndpointGroup } from '@/docs/types';
 // The memory verbs all POST to /api/memory/<verb> with a JSON body that mirrors
 // the tool params. Shared response fields for the write-family verbs.
 const WRITE_RESULT_FIELDS = [
-  { name: 'path', type: 'string', description: 'The document path that was written.' },
+  {
+    name: 'path',
+    type: 'string',
+    description:
+      'The document path that was written, echoed with its @<vault>/ prefix when the request was vault-scoped.',
+  },
   { name: 'rev', type: 'string', description: 'Git commit hash of this write.' },
   { name: 'updated', type: 'string', description: 'ISO 8601 commit time.' },
 ];
@@ -94,8 +99,9 @@ export const LOCAL_API_ENDPOINTS: EndpointGroup[] = [
           },
           {
             name: 'nextCursor',
-            type: 'string | null',
-            description: 'Pass back as opts.cursor for the next page.',
+            type: 'string, optional',
+            description:
+              'Present only when more pages exist; pass back as opts.cursor for the next page.',
           },
         ],
         errors: [
@@ -131,8 +137,12 @@ export const LOCAL_API_ENDPOINTS: EndpointGroup[] = [
   "deleted": false
 }`,
         fields: [
-          { name: 'path', type: 'string', description: 'Resolved document path.' },
-          { name: 'title', type: 'string', description: 'First heading or filename.' },
+          {
+            name: 'path',
+            type: 'string',
+            description: 'Resolved document path, vault-relative (no @ prefix).',
+          },
+          { name: 'title', type: 'string', description: 'Filename stem.' },
           { name: 'frontmatter', type: 'object', description: 'Parsed YAML frontmatter.' },
           { name: 'body', type: 'string', description: 'Markdown body.' },
           { name: 'tags', type: 'string[]', description: 'Frontmatter tags.' },
@@ -162,9 +172,9 @@ export const LOCAL_API_ENDPOINTS: EndpointGroup[] = [
   -H "Content-Type: application/json" \\
   -d '{"ref":"work/plan.md","body":"Q3 focus is search.","opts":{"vault":"notes","frontmatter":{"tags":["work"]}}}'`,
         response: `{
-  "path": "work/plan.md",
-  "rev": "0a5c9aff51705440acff72b7563b259111b08c4e",
-  "updated": "2026-07-06T14:11:54.663Z"
+  "path": "@notes/work/plan.md",
+  "rev": "8e0670daa3bef7cdd58152b70092e3da553445b4",
+  "updated": "2026-07-06T14:37:07.262Z"
 }`,
         fields: WRITE_RESULT_FIELDS,
         errors: [{ status: '400', meaning: 'invalid body, or a refused secret' }],
@@ -218,12 +228,17 @@ export const LOCAL_API_ENDPOINTS: EndpointGroup[] = [
         response: `{
   "folder": "@notes",
   "entries": [
-    { "type": "folder", "path": "@notes/work", "files": 1 },
+    { "type": "folder", "path": "@notes/work", "files": 2,
+      "entries": [
+        { "type": "folder", "path": "@notes/work/tasks", "files": 1 },
+        { "type": "file", "path": "@notes/work/plan.md",
+          "title": "plan", "updated": "2026-07-06T14:37:07+00:00" }
+      ] },
     { "type": "file", "path": "@notes/welcome.md",
-      "title": "welcome", "updated": "2026-07-06T14:11:31+00:00" }
+      "title": "welcome", "updated": "2026-07-06T14:37:07+00:00" }
   ],
   "truncated": false,
-  "files": 2
+  "files": 3
 }`,
         fields: [
           { name: 'folder', type: 'string', description: 'The listed folder.' },
@@ -234,6 +249,21 @@ export const LOCAL_API_ENDPOINTS: EndpointGroup[] = [
             description: '"file" or "folder".',
           },
           { name: 'entries[].path', type: 'string', description: 'Node path.' },
+          {
+            name: 'entries[].files',
+            type: 'integer',
+            description: 'Folder nodes: file count under the folder.',
+          },
+          {
+            name: 'entries[].entries',
+            type: 'array, optional',
+            description: 'Folder nodes: nested children, down to two levels deep in total.',
+          },
+          {
+            name: 'entries[].truncated',
+            type: 'boolean, optional',
+            description: 'Folder nodes: true when its children were cut at the per-folder cap.',
+          },
           { name: 'files', type: 'integer', description: 'Total files under the folder.' },
         ],
         errors: [{ status: '400', meaning: 'invalid body' }],
