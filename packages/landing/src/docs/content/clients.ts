@@ -1,8 +1,11 @@
-import type { DocNavItem, DocPage } from '../types';
+import type { DocBlock, DocNavItem, DocPage } from '../types';
 import {
   CHATGPT_CONNECTORS_URL,
   CLAUDE_ADD_URL,
+  CLAUDE_CODE_COMMAND,
+  CLAUDE_CODE_MCP_JSON,
   CURSOR_ADD_URL,
+  CURSOR_MCP_JSON,
   MCP_ENDPOINT_URL as ENDPOINT,
   VSCODE_ADD_URL,
 } from '@/lib/mcp-docs';
@@ -18,8 +21,10 @@ interface ClientDef {
   /** Page H1. */
   title: string;
   lede: string;
-  /** Markdown setup instructions. */
+  /** Markdown setup instructions (fallback when setupBlocks is unset). */
   setup: string;
+  /** Rich setup blocks (e.g. config-variant tabs) - overrides `setup`. */
+  setupBlocks?: DocBlock[];
 }
 
 const CLIENTS: ClientDef[] = [
@@ -31,10 +36,33 @@ const CLIENTS: ClientDef[] = [
     setup: `Run:
 
 \`\`\`bash
-claude mcp add --transport http memory ${ENDPOINT}
+${CLAUDE_CODE_COMMAND}
 \`\`\`
 
 Then run \`/mcp\` and complete the OAuth sign-in. A connector you add in [Claude.ai](https://claude.ai) also syncs here automatically.`,
+    setupBlocks: [
+      {
+        type: 'tabs',
+        tabs: [
+          {
+            label: 'Command',
+            language: 'bash',
+            code: CLAUDE_CODE_COMMAND,
+            caption: 'Run in your terminal, then run /mcp to complete the OAuth sign-in.',
+          },
+          {
+            label: 'Config file',
+            language: 'json',
+            code: CLAUDE_CODE_MCP_JSON,
+            caption: 'Project-scoped .mcp.json in the repo root - shared with your team.',
+          },
+        ],
+      },
+      {
+        type: 'p',
+        md: 'Then run `/mcp` and complete the OAuth sign-in. A connector you add in [Claude.ai](https://claude.ai) also syncs here automatically.',
+      },
+    ],
   },
   {
     slug: 'claude',
@@ -74,7 +102,11 @@ VS Code opens the browser for the OAuth sign-in on first use.`,
     lede: 'Add the memory server to Cursor with a deeplink or its MCP config.',
     setup: `**One-click:** [Add to Cursor](${CURSOR_ADD_URL}), then sign in when prompted.
 
-**Manual:** add \`{ "url": "${ENDPOINT}" }\` to \`~/.cursor/mcp.json\`.`,
+**Manual:** add the server to \`~/.cursor/mcp.json\`:
+
+\`\`\`json
+${CURSOR_MCP_JSON}
+\`\`\``,
   },
   {
     slug: 'chatgpt',
@@ -111,7 +143,7 @@ export const clientDocs: DocPage[] = CLIENTS.map((c) => ({
     {
       id: 'setup',
       title: 'Setup',
-      blocks: [{ type: 'p', md: c.setup }],
+      blocks: c.setupBlocks ?? [{ type: 'p', md: c.setup }],
     },
     {
       id: 'whats-next',
