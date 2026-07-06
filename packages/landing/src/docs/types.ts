@@ -119,7 +119,8 @@ export type DocBlock =
   | { type: 'callout'; variant: CalloutVariant; title?: string; md: string }
   | { type: 'steps'; steps: Step[] }
   | { type: 'endpoints'; groups: EndpointGroup[] }
-  | { type: 'tools'; groups: ToolGroup[] };
+  | { type: 'tools'; groups: ToolGroup[] }
+  | { type: 'diagram' };
 
 export interface DocSection {
   /** Anchor id - also the table-of-contents target. */

@@ -50,17 +50,20 @@ export const overviewDoc: DocPage = {
     },
     {
       id: 'how-it-works',
-      title: 'How it works',
+      title: 'How it fits together',
       blocks: [
         {
           type: 'p',
-          md: 'Every connected AI talks to one cloud **MCP server** over a single endpoint, using six tools to search, read, and write your notes. Clients authenticate with OAuth - sign in once in the browser, no API key.',
+          md: 'Everything you connect ends up reading and writing the same store. Your AI tools go through the **MCP server**, scripts use the **REST API**, and your files stay in reach through git-powered **sync**:',
+        },
+        {
+          type: 'diagram',
         },
         {
           type: 'callout',
           variant: 'success',
           title: 'Next: connect the MCP server',
-          md: 'Head to the **[MCP server](/docs/mcp-server)** page for the endpoint, the tools, and one-click setup for Claude, VS Code, Cursor, and ChatGPT.',
+          md: 'Head to the **[MCP server](/docs/mcp-server)** page for the endpoint and one-click client setup, the **[MCP tools](/docs/mcp-tools)** reference for the six tool contracts, or the **[REST API](/docs/rest-api)** for the HTTP surface.',
         },
       ],
     },
