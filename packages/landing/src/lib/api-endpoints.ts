@@ -302,7 +302,7 @@ export const API_ENDPOINTS: EndpointGroup[] = [
         wave: 2,
         summary: 'Search notes',
         description:
-          'Ranked lexical search over the vault (git-native, literal keyword matching). Returns paths and snippets, never full bodies.',
+          'Lexical search over the vault (git-native, literal keyword matching), ranked by match count. Returns paths and snippets, never full bodies.',
         params: [
           { name: 'q', type: 'string, query', description: 'Search query. Required.' },
           { name: 'folder', type: 'string, query', description: 'Scope to a folder. Optional.' },
@@ -314,7 +314,7 @@ export const API_ENDPOINTS: EndpointGroup[] = [
         response: `{
   "results": [
     { "path": "work/plan.md", "title": "Plan",
-      "snippet": "...the Q3 roadmap is...", "score": 0.92,
+      "snippet": "...the Q3 roadmap is...", "score": 3,
       "updated": "2026-07-05T21:47:55+00:00" }
   ],
   "nextCursor": null
@@ -322,7 +322,11 @@ export const API_ENDPOINTS: EndpointGroup[] = [
         fields: [
           { name: 'results', type: 'array', description: 'Ranked matches.' },
           { name: 'results[].snippet', type: 'string', description: 'Match context.' },
-          { name: 'results[].score', type: 'number', description: 'Relevance, 0-1.' },
+          {
+            name: 'results[].score',
+            type: 'integer',
+            description: 'Match count - how many times the query hits the note.',
+          },
           { name: 'nextCursor', type: 'string | null', description: 'Next page cursor.' },
         ],
         errors: [
