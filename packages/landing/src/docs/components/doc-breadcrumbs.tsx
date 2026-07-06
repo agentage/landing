@@ -33,7 +33,7 @@ export function DocBreadcrumbs({
   };
 
   return (
-    <nav aria-label="Breadcrumb" className="mb-3">
+    <nav aria-label="Breadcrumb" className="min-w-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

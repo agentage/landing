@@ -37,6 +37,14 @@ export const mcpServerDoc: DocPage = {
           title: 'Auth: OAuth 2.1, no API key',
           md: 'Clients authenticate with **OAuth 2.1** (PKCE + dynamic client registration) - sign in once in the browser, no API key to copy or leak. The same account in every client shares one memory.',
         },
+        {
+          type: 'p',
+          md: 'The client discovers it needs auth from the endpoint itself, sends you to sign in at the authorization server, then reconnects with the token it gets back - no key to paste:',
+        },
+        {
+          type: 'diagram',
+          name: 'mcp-auth-flow',
+        },
       ],
     },
     {

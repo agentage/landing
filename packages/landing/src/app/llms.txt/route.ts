@@ -1,5 +1,7 @@
 import { SITE_NAME, getSiteUrl } from '../../lib/site';
 import { getAllPosts } from '../../lib/blog';
+import { docPages } from '../../docs/registry';
+import { docMdHref } from '../../docs/nav-order';
 import {
   MCP_AUTH_NOTE,
   MCP_ENDPOINT_URL,
@@ -20,6 +22,11 @@ export async function GET() {
 
   const tools = MCP_TOOLS.map(([name, desc]) => `  - ${name}: ${desc}`).join('\n');
 
+  // Per-page markdown mirrors - append .md to any docs URL.
+  const docPagesMd = docPages()
+    .map((p) => `- [${p.title}](${SITE_URL}${docMdHref(p.slug)}): ${p.lede}`)
+    .join('\n');
+
   const body = `# ${SITE_NAME}
 
 > One shared markdown memory for Claude, ChatGPT, Cursor and every AI - a single MCP endpoint your tools read and write. Files-first, EU-private, export anytime. Owned by you.
@@ -37,6 +44,9 @@ ${tools}
 
 ## Docs
 - [Setup & MCP tools](${SITE_URL}/docs): connect Claude, ChatGPT, Cursor, and Obsidian to one shared memory; the six memory__* MCP tools (search, read, write, edit, list, delete). Markdown: [/docs.md](${SITE_URL}/docs.md)
+
+Per-page Markdown mirrors (append .md to any docs URL):
+${docPagesMd}
 
 ## Pages
 - [Home](${SITE_URL}/): what it is, how it works.

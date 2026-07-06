@@ -1,5 +1,6 @@
 import { DocArticle } from './doc-article';
 import { DocBreadcrumbs } from './doc-breadcrumbs';
+import { DocMarkdownActions } from './doc-markdown-actions';
 import { DocPrevNext } from './doc-prev-next';
 import { DocToc } from './doc-toc';
 import type { DocPage } from '../types';
@@ -17,7 +18,10 @@ export function DocPageView({ doc }: { doc: DocPage }): React.JSX.Element {
   return (
     <div className="flex gap-8">
       <div className="min-w-0 flex-1">
-        {!isIndex && <DocBreadcrumbs slug={doc.slug} title={doc.title} />}
+        <div className="mb-3 flex items-start justify-between gap-4">
+          {!isIndex ? <DocBreadcrumbs slug={doc.slug} title={doc.title} /> : <span aria-hidden />}
+          <DocMarkdownActions slug={doc.slug} />
+        </div>
         <DocArticle doc={doc} />
         <DocPrevNext slug={doc.slug} />
       </div>

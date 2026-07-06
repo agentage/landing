@@ -25,3 +25,6 @@ export const getDoc = (slug: string): DocPage | undefined => BY_SLUG.get(slug);
 
 /** Slugs for non-index pages, for generateStaticParams on /[slug]. */
 export const docSlugs = (): string[] => PAGES.map((p) => p.slug).filter((s) => s !== '');
+
+/** Every page in registry order (index first), for the .md mirrors + llms.txt. */
+export const docPages = (): DocPage[] => PAGES;

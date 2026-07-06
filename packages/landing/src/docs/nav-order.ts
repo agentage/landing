@@ -19,6 +19,9 @@ export interface PrevNext {
 // URL for a doc slug ('' is the docs index).
 export const docHref = (slug: string): string => (slug === '' ? '/docs' : `/docs/${slug}`);
 
+// URL for a doc slug's markdown mirror ('' is /docs.md; others /docs/<slug>.md).
+export const docMdHref = (slug: string): string => (slug === '' ? '/docs.md' : `/docs/${slug}.md`);
+
 // Flatten sidebar groups into reading order, dropping stubs (comingSoon or
 // slug-less) so navigation only ever points at real, live pages.
 export function flattenNav(groups: DocNavGroup[]): FlatNavEntry[] {
