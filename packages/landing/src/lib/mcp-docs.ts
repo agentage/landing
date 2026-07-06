@@ -87,7 +87,18 @@ export const LIMITATIONS: readonly string[] = [
   'One memory per account; connect the same account in each client to share it. Data is stored in the EU and exportable anytime.',
 ];
 
-export const CLAUDE_CODE_COMMAND = `claude mcp add --transport http memory ${MCP_ENDPOINT_URL}`;
+export const CLAUDE_CODE_COMMAND = `claude mcp add --transport http agentage-memory ${MCP_ENDPOINT_URL}`;
+
+// Project-scoped .mcp.json variant (checked into the repo root). Same shape as
+// the generic MCP config; Claude Code accepts `type: http` here.
+export const CLAUDE_CODE_MCP_JSON = `{
+  "mcpServers": {
+    "agentage-memory": {
+      "type": "http",
+      "url": "${MCP_ENDPOINT_URL}"
+    }
+  }
+}`;
 
 export const CLAUDE_CONNECTORS_URL =
   'https://claude.ai/customize/connectors?modal=add-custom-connector';
@@ -102,10 +113,19 @@ export const VSCODE_MCP_JSON = `{
   }
 }`;
 
+// Cursor's ~/.cursor/mcp.json - the mcpServers map, url only (no type needed).
+export const CURSOR_MCP_JSON = `{
+  "mcpServers": {
+    "agentage-memory": {
+      "url": "${MCP_ENDPOINT_URL}"
+    }
+  }
+}`;
+
 // One-click "Add to <client>" deeplinks - prefill the server, then the user
 // confirms and signs in (one step shorter than the manual paste).
 export const CLAUDE_ADD_URL = `https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=${encodeURIComponent(
-  'agentage Memory'
+  'Agentage Memory'
 )}&connectorUrl=${encodeURIComponent(MCP_ENDPOINT_URL)}`;
 
 export const VSCODE_ADD_URL = `vscode:mcp/install?${encodeURIComponent(
@@ -151,7 +171,8 @@ export const CLIENT_GUIDES: ReadonlyArray<{
     client: 'Cursor',
     steps: [
       `One-click: [Add to Cursor](${CURSOR_ADD_URL}), then sign in when prompted.`,
-      `Or add \`{ "url": "${MCP_ENDPOINT_URL}" }\` to \`~/.cursor/mcp.json\`.`,
+      'Or add the server to `~/.cursor/mcp.json`:',
+      `\`\`\`json\n${CURSOR_MCP_JSON}\n\`\`\``,
     ],
   },
   {

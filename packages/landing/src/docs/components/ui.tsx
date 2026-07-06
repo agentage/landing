@@ -106,7 +106,7 @@ export function CodeBlock({
   return (
     <div className="group relative overflow-hidden rounded-lg border border-border bg-card">
       <div className="flex items-center justify-between border-b border-border px-4 py-2">
-        <span className="font-mono text-xs text-muted-foreground">{language ?? 'shell'}</span>
+        <span className="font-mono text-xs text-muted-foreground">{language ?? 'text'}</span>
         <button
           type="button"
           onClick={() => void copy()}
