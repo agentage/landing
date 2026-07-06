@@ -120,7 +120,7 @@ export type DocBlock =
   | { type: 'steps'; steps: Step[] }
   | { type: 'endpoints'; groups: EndpointGroup[] }
   | { type: 'tools'; groups: ToolGroup[] }
-  | { type: 'diagram' };
+  | { type: 'diagram'; name?: 'memory-map' | 'mcp-auth-flow' };
 
 export interface DocSection {
   /** Anchor id - also the table-of-contents target. */

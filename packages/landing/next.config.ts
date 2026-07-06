@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
       { source: '/.well-known/mcp-registry-auth', destination: '/mcp-registry-auth' },
       // /blog/<slug>.md → markdown mirror for agents (route handler at /blog-md/<slug>).
       { source: '/blog/:slug.md', destination: '/blog-md/:slug' },
+      // /docs/<slug>.md → per-page markdown mirror (route handler at /docs-md/<slug>).
+      { source: '/docs/:slug.md', destination: '/docs-md/:slug' },
     ];
   },
 };

@@ -5,6 +5,7 @@ import { Alert, CodeBlock, Md, Tabs, TabsContent, TabsList, TabsTrigger } from '
 import { EndpointList } from '@/components/docs/endpoint-list';
 import { ToolList } from '@/components/docs/tool-list';
 import { MemoryMapDiagram } from '@/components/docs/memory-map-diagram';
+import { McpAuthFlow } from '@/components/docs/mcp-auth-flow';
 import type { CalloutVariant, DocBlock, DocPage } from '../types';
 
 const calloutMeta: Record<
@@ -87,7 +88,7 @@ function Block({ block }: { block: DocBlock }): React.JSX.Element {
       return <ToolList groups={block.groups} />;
 
     case 'diagram':
-      return <MemoryMapDiagram />;
+      return block.name === 'mcp-auth-flow' ? <McpAuthFlow /> : <MemoryMapDiagram />;
 
     case 'steps':
       return (

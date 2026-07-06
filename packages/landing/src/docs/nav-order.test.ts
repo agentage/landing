@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { docHref, flattenNav, navEntryFor, prevNext } from './nav-order';
+import { docHref, docMdHref, flattenNav, navEntryFor, prevNext } from './nav-order';
 import type { DocNavGroup } from './types';
 
 const FIXTURE: DocNavGroup[] = [
@@ -83,5 +83,15 @@ describe('docHref', () => {
 
   it('maps a real slug under /docs', () => {
     expect(docHref('rest-api')).toBe('/docs/rest-api');
+  });
+});
+
+describe('docMdHref', () => {
+  it('maps the empty slug to the docs index mirror', () => {
+    expect(docMdHref('')).toBe('/docs.md');
+  });
+
+  it('maps a real slug to its .md mirror', () => {
+    expect(docMdHref('rest-api')).toBe('/docs/rest-api.md');
   });
 });
