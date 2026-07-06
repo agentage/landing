@@ -78,6 +78,15 @@ test.describe('Landing - SEO/PWA', { tag: '@p0' }, () => {
     expect(sizes).toEqual(expect.arrayContaining(['192x192', '512x512']));
   });
 
+  test('vaults JSON Schema serves as JSON (fixes live 404)', async ({ request }) => {
+    const res = await request.get('/schemas/vaults.schema.json');
+    expect(res.status()).toBe(200);
+    expect(res.headers()['content-type']).toContain('application/json');
+    const schema = JSON.parse(await res.text());
+    expect(schema.$schema).toBe('https://json-schema.org/draft/2020-12/schema');
+    expect(schema.required).toContain('version');
+  });
+
   test('/privacy carries the Google Limited-Use disclosure', async ({ request }) => {
     const html = await body(request, '/privacy');
     expect(html).toContain('Limited Use');
