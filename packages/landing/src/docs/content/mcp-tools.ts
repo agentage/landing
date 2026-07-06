@@ -71,22 +71,26 @@ export const mcpToolsDoc: DocPage = {
       blocks: [
         {
           type: 'p',
-          md: 'Own more than one vault? Prefix any path with `@<vault>` to address a specific one. The `@` lives inside the existing `path` and `folder` arguments, so the six tool schemas are unchanged.',
+          md: 'Own more than one vault? The first path segment, prefixed with `@`, is the vault name: `@<vault-name>/<path>`. It lives inside the existing `path` and `folder` arguments, so the six tool schemas are unchanged. Find your vault names with `memory__list` (no folder).',
         },
         {
           type: 'code',
           language: 'json',
-          code: `memory__write { "path": "@work/notes/plan.md", "body": "..." }
-memory__read  { "path": "@work/notes/plan.md" }`,
+          code: `memory__write { "path": "@<vault-name>/notes/plan.md", "body": "..." }
+memory__read  { "path": "@<vault-name>/notes/plan.md" }
+
+memory__write { "path": "@work/notes/plan.md", "body": "..." }`,
           caption:
-            'An @<vault>/ prefix routes the call into that vault; returned paths come back @-prefixed so they round-trip.',
+            'The first segment after @ is the vault name; the rest is the path inside that vault. The last line shows a vault named work. Returned paths come back @-prefixed so they round-trip.',
         },
         {
           type: 'code',
           language: 'json',
-          code: `memory__search { "query": "roadmap", "folder": "@work" }`,
+          code: `memory__search { "query": "roadmap", "folder": "@<vault-name>" }
+
+memory__search { "query": "roadmap", "folder": "@work" }`,
           caption:
-            'folder: "@<vault>" scopes a search or list to one whole vault; hits come back @-prefixed.',
+            'folder: "@<vault-name>" scopes a search or list to one whole vault; hits come back @-prefixed.',
         },
         {
           type: 'p',
