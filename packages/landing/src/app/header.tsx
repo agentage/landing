@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { GITHUB_URL, DASHBOARD_URL, CATALOG_URL } from '../lib/site';
+import { AccountMenu } from './account-menu';
 
 // `hard`: render a plain <a> so the browser does a full-page navigation. The
 // dashboard lives on its own host (dashboard.<fqdn>); a Next <Link> would try to
@@ -93,65 +94,72 @@ export function Header() {
           <span className="text-foreground">Age</span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map(({ href, label, hard }) => {
-            const { isActive, isExternal } = navState(href, hard, pathname);
-            const className = isExternal
-              ? 'group relative px-3 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground'
-              : cn(
-                  'group relative px-3 py-2 text-sm font-medium transition-colors duration-200',
-                  isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-                );
-            return (
-              <NavItem
-                key={href}
-                href={href}
-                hard={hard}
-                isExternal={isExternal}
-                className={className}
-              >
-                {label}
-                {!isExternal && (
-                  <span
-                    className={cn(
-                      'absolute inset-x-3 -bottom-[1px] h-[2px] rounded-lg transition-all duration-300',
-                      isActive ? 'bg-primary' : 'scale-x-0 bg-primary/60 group-hover:scale-x-100'
-                    )}
-                  />
-                )}
-              </NavItem>
-            );
-          })}
-        </nav>
+        {/* Right cluster: desktop nav, account island (all viewports), mobile hamburger */}
+        <div className="flex items-center gap-1">
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-1 md:flex">
+            {navLinks.map(({ href, label, hard }) => {
+              const { isActive, isExternal } = navState(href, hard, pathname);
+              const className = isExternal
+                ? 'group relative px-3 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground'
+                : cn(
+                    'group relative px-3 py-2 text-sm font-medium transition-colors duration-200',
+                    isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                  );
+              return (
+                <NavItem
+                  key={href}
+                  href={href}
+                  hard={hard}
+                  isExternal={isExternal}
+                  className={className}
+                >
+                  {label}
+                  {!isExternal && (
+                    <span
+                      className={cn(
+                        'absolute inset-x-3 -bottom-[1px] h-[2px] rounded-lg transition-all duration-300',
+                        isActive ? 'bg-primary' : 'scale-x-0 bg-primary/60 group-hover:scale-x-100'
+                      )}
+                    />
+                  )}
+                </NavItem>
+              );
+            })}
+          </nav>
 
-        {/* Mobile hamburger */}
-        <button
-          className="relative rounded-lg p-2 text-muted-foreground transition-colors duration-200 hover:text-foreground md:hidden"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          <div className="relative h-5 w-5">
-            <span
-              className={cn(
-                'absolute left-0 block h-[2px] w-5 rounded-lg bg-current transition-all duration-300',
-                mobileOpen ? 'top-[9px] rotate-45' : 'top-[3px] rotate-0'
-              )}
-            />
-            <span
-              className={cn(
-                'absolute left-0 top-[9px] block h-[2px] w-5 rounded-lg bg-current transition-all duration-200',
-                mobileOpen ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100'
-              )}
-            />
-            <span
-              className={cn(
-                'absolute left-0 block h-[2px] w-5 rounded-lg bg-current transition-all duration-300',
-                mobileOpen ? 'top-[9px] -rotate-45' : 'top-[15px] rotate-0'
-              )}
-            />
-          </div>
-        </button>
+          {/* Account island - always visible in the top bar (covers desktop + mobile
+              without duplicating into the overflow-hidden mobile drawer). */}
+          <AccountMenu className="ml-1" />
+
+          {/* Mobile hamburger */}
+          <button
+            className="relative rounded-lg p-2 text-muted-foreground transition-colors duration-200 hover:text-foreground md:hidden"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            <div className="relative h-5 w-5">
+              <span
+                className={cn(
+                  'absolute left-0 block h-[2px] w-5 rounded-lg bg-current transition-all duration-300',
+                  mobileOpen ? 'top-[9px] rotate-45' : 'top-[3px] rotate-0'
+                )}
+              />
+              <span
+                className={cn(
+                  'absolute left-0 top-[9px] block h-[2px] w-5 rounded-lg bg-current transition-all duration-200',
+                  mobileOpen ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100'
+                )}
+              />
+              <span
+                className={cn(
+                  'absolute left-0 block h-[2px] w-5 rounded-lg bg-current transition-all duration-300',
+                  mobileOpen ? 'top-[9px] -rotate-45' : 'top-[15px] rotate-0'
+                )}
+              />
+            </div>
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
