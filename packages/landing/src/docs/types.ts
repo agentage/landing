@@ -29,13 +29,58 @@ export interface ClientTab {
   md: string;
 }
 
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+/** Live = callable today; planned = draft contract from the north-star spec. */
+export type EndpointStatus = 'live' | 'planned';
+
+export interface EndpointArg {
+  /** Parameter or response field name, e.g. `vault` or `vaults[].name`. */
+  name: string;
+  /** Type + location, e.g. "string, body", "integer, query", "array". */
+  type: string;
+  description: string;
+}
+
+export interface EndpointError {
+  /** HTTP status code, e.g. "401". */
+  status: string;
+  meaning: string;
+}
+
+export interface Endpoint {
+  method: HttpMethod;
+  path: string;
+  /** One-line summary shown on the collapsed row. */
+  summary: string;
+  status: EndpointStatus;
+  /** Rollout wave for planned endpoints, e.g. 2 or 3. */
+  wave?: number;
+  description: string;
+  params?: EndpointArg[];
+  /** curl example. */
+  curl: string;
+  /** 200 response body. */
+  response: string;
+  /** Response field reference. */
+  fields: EndpointArg[];
+  errors: EndpointError[];
+}
+
+export interface EndpointGroup {
+  /** Group heading, e.g. "Vaults", "Notes", "Search & export". */
+  group: string;
+  items: Endpoint[];
+}
+
 export type DocBlock =
   | { type: 'p'; md: string }
   | { type: 'code'; code: string; language?: string; caption?: string }
   | { type: 'tabs'; tabs: CodeTab[] }
   | { type: 'clienttabs'; tabs: ClientTab[] }
   | { type: 'callout'; variant: CalloutVariant; title?: string; md: string }
-  | { type: 'steps'; steps: Step[] };
+  | { type: 'steps'; steps: Step[] }
+  | { type: 'endpoints'; groups: EndpointGroup[] };
 
 export interface DocSection {
   /** Anchor id - also the table-of-contents target. */
