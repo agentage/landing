@@ -19,6 +19,7 @@ export const docsNav: DocNavGroup[] = [
   {
     title: 'Reference',
     items: [
+      { label: 'REST API', slug: 'rest-api' },
       { label: 'CLI', comingSoon: true },
       { label: 'MCP tools', comingSoon: true },
     ],
