@@ -49,7 +49,7 @@ export const cliDoc: DocPage = {
               title: 'Add a vault',
               body: 'A vault is just a folder of plain `.md` files you pick. Add a local folder, or one kept in sync with your own git remote:',
               code: [
-                'agentage vault add notes --local --path ~/notes',
+                'agentage vault add notes --local ~/notes',
                 'agentage vault add work --git git@github.com:you/work-notes.git',
                 'agentage vault list',
               ].join('\n'),
