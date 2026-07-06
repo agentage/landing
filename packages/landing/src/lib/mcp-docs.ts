@@ -22,6 +22,15 @@ export const REST_RATE_LIMIT_PER_MIN = 60;
 export const REST_AUTH_NOTE =
   'OAuth 2.1 bearer token - the same token issued when you connect any MCP client. No API key.';
 
+// --- CLI (@agentage/cli) --------------------------------------------------
+// Single source of truth for the CLI facts documented at /docs/cli.
+export const CLI_PACKAGE = '@agentage/cli';
+export const CLI_INSTALL_COMMAND = `npm install -g ${CLI_PACKAGE}`;
+// Registers the CLI's stdio MCP server with Claude Code (same six memory__ tools).
+export const CLI_MCP_ADD_COMMAND = 'claude mcp add agentage -- agentage mcp';
+// Local-only Streamable HTTP endpoint served by the background daemon.
+export const CLI_DAEMON_MCP_URL = 'http://127.0.0.1:4243/mcp';
+
 // One-line positioning, shared by the docs page header + the markdown mirrors. Leads with
 // the differentiator: cross-vendor (names the clients) + files-first ownership.
 export const DOCS_INTRO =
