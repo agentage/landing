@@ -7,3 +7,4 @@ package-lock.json
 .claude
 **/.next
 packages/landing/public/email
+packages/landing/public/schemas

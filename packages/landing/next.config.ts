@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
     // Short link to the generic connect guide.
     return [{ source: '/connect', destination: '/docs/connect', permanent: true }];
   },
+  async headers() {
+    // Static JSON Schema artifacts under public/schemas are inert and cacheable.
+    return [
+      {
+        source: '/schemas/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600' }],
+      },
+    ];
+  },
   async rewrites() {
     // The waitlist/unsubscribe calls now hit the API host directly (api.<fqdn>/api,
     // cross-origin) - see lib/site.ts - so no same-origin /api proxy is needed here.
