@@ -20,8 +20,8 @@ export const docsNav: DocNavGroup[] = [
     title: 'Reference',
     items: [
       { label: 'REST API', slug: 'rest-api' },
+      { label: 'MCP tools', slug: 'mcp-tools' },
       { label: 'CLI', comingSoon: true },
-      { label: 'MCP tools', comingSoon: true },
     ],
   },
 ];

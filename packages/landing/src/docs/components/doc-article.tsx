@@ -3,6 +3,7 @@
 import { Info, TriangleAlert, CircleCheck } from 'lucide-react';
 import { Alert, CodeBlock, Md, Tabs, TabsContent, TabsList, TabsTrigger } from './ui';
 import { EndpointList } from '@/components/docs/endpoint-list';
+import { ToolList } from '@/components/docs/tool-list';
 import type { CalloutVariant, DocBlock, DocPage } from '../types';
 
 const calloutMeta: Record<
@@ -80,6 +81,9 @@ function Block({ block }: { block: DocBlock }): React.JSX.Element {
 
     case 'endpoints':
       return <EndpointList groups={block.groups} />;
+
+    case 'tools':
+      return <ToolList groups={block.groups} />;
 
     case 'steps':
       return (

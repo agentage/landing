@@ -20,7 +20,7 @@ const METHOD_CLASS: Record<HttpMethod, string> = {
   DELETE: 'text-destructive bg-destructive/10 border-destructive/20',
 };
 
-function SectionLabel({ children }: { children: React.ReactNode }): React.JSX.Element {
+export function SectionLabel({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
     <p className="mt-4 mb-1.5 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
       {children}
