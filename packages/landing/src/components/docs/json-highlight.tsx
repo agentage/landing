@@ -4,11 +4,13 @@
 // pulling shiki into this client island (async + heavy); a tiny tokenizer colors
 // keys/strings/numbers/booleans/null via the landing's semantic tokens, so it
 // works in both light and dark themes. Responses are normalized through
-// JSON.parse/stringify (2-space) - nothing is hand-aligned.
+// JSON.parse/stringify (2-space) - nothing is hand-aligned. The tokenizer +
+// normalizer are also reused by the shared CodeBlock so `json` fences elsewhere
+// get the same colors.
 
 import * as React from 'react';
 
-interface Piece {
+export interface Piece {
   text: string;
   className?: string;
 }
@@ -18,7 +20,7 @@ interface Piece {
 const TOKEN =
   /("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false|null)\b|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g;
 
-function tokenize(json: string): Piece[] {
+export function tokenizeJson(json: string): Piece[] {
   const pieces: Piece[] = [];
   let last = 0;
   TOKEN.lastIndex = 0;
@@ -44,7 +46,7 @@ function tokenize(json: string): Piece[] {
   return pieces;
 }
 
-function normalize(code: string): { text: string; highlighted: boolean } {
+export function normalizeJson(code: string): { text: string; highlighted: boolean } {
   try {
     return { text: JSON.stringify(JSON.parse(code), null, 2), highlighted: true };
   } catch {
@@ -54,7 +56,7 @@ function normalize(code: string): { text: string; highlighted: boolean } {
 
 export function JsonBlock({ code }: { code: string }): React.JSX.Element {
   const [copied, setCopied] = React.useState(false);
-  const { text, highlighted } = normalize(code);
+  const { text, highlighted } = normalizeJson(code);
   const copy = async (): Promise<void> => {
     await navigator.clipboard.writeText(text);
     setCopied(true);
@@ -78,7 +80,7 @@ export function JsonBlock({ code }: { code: string }): React.JSX.Element {
       <pre className="overflow-x-auto p-4 text-[13.5px] leading-relaxed">
         <code className="font-mono text-foreground">
           {highlighted
-            ? tokenize(text).map((p, i) =>
+            ? tokenizeJson(text).map((p, i) =>
                 p.className ? (
                   <span key={i} className={p.className}>
                     {p.text}

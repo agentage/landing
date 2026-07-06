@@ -1,9 +1,14 @@
 import type { DocPage } from '../types';
-import { CLI_DAEMON_MCP_URL, CLI_INSTALL_COMMAND, CLI_MCP_ADD_COMMAND } from '@/lib/mcp-docs';
+import {
+  CLI_DAEMON_MCP_URL,
+  CLI_INSTALL_COMMAND,
+  CLI_MCP_ADD_COMMAND,
+  INSTALL_SCRIPT_COMMAND,
+} from '@/lib/mcp-docs';
 
-// The @agentage/cli reference. Same authoring recipe as rest-api / mcp-tools:
-// plain serializable DocPage data. Install and command facts come from
-// lib/mcp-docs.ts so they never drift from the other surfaces.
+// The @agentage/cli reference. A numbered getting-started flow first, then the
+// deeper sections. Install and command facts come from lib/mcp-docs.ts so they
+// never drift from the other surfaces.
 export const cliDoc: DocPage = {
   slug: 'cli',
   title: 'CLI',
@@ -18,97 +23,55 @@ export const cliDoc: DocPage = {
   ],
   sections: [
     {
-      id: 'install',
-      title: 'Install',
-      blocks: [
-        {
-          type: 'code',
-          language: 'bash',
-          code: CLI_INSTALL_COMMAND,
-        },
-        {
-          type: 'p',
-          md: 'Needs Node 22+. Then sign in once:',
-        },
-        {
-          type: 'code',
-          language: 'bash',
-          code: 'agentage setup',
-        },
-        {
-          type: 'p',
-          md: 'Opens the browser for OAuth sign-in (no API key to copy). `agentage status` shows the connection; `agentage setup --no-browser` prints the link instead.',
-        },
-      ],
-    },
-    {
-      id: 'vaults',
-      title: 'Vaults are folders',
+      id: 'get-started',
+      title: 'Get started',
       blocks: [
         {
           type: 'p',
-          md: 'A vault is a folder of plain `.md` files you choose. The CLI keeps a small registry at `~/.agentage/vaults.json`:',
+          md: 'Five steps from nothing to your notes in every AI on your machine.',
         },
         {
-          type: 'code',
-          language: 'bash',
-          code: [
-            'agentage vault add notes --local --path ~/notes',
-            'agentage vault add work --git git@github.com:you/work-notes.git',
-            'agentage vault list',
-          ].join('\n'),
-        },
-        {
-          type: 'p',
-          md: [
-            '- `--local` - just a folder, no sync.',
-            '- `--git <remote>` - the folder stays in sync with your own git remote in the background.',
-          ].join('\n'),
-        },
-      ],
-    },
-    {
-      id: 'notes',
-      title: 'Work with notes - offline',
-      blocks: [
-        {
-          type: 'p',
-          md: 'The same six operations every AI uses, as commands. Everything works with the network down:',
-        },
-        {
-          type: 'code',
-          language: 'bash',
-          code: [
-            'agentage memory search "postgres" --limit 5',
-            'agentage memory read work/tasks/plan.md',
-            'agentage memory write work/tasks/plan.md --body -',
-            'agentage memory edit work/tasks/plan.md --old "draft" --new "final"',
-            'agentage memory list work/',
-            'agentage memory delete work/old.md',
-          ].join('\n'),
-        },
-        {
-          type: 'p',
-          md: 'Address a specific vault with `@<vault>/` in the path (e.g. `@work/tasks/plan.md`); otherwise the default vault is used.',
-        },
-      ],
-    },
-    {
-      id: 'connect',
-      title: 'Connect your AI',
-      blocks: [
-        {
-          type: 'p',
-          md: 'The CLI is also a local MCP server with the same six `memory__` tools as the cloud endpoint:',
-        },
-        {
-          type: 'code',
-          language: 'bash',
-          code: CLI_MCP_ADD_COMMAND,
-        },
-        {
-          type: 'p',
-          md: `Any stdio MCP client works the same way. Prefer HTTP? The background daemon serves Streamable HTTP at \`${CLI_DAEMON_MCP_URL}\` - local only, never exposed to the network.`,
+          type: 'steps',
+          steps: [
+            {
+              title: 'Install',
+              body: `Needs Node 22 or newer. Prefer npm? Run \`${CLI_INSTALL_COMMAND}\` instead.`,
+              code: INSTALL_SCRIPT_COMMAND,
+              language: 'bash',
+            },
+            {
+              title: 'Sign in',
+              body: 'Opens your browser for a one-time sign-in - no API key to copy. `agentage status` shows the connection any time; `agentage setup --no-browser` prints the link instead.',
+              code: 'agentage setup',
+              language: 'bash',
+            },
+            {
+              title: 'Add a vault',
+              body: 'A vault is just a folder of plain `.md` files you pick. Add a local folder, or one kept in sync with your own git remote:',
+              code: [
+                'agentage vault add notes --local --path ~/notes',
+                'agentage vault add work --git git@github.com:you/work-notes.git',
+                'agentage vault list',
+              ].join('\n'),
+              language: 'bash',
+            },
+            {
+              title: 'Use your notes',
+              body: 'The same six operations every AI uses, now as commands - and they keep working with the network down. Address one vault with `@<vault>/` in the path; otherwise your default vault is used.',
+              code: [
+                'agentage memory search "postgres" --limit 5',
+                'agentage memory read work/tasks/plan.md',
+                'agentage memory write work/tasks/plan.md --body -',
+              ].join('\n'),
+              language: 'bash',
+            },
+            {
+              title: 'Connect your AI',
+              body: 'The CLI is also a local MCP server with the same six `memory__` tools as the cloud endpoint. Add it to Claude Code - any stdio MCP client works the same way:',
+              code: CLI_MCP_ADD_COMMAND,
+              language: 'bash',
+            },
+          ],
         },
       ],
     },
@@ -118,7 +81,7 @@ export const cliDoc: DocPage = {
       blocks: [
         {
           type: 'p',
-          md: 'One background process owns writes and sync so several tools can share the same vaults safely:',
+          md: 'One background process keeps writes and sync tidy so several tools can share the same vaults safely:',
         },
         {
           type: 'code',
@@ -129,7 +92,7 @@ export const cliDoc: DocPage = {
         },
         {
           type: 'p',
-          md: 'Commands start it automatically when needed (`--no-daemon` skips). It restarts itself after an update.',
+          md: `It starts automatically when a command needs it (\`--no-daemon\` skips) and restarts itself after an update. Prefer HTTP? It also serves the same tools locally at \`${CLI_DAEMON_MCP_URL}\` - never exposed to the network.`,
         },
       ],
     },
@@ -148,11 +111,7 @@ export const cliDoc: DocPage = {
         },
         {
           type: 'p',
-          md: 'Conflicting remote edits never overwrite your local notes - they land next to them as `<file>.conflict.md`. Unreachable remotes never block writing; notes are saved locally first.',
-        },
-        {
-          type: 'p',
-          md: 'Syncing a vault with your agentage account memory (the one your cloud MCP clients see) is coming soon.',
+          md: 'Your local notes are always saved first: an unreachable remote never blocks a write, and a conflicting remote edit lands next to yours as `<file>.conflict.md` instead of overwriting it. Syncing a vault with your agentage account memory is coming soon.',
         },
       ],
     },
@@ -167,7 +126,7 @@ export const cliDoc: DocPage = {
         },
         {
           type: 'p',
-          md: 'Checks for a new version (also hinted passively once per hour) and walks through the npm update.',
+          md: 'Checks for a new version (also hinted once an hour) and walks you through the update.',
         },
       ],
     },
@@ -180,7 +139,7 @@ export const cliDoc: DocPage = {
           md: [
             '- Not a cloud client - reads and writes are local files first; the cloud MCP endpoint is at [memory.agentage.io/mcp](/docs/mcp-server).',
             '- Not another database - vaults are ordinary folders; delete the CLI and your markdown is still there.',
-            '- No API keys - one OAuth sign-in, same account as every other agentage surface.',
+            '- No API keys - one sign-in, the same account as every other agentage surface.',
           ].join('\n'),
         },
       ],

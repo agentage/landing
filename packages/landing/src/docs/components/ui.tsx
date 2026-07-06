@@ -11,6 +11,8 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { tokenizeBash } from '@/components/docs/bash-highlight';
+import { normalizeJson, tokenizeJson, type Piece } from '@/components/docs/json-highlight';
 
 // --- Markdown -------------------------------------------------------------
 const proseClass = cn(
@@ -72,6 +74,21 @@ export function Md({
 }
 
 // --- CodeBlock ------------------------------------------------------------
+// Pick a tokenizer by language. bash/sh keep the exact source so the copy button
+// stays byte-accurate; json is normalized (JSON.parse/stringify) before coloring,
+// matching JsonBlock. Everything else renders as plain text.
+function highlight(code: string, language?: string): { pieces: Piece[] | null; text: string } {
+  const lang = language?.toLowerCase();
+  if (lang === 'bash' || lang === 'sh' || lang === 'shell') {
+    return { pieces: tokenizeBash(code), text: code };
+  }
+  if (lang === 'json') {
+    const { text, highlighted } = normalizeJson(code);
+    return { pieces: highlighted ? tokenizeJson(text) : null, text };
+  }
+  return { pieces: null, text: code };
+}
+
 export function CodeBlock({
   code,
   language,
@@ -80,8 +97,9 @@ export function CodeBlock({
   language?: string;
 }): React.JSX.Element {
   const [copied, setCopied] = React.useState(false);
+  const { pieces, text } = highlight(code, language);
   const copy = async (): Promise<void> => {
-    await navigator.clipboard.writeText(code);
+    await navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -99,7 +117,19 @@ export function CodeBlock({
         </button>
       </div>
       <pre className="overflow-x-auto p-4 text-[13.5px] leading-relaxed">
-        <code className="font-mono text-foreground">{code}</code>
+        <code className="font-mono text-foreground">
+          {pieces
+            ? pieces.map((p, i) =>
+                p.className ? (
+                  <span key={i} className={p.className}>
+                    {p.text}
+                  </span>
+                ) : (
+                  <React.Fragment key={i}>{p.text}</React.Fragment>
+                )
+              )
+            : text}
+        </code>
       </pre>
     </div>
   );
