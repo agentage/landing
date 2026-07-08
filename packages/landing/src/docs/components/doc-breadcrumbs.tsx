@@ -21,15 +21,19 @@ export function DocBreadcrumbs({
     { name: title, href: docHref(slug) },
   ];
 
+  // Google requires `item` on every intermediate ListItem, so item-less nav
+  // groups are kept in the visible trail below but dropped from the JSON-LD.
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      name: item.name,
-      ...(item.href ? { item: `${SITE_URL}${item.href}` } : {}),
-    })),
+    itemListElement: items
+      .filter((item) => item.href)
+      .map((item, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: item.name,
+        item: `${SITE_URL}${item.href}`,
+      })),
   };
 
   return (
