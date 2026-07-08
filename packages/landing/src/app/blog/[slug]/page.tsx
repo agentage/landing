@@ -60,25 +60,12 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
     datePublished: post.date,
     dateModified: post.updated ?? post.date,
     author: { '@type': 'Person', name: post.author },
-    publisher: { '@type': 'Organization', name: 'Agentage', url: SITE_URL },
+    publisher: { '@id': `${SITE_URL}/#organization` },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${post.slug}` },
-    ...(post.ogImageUrl ? { image: `${SITE_URL}${post.ogImageUrl}` } : {}),
+    // image is REQUIRED for Article rich results; fall back to the site-wide
+    // 1200x630 /opengraph-image route so a coverless post is still valid.
+    image: `${SITE_URL}${post.ogImageUrl ?? '/opengraph-image'}`,
   };
-
-  // Emit FAQPage structured data when a post declares an faq array, so the Q&A
-  // is eligible for rich results. Answers must match the visible FAQ text.
-  const faqJsonLd =
-    post.faq && post.faq.length > 0
-      ? {
-          '@context': 'https://schema.org',
-          '@type': 'FAQPage',
-          mainEntity: post.faq.map((item) => ({
-            '@type': 'Question',
-            name: item.question,
-            acceptedAnswer: { '@type': 'Answer', text: item.answer },
-          })),
-        }
-      : null;
 
   return (
     <article className="mx-auto max-w-5xl px-6 pb-20 md:pb-24">
@@ -86,12 +73,6 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
-      {faqJsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-        />
-      )}
       <Link
         href="/blog"
         className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
