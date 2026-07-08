@@ -67,7 +67,7 @@ export const cliDoc: DocPage = {
             },
             {
               title: 'Connect your AI',
-              body: 'The CLI is also a local MCP server with the same six `memory__` tools as the cloud endpoint. Add it to Claude Code - any stdio MCP client works the same way:',
+              body: 'The daemon serves the same six `memory__` tools as the cloud endpoint over local MCP - Streamable HTTP at `http://127.0.0.1:4243/mcp`. Point Claude Code at it - any HTTP MCP client connects the same way:',
               code: CLI_MCP_ADD_COMMAND,
               language: 'bash',
             },
@@ -92,7 +92,7 @@ export const cliDoc: DocPage = {
         },
         {
           type: 'p',
-          md: `It starts automatically when a command needs it (\`--no-daemon\` skips) and restarts itself after an update. Prefer HTTP? It also serves the same tools locally at \`${CLI_DAEMON_MCP_URL}\` - never exposed to the network.`,
+          md: `It starts automatically when a command needs it (\`--no-daemon\` skips) and restarts itself after an update. It also serves the MCP tools locally over Streamable HTTP at \`${CLI_DAEMON_MCP_URL}\` - never exposed to the network - which is how your AI connects above.`,
         },
       ],
     },
