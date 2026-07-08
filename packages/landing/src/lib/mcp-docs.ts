@@ -36,10 +36,10 @@ export const CLI_PACKAGE = '@agentage/cli';
 export const CLI_INSTALL_COMMAND = `npm install -g ${CLI_PACKAGE}`;
 // One-line remote installer (serves public/install.sh) - the primary install path.
 export const INSTALL_SCRIPT_COMMAND = 'curl -fsSL https://agentage.io/install.sh | bash';
-// Registers the CLI's stdio MCP server with Claude Code (same six memory__ tools).
-export const CLI_MCP_ADD_COMMAND = 'claude mcp add agentage -- agentage mcp';
 // Local-only Streamable HTTP endpoint served by the background daemon.
 export const CLI_DAEMON_MCP_URL = 'http://127.0.0.1:4243/mcp';
+// Points Claude Code at the daemon's local HTTP MCP endpoint (same six memory__ tools).
+export const CLI_MCP_ADD_COMMAND = `claude mcp add --transport http agentage ${CLI_DAEMON_MCP_URL}`;
 
 // One-line positioning, shared by the docs page header + the markdown mirrors. Leads with
 // the differentiator: cross-vendor (names the clients) + files-first ownership.
