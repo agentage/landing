@@ -3,7 +3,7 @@ import { LegalShell } from '../legal-shell';
 import { CONTACT_EMAIL } from '../../lib/site';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - Agentage Memory',
+  title: 'Privacy Policy',
   description:
     'How Agentage Memory collects, stores, and protects your data. EU-resident, files-first, yours to export anytime.',
   alternates: { canonical: '/privacy' },

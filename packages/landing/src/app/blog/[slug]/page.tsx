@@ -22,10 +22,12 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   if (!post) return {};
 
   const url = `/blog/${post.slug}`;
-  const images = post.ogImageUrl ? [{ url: post.ogImageUrl, alt: post.title }] : undefined;
+  const images = post.ogImageUrl
+    ? [{ url: post.ogImageUrl, alt: post.title, width: 1200, height: 630 }]
+    : undefined;
 
   return {
-    title: `${post.title} - ${SITE_NAME}`,
+    title: post.title,
     description: post.description,
     alternates: { canonical: url },
     openGraph: {
@@ -33,6 +35,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       url,
       title: post.title,
       description: post.description,
+      siteName: SITE_NAME,
+      locale: 'en_US',
       publishedTime: post.date,
       modifiedTime: post.updated ?? post.date,
       authors: [post.author],
