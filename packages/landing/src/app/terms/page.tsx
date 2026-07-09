@@ -3,7 +3,7 @@ import { LegalShell } from '../legal-shell';
 import { CONTACT_EMAIL } from '../../lib/site';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service - Agentage Memory',
+  title: 'Terms of Service',
   description: 'The terms for using Agentage Memory - the shared memory layer for every AI.',
   alternates: { canonical: '/terms' },
 };

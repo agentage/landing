@@ -12,7 +12,7 @@ const DESCRIPTION =
   'Shared markdown memory for Claude, ChatGPT, Cursor & every AI - one MCP endpoint, files-first, EU-private, export anytime. Owned by you.';
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: { default: TITLE, template: `%s - ${SITE_NAME}` },
   description: DESCRIPTION,
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: '/' },
@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     type: 'website',
     locale: 'en_US',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -42,6 +43,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     site: '@agentage',
     creator: '@vreshch',
+    images: ['/twitter-image'],
   },
   verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
     ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }

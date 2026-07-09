@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { CONTACT_EMAIL, GITHUB_URL } from '../../lib/site';
 
 export const metadata: Metadata = {
-  title: 'Contact - Agentage Memory',
+  title: 'Contact',
   description:
     'Get in touch with the Agentage Memory team - questions, feedback, or security reports.',
   alternates: { canonical: '/contacts' },
