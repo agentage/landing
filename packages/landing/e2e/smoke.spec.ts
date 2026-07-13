@@ -86,4 +86,18 @@ test.describe('Landing - Routes', { tag: '@smoke' }, () => {
     await page.goto('/docs');
     await expect(page.locator('h1')).toContainText('Agentage Memory');
   });
+
+  test('/mcp redirects to the catalog host', async ({ request }) => {
+    const res = await request.get('/mcp', { maxRedirects: 0 });
+    expect(res.status()).toBe(308);
+    expect(res.headers()['location']).toBe('https://catalog.agentage.io/mcp');
+  });
+
+  test('/mcp deep links carry the path through', async ({ request }) => {
+    const res = await request.get('/mcp/io-agentage-mcp-catalog', { maxRedirects: 0 });
+    expect(res.status()).toBe(308);
+    expect(res.headers()['location']).toBe(
+      'https://catalog.agentage.io/mcp/io-agentage-mcp-catalog'
+    );
+  });
 });
