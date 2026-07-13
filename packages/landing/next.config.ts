@@ -3,8 +3,26 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   output: 'standalone',
   async redirects() {
-    // Short link to the generic connect guide.
-    return [{ source: '/connect', destination: '/docs/connect', permanent: true }];
+    return [
+      // Short link to the generic connect guide.
+      { source: '/connect', destination: '/docs/connect', permanent: true },
+      // The MCP directory lives on its own host; keep the advertised apex path working.
+      { source: '/mcp', destination: 'https://catalog.agentage.io/mcp', permanent: true },
+      {
+        source: '/mcp/:path*',
+        destination: 'https://catalog.agentage.io/mcp/:path*',
+        permanent: true,
+      },
+    ];
+  },
+  async headers() {
+    // Static JSON Schema artifacts under public/schemas are inert and cacheable.
+    return [
+      {
+        source: '/schemas/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600' }],
+      },
+    ];
   },
   async rewrites() {
     // The waitlist/unsubscribe calls now hit the API host directly (api.<fqdn>/api,

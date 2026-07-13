@@ -1,13 +1,29 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllPosts, formatPostDate, type BlogPostMeta } from '@/lib/blog';
+import { SITE_NAME } from '@/lib/site';
+
+const BLOG_INDEX_DESCRIPTION =
+  'Build-in-public notes on shared AI memory, MCP, and shipping Agentage Memory - one markdown memory every AI reads and writes.';
 
 export const metadata: Metadata = {
-  title: 'Blog - Agentage Memory',
-  description:
-    'Build-in-public notes on shared AI memory, MCP, and shipping Agentage Memory - one markdown memory every AI reads and writes.',
+  title: 'Blog',
+  description: BLOG_INDEX_DESCRIPTION,
   alternates: { canonical: '/blog' },
-  openGraph: { url: '/blog', title: 'Blog - Agentage Memory' },
+  openGraph: {
+    url: '/blog',
+    title: 'Blog',
+    description: BLOG_INDEX_DESCRIPTION,
+    siteName: SITE_NAME,
+    locale: 'en_US',
+    images: ['/opengraph-image'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Blog',
+    description: BLOG_INDEX_DESCRIPTION,
+    images: ['/twitter-image'],
+  },
 };
 
 function CoverFrame({ url, alt, className }: { url?: string; alt: string; className?: string }) {
