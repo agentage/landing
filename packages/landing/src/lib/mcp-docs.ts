@@ -31,15 +31,33 @@ export const REST_LIVE_ENDPOINTS: ReadonlyArray<readonly [string, string]> = [
 ];
 
 // --- CLI (@agentage/cli) --------------------------------------------------
-// Single source of truth for the CLI facts documented at /docs/cli.
+// Single source of truth for the CLI facts documented at /docs/cli and /docs/local-api.
 export const CLI_PACKAGE = '@agentage/cli';
 export const CLI_INSTALL_COMMAND = `npm install -g ${CLI_PACKAGE}`;
 // One-line remote installer (serves public/install.sh) - the primary install path.
 export const INSTALL_SCRIPT_COMMAND = 'curl -fsSL https://agentage.io/install.sh | bash';
+// The local MCP server name reused across every wiring example (matches the cloud docs).
+export const CLI_MCP_SERVER_NAME = 'agentage-memory';
+// Registers the CLI's stdio MCP server with Claude Code (same six memory__ tools).
+export const CLI_MCP_ADD_COMMAND = `claude mcp add ${CLI_MCP_SERVER_NAME} -- agentage mcp`;
+
+// The background daemon is loopback-only: bound to 127.0.0.1, no auth on the socket.
+export const CLI_DAEMON_HOST = '127.0.0.1';
+export const CLI_DAEMON_PORT = 4243;
+export const CLI_DAEMON_BASE_URL = `http://${CLI_DAEMON_HOST}:${CLI_DAEMON_PORT}`;
 // Local-only Streamable HTTP endpoint served by the background daemon.
-export const CLI_DAEMON_MCP_URL = 'http://127.0.0.1:4243/mcp';
-// Points Claude Code at the daemon's local HTTP MCP endpoint (same six memory__ tools).
-export const CLI_MCP_ADD_COMMAND = `claude mcp add --transport http agentage ${CLI_DAEMON_MCP_URL}`;
+export const CLI_DAEMON_MCP_URL = `${CLI_DAEMON_BASE_URL}/mcp`;
+
+// stdio wiring: any client spawns `agentage mcp`. Same shape for ~/.cursor/mcp.json,
+// .vscode/mcp.json, or a Claude Code .mcp.json.
+export const CLI_STDIO_MCP_JSON = `{
+  "mcpServers": {
+    "${CLI_MCP_SERVER_NAME}": {
+      "command": "agentage",
+      "args": ["mcp"]
+    }
+  }
+}`;
 
 // One-line positioning, shared by the docs page header + the markdown mirrors. Leads with
 // the differentiator: cross-vendor (names the clients) + files-first ownership.

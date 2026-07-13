@@ -22,6 +22,7 @@ export const docsNav: DocNavGroup[] = [
       { label: 'REST API', slug: 'rest-api' },
       { label: 'MCP tools', slug: 'mcp-tools' },
       { label: 'CLI', slug: 'cli' },
+      { label: 'Local API', slug: 'local-api' },
     ],
   },
 ];
