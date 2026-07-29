@@ -1,10 +1,10 @@
 name: Deploy
 
-# Build -> e2e-gate (against the built image) -> deploy to BOTH dev and prod in
-# parallel. The image is env-agnostic (runtime SITE_FQDN), so one build ships to
-# both; each environment supplies its own SSH host/key + SITE_FQDN. Hardened:
-# runs only on push to master / manual dispatch (never fork PRs); each deploy is
-# gated on its protected Environment AND the DEPLOY_ENABLED repo variable.
+# Build -> e2e-gate (against the built image) -> deploy to prod. The image is
+# env-agnostic (runtime SITE_FQDN), built once and shipped as-is; the production
+# environment supplies its own SSH host/key + SITE_FQDN. Hardened: runs only on
+# push to master / manual dispatch (never fork PRs); deploy is gated on the
+# protected Environment AND the DEPLOY_ENABLED repo variable.
 on:
   push:
     branches: [master]
@@ -40,7 +40,7 @@ jobs:
           context: .
           target: runner
           push: true
-          # Env-agnostic image (one digest for both dev + prod), so neutral tags.
+          # Env-agnostic image (runtime SITE_FQDN), so neutral tags.
           tags: |
             ${{ env.IMAGE }}:${{ github.sha }}
             ${{ env.IMAGE }}:latest
@@ -103,16 +103,12 @@ jobs:
           retention-days: 7
 
   deploy:
-    name: 🚀 Deploy (${{ matrix.environment }})
+    name: 🚀 Deploy (production)
     needs: e2e-gate
     if: vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment: ${{ matrix.environment }}
-    strategy:
-      fail-fast: false
-      matrix:
-        environment: [development, production]
+    environment: production
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-ssh
@@ -142,7 +138,7 @@ jobs:
           SITE_FQDN: ${{ vars.SITE_FQDN }}
         run: |
           # Wait until the apex actually serves THIS landing (the hero), not just
-          # any 200 - dev shares the host with other stacks, so Traefik can take a
+          # any 200 - the host is shared with other stacks, so Traefik can take a
           # moment to route to the new landing router.
           for i in $(seq 1 40); do
             curl -fsS "https://${SITE_FQDN}/" 2>/dev/null | grep -q "One memory" && { ok=1; break; }
@@ -151,12 +147,6 @@ jobs:
           echo "Smoke: https://${SITE_FQDN}/"
           [ -n "${ok:-}" ] || { echo "::error::apex never served the landing hero"; exit 1; }
           robots=$(curl -fsS "https://${SITE_FQDN}/robots.txt")
-          case "$SITE_FQDN" in
-            dev.*)
-              echo "$robots" | grep -qiE 'Disallow:[[:space:]]*/' || { echo "::error::dev must be noindex"; exit 1; }
-              echo "✅ dev serving + noindex" ;;
-            *)
-              echo "$robots" | grep -qi "Sitemap:" || { echo "::error::prod robots missing Sitemap"; exit 1; }
-              echo "$robots" | grep -qiE '^[[:space:]]*Disallow:[[:space:]]*/[[:space:]]*$' && { echo "::error::prod robots blanket-disallow"; exit 1; }
-              echo "✅ prod serving + indexable" ;;
-          esac
+          echo "$robots" | grep -qi "Sitemap:" || { echo "::error::prod robots missing Sitemap"; exit 1; }
+          echo "$robots" | grep -qiE '^[[:space:]]*Disallow:[[:space:]]*/[[:space:]]*$' && { echo "::error::prod robots blanket-disallow"; exit 1; }
+          echo "✅ prod serving + indexable"
