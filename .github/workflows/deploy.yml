@@ -150,3 +150,7 @@ jobs:
           echo "$robots" | grep -qi "Sitemap:" || { echo "::error::prod robots missing Sitemap"; exit 1; }
           echo "$robots" | grep -qiE '^[[:space:]]*Disallow:[[:space:]]*/[[:space:]]*$' && { echo "::error::prod robots blanket-disallow"; exit 1; }
           echo "✅ prod serving + indexable"
+
+      - name: Reclaim disk (post-deploy)
+        # system prune also clears stopped Swarm task containers (2026-07-31 disk-full incident).
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker system prune -af"
