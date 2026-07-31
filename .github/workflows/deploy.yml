@@ -153,4 +153,8 @@ jobs:
 
       - name: Reclaim disk (post-deploy)
         # system prune also clears stopped Swarm task containers (2026-07-31 disk-full incident).
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker system prune -af"
+        run: |
+          # Best-effort: concurrent stack deploys race the docker prune lock; never fail a deploy on cleanup.
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker system prune -af" && exit 0
+          sleep 45
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker system prune -af" || echo "::warning::post-deploy prune skipped (another prune in progress)"
