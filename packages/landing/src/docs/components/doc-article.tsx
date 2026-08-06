@@ -39,7 +39,7 @@ function Block({ block }: { block: DocBlock }): React.JSX.Element {
     case 'tabs':
       return (
         <Tabs defaultValue={block.tabs[0]?.label} className="my-4">
-          <TabsList>
+          <TabsList className="self-start">
             {block.tabs.map((t) => (
               <TabsTrigger key={t.label} value={t.label}>
                 {t.label}
@@ -58,7 +58,7 @@ function Block({ block }: { block: DocBlock }): React.JSX.Element {
     case 'clienttabs':
       return (
         <Tabs defaultValue={block.tabs[0]?.label} className="my-4">
-          <TabsList>
+          <TabsList className="self-start">
             {block.tabs.map((t) => (
               <TabsTrigger key={t.label} value={t.label}>
                 {t.label}
