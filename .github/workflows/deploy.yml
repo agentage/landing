@@ -137,15 +137,17 @@ jobs:
         env:
           SITE_FQDN: ${{ vars.SITE_FQDN }}
         run: |
-          # Wait until the apex actually serves THIS landing (the hero), not just
-          # any 200 - the host is shared with other stacks, so Traefik can take a
-          # moment to route to the new landing router.
-          for i in $(seq 1 40); do
-            curl -fsS "https://${SITE_FQDN}/" 2>/dev/null | grep -q "One memory" && { ok=1; break; }
+          # Assert /health serves THIS commit - a hero-text grep passes against the
+          # OLD container (2026-08-06: green runs left prod stale, prune raced the
+          # rolling update). Convergence-gating here also keeps the prune step safe.
+          for i in $(seq 1 60); do
+            commit=$(curl -fsS "https://${SITE_FQDN}/health" 2>/dev/null | grep -o '"commit":"[^"]*"' | cut -d'"' -f4)
+            [ "$commit" = "${{ github.sha }}" ] && { ok=1; break; }
             sleep 5
           done
-          echo "Smoke: https://${SITE_FQDN}/"
-          [ -n "${ok:-}" ] || { echo "::error::apex never served the landing hero"; exit 1; }
+          echo "Smoke: https://${SITE_FQDN}/health -> ${commit:-none}"
+          [ -n "${ok:-}" ] || { echo "::error::${SITE_FQDN} never served commit ${{ github.sha }} (last: ${commit:-none})"; exit 1; }
+          curl -fsS "https://${SITE_FQDN}/" | grep -q "One memory" || { echo "::error::apex hero missing"; exit 1; }
           robots=$(curl -fsS "https://${SITE_FQDN}/robots.txt")
           echo "$robots" | grep -qi "Sitemap:" || { echo "::error::prod robots missing Sitemap"; exit 1; }
           echo "$robots" | grep -qiE '^[[:space:]]*Disallow:[[:space:]]*/[[:space:]]*$' && { echo "::error::prod robots blanket-disallow"; exit 1; }
