@@ -10,7 +10,7 @@ import {
   VSCODE_ADD_URL,
   VSCODE_MCP_JSON,
 } from '../lib/mcp-docs';
-import { CopyButton } from './docs/copy-button';
+import { CopyButton } from '@agentage/design-system/copy-button';
 
 type Step = {
   text?: string;

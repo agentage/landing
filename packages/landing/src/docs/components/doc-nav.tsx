@@ -16,7 +16,7 @@ import {
   Search,
   type LucideIcon,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@agentage/design-system/utils';
 import { docsNav } from '../nav';
 
 // Per-item icon, keyed by label. Lives here (not in nav data) so the data stays

@@ -1,7 +1,9 @@
 'use client';
 
 import { Info, TriangleAlert, CircleCheck } from 'lucide-react';
-import { Alert, CodeBlock, Md, Tabs, TabsContent, TabsList, TabsTrigger } from './ui';
+import { Alert } from '@agentage/design-system/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@agentage/design-system/tabs';
+import { CodeBlock, Md } from './ui';
 import { EndpointList } from '@/components/docs/endpoint-list';
 import { ToolList } from '@/components/docs/tool-list';
 import { MemoryMapDiagram } from '@/components/docs/memory-map-diagram';
@@ -37,7 +39,7 @@ function Block({ block }: { block: DocBlock }): React.JSX.Element {
     case 'tabs':
       return (
         <Tabs defaultValue={block.tabs[0]?.label} className="my-4">
-          <TabsList>
+          <TabsList className="self-start">
             {block.tabs.map((t) => (
               <TabsTrigger key={t.label} value={t.label}>
                 {t.label}
@@ -56,7 +58,7 @@ function Block({ block }: { block: DocBlock }): React.JSX.Element {
     case 'clienttabs':
       return (
         <Tabs defaultValue={block.tabs[0]?.label} className="my-4">
-          <TabsList>
+          <TabsList className="self-start">
             {block.tabs.map((t) => (
               <TabsTrigger key={t.label} value={t.label}>
                 {t.label}
