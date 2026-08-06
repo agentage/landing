@@ -1,16 +1,14 @@
 'use client';
 
-// SSR-safe local primitives for the docs pages. We intentionally do NOT import
-// the @agentage/design-system JS barrel: it is a browser bundle whose markdown
-// chunk touches `document` at module eval and crashes server rendering. Only the
-// design-system *tokens* (theme.css) are used, via globals.css. These are trimmed
-// copies of the DS components wired to the local `cn`.
+// Docs-only primitives the design system does not cover: `Md` needs per-node
+// component overrides (fenced blocks route to the highlighted CodeBlock) and
+// `CodeBlock` needs bash/json tokenizing - neither is expressible via
+// DS markdown/code-block today. Everything else comes from the DS subpaths.
 
 import * as React from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/lib/utils';
+import { cn } from '@agentage/design-system/utils';
 import { tokenizeBash } from '@/components/docs/bash-highlight';
 import { normalizeJson, tokenizeJson, type Piece } from '@/components/docs/json-highlight';
 
@@ -131,126 +129,6 @@ export function CodeBlock({
             : text}
         </code>
       </pre>
-    </div>
-  );
-}
-
-// --- Alert ----------------------------------------------------------------
-const alertVariants = cva(
-  'flex gap-3 rounded-lg border p-4 text-sm [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0',
-  {
-    variants: {
-      variant: {
-        default: 'border-border bg-card text-card-foreground',
-        success: 'border-success/30 bg-success/10 text-success',
-        warning: 'border-warning/30 bg-warning/10 text-warning',
-        info: 'border-info/30 bg-info/10 text-info',
-      },
-    },
-    defaultVariants: { variant: 'default' },
-  }
-);
-
-export function Alert({
-  className,
-  variant,
-  icon,
-  children,
-}: React.HTMLAttributes<HTMLDivElement> &
-  VariantProps<typeof alertVariants> & { icon?: React.ReactNode }): React.JSX.Element {
-  return (
-    <div role="alert" className={cn(alertVariants({ variant }), className)}>
-      {icon}
-      <div className="min-w-0 flex-1">{children}</div>
-    </div>
-  );
-}
-
-// --- Tabs -----------------------------------------------------------------
-const TabsCtx = React.createContext<{ value: string; set: (v: string) => void; id: string }>({
-  value: '',
-  set: () => {},
-  id: '',
-});
-
-const tabIds = (id: string, value: string): { tab: string; panel: string } => ({
-  tab: `${id}-tab-${value}`,
-  panel: `${id}-panel-${value}`,
-});
-
-export function Tabs({
-  defaultValue = '',
-  className,
-  children,
-}: {
-  defaultValue?: string;
-  className?: string;
-  children: React.ReactNode;
-}): React.JSX.Element {
-  const [value, set] = React.useState(defaultValue);
-  const id = React.useId();
-  return (
-    <TabsCtx.Provider value={{ value, set, id }}>
-      <div className={cn('flex flex-col', className)}>{children}</div>
-    </TabsCtx.Provider>
-  );
-}
-
-export function TabsList({ children }: { children: React.ReactNode }): React.JSX.Element {
-  return (
-    <div
-      role="tablist"
-      className="inline-flex items-center gap-1 self-start rounded-lg bg-muted p-1"
-    >
-      {children}
-    </div>
-  );
-}
-
-export function TabsTrigger({
-  value,
-  children,
-}: {
-  value: string;
-  children: React.ReactNode;
-}): React.JSX.Element {
-  const ctx = React.useContext(TabsCtx);
-  const active = ctx.value === value;
-  const ids = tabIds(ctx.id, value);
-  return (
-    <button
-      type="button"
-      role="tab"
-      id={ids.tab}
-      aria-controls={ids.panel}
-      aria-selected={active}
-      tabIndex={active ? 0 : -1}
-      onClick={() => ctx.set(value)}
-      className={cn(
-        'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
-        active
-          ? 'bg-background text-foreground shadow-sm'
-          : 'text-muted-foreground hover:text-foreground'
-      )}
-    >
-      {children}
-    </button>
-  );
-}
-
-export function TabsContent({
-  value,
-  children,
-}: {
-  value: string;
-  children: React.ReactNode;
-}): React.JSX.Element | null {
-  const ctx = React.useContext(TabsCtx);
-  if (ctx.value !== value) return null;
-  const ids = tabIds(ctx.id, value);
-  return (
-    <div role="tabpanel" id={ids.panel} aria-labelledby={ids.tab} className="mt-3">
-      {children}
     </div>
   );
 }

@@ -8,7 +8,7 @@
 
 import * as React from 'react';
 import { ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@agentage/design-system/utils';
 import { SectionLabel } from './endpoint-list';
 import { JsonBlock } from './json-highlight';
 import type { ToolArg, ToolBadgeColor, ToolContract, ToolGroup } from '@/docs/types';

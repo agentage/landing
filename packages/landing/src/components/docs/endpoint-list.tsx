@@ -7,7 +7,7 @@
 
 import * as React from 'react';
 import { ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@agentage/design-system/utils';
 import { CodeBlock } from '@/docs/components/ui';
 import { JsonBlock } from './json-highlight';
 import type { Endpoint, EndpointArg, EndpointGroup, HttpMethod } from '@/docs/types';

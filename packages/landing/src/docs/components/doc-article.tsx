@@ -1,7 +1,9 @@
 'use client';
 
 import { Info, TriangleAlert, CircleCheck } from 'lucide-react';
-import { Alert, CodeBlock, Md, Tabs, TabsContent, TabsList, TabsTrigger } from './ui';
+import { Alert } from '@agentage/design-system/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@agentage/design-system/tabs';
+import { CodeBlock, Md } from './ui';
 import { EndpointList } from '@/components/docs/endpoint-list';
 import { ToolList } from '@/components/docs/tool-list';
 import { MemoryMapDiagram } from '@/components/docs/memory-map-diagram';
