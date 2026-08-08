@@ -331,7 +331,7 @@ export const cliDoc: DocPage = {
         {
           type: 'p',
           md: [
-            '- Not a cloud client - reads and writes hit local files first; the cloud MCP endpoint is at [memory.agentage.io/mcp](/docs/mcp-server) and the read-only HTTP surface at [api.agentage.io](/docs/rest-api).',
+            '- Not a cloud client - reads and writes hit local files first; the cloud MCP endpoint is at [memory.agentage.io/mcp](/docs/mcp-server) and the HTTP surface at [api.agentage.io](/docs/rest-api).',
             '- Not another database - vaults are ordinary folders; uninstall the CLI and your markdown is still there.',
             '- No API keys - one optional sign-in, the same account as every other agentage surface.',
           ].join('\n'),

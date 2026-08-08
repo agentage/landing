@@ -42,7 +42,7 @@ export const mcpToolsDoc: DocPage = {
         },
         {
           type: 'p',
-          md: `Connect any MCP client to the single endpoint \`${MCP_ENDPOINT}\` (Streamable HTTP, OAuth 2.1 with PKCE, sign-in at ${MCP_AUTH_ORIGIN}) and it gets these six \`memory__*\` tools. They read and write one shared markdown memory - the same notes across every AI you connect. New here? Start with the [MCP server](/docs/mcp-server) guide; for the read-only HTTP surface see the [REST API](/docs/rest-api).`,
+          md: `Connect any MCP client to the single endpoint \`${MCP_ENDPOINT}\` (Streamable HTTP, OAuth 2.1 with PKCE, sign-in at ${MCP_AUTH_ORIGIN}) and it gets these six \`memory__*\` tools. They read and write one shared markdown memory - the same notes across every AI you connect. New here? Start with the [MCP server](/docs/mcp-server) guide; for the HTTP surface over the same memory see the [REST API](/docs/rest-api).`,
         },
         {
           type: 'callout',
