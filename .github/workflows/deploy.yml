@@ -133,7 +133,7 @@ jobs:
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p /opt/agentage/landing"
           scp docker-compose.deploy.yml ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/agentage/landing/docker-compose.yml
       - name: Login to GHCR on host
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker login ghcr.io -u ${{ github.actor }} --password-stdin"
+        run: echo "${{ secrets.GHCR_READ_TOKEN }}" | ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker login ghcr.io -u vreshch --password-stdin"
       - name: Deploy stack
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /opt/agentage/landing && docker stack deploy -c docker-compose.yml agentage-landing --with-registry-auth"
       - name: Wait + live smoke
