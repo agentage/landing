@@ -120,8 +120,11 @@ jobs:
           SITE_FQDN: ${{ vars.SITE_FQDN }}
           IMAGE_TAG: ${{ github.sha }}
           GA_MEASUREMENT_ID: ${{ vars.GA_MEASUREMENT_ID }}
+          # SigNoz OTLP over the mesh; empty token keeps tracing inert.
+          OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT || 'http://172.31.0.1:4318' }}
+          SIGNOZ_INGEST_TOKEN: ${{ secrets.SIGNOZ_INGEST_TOKEN }}
         run: |
-          envsubst '${SITE_FQDN} ${IMAGE_TAG} ${GA_MEASUREMENT_ID}' < docker-compose.yml > docker-compose.deploy.yml
+          envsubst '${SITE_FQDN} ${IMAGE_TAG} ${GA_MEASUREMENT_ID} ${OTEL_EXPORTER_OTLP_ENDPOINT} ${SIGNOZ_INGEST_TOKEN}' < docker-compose.yml > docker-compose.deploy.yml
           if grep -E '\$\{(SITE_FQDN|IMAGE_TAG|GA_MEASUREMENT_ID)' docker-compose.deploy.yml; then
             echo "::error::unresolved variable in docker-compose.deploy.yml"; exit 1
           fi

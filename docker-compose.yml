@@ -20,6 +20,17 @@ services:
       - GA_MEASUREMENT_ID=${GA_MEASUREMENT_ID}
       # MCP-registry domain proof served at /.well-known/mcp-registry-auth.
       - 'MCP_REGISTRY_AUTH=v=MCPv1; k=ed25519; p=cksw7lCnQyXzAvA0ei34404Hla71nJD585WQ0zt2IO0='
+      # SigNoz tracing over the mesh (@vercel/otel via src/instrumentation.ts).
+      # An unset endpoint keeps the instrumentation fully inert.
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+      - OTEL_EXPORTER_OTLP_HEADERS=Authorization=Bearer ${SIGNOZ_INGEST_TOKEN}
+      - OTEL_SERVICE_NAME=agentage-landing
+      - OTEL_TRACES_SAMPLER=parentbased_traceidratio
+      # 5%: public site, bot-exposed - volume control like catalog-web.
+      - OTEL_TRACES_SAMPLER_ARG=0.05
+      # Metrics come from the host otel-agent, logs from the log pipeline.
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_LOGS_EXPORTER=none
     deploy:
       update_config:
         order: start-first
