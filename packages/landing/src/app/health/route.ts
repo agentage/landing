@@ -1,19 +1,7 @@
-import { NextResponse } from 'next/server';
+import { healthResponse } from '@agentage/observability/health';
 
-// Container liveness probe (Dockerfile HEALTHCHECK). Standard { success, data }
-// envelope + build provenance, matching backend/memory-mcp/auth/dashboard/sync.
-// force-dynamic so commit/buildTime are read from the running container's env per
-// request (never build-baked).
+// Never prerender, or commit/buildTime are baked at build instead of read from the
+// running container.
 export const dynamic = 'force-dynamic';
 
-export function GET() {
-  return NextResponse.json({
-    success: true,
-    data: {
-      status: 'ok',
-      service: 'landing',
-      commit: process.env.COMMIT_SHA ?? null,
-      buildTime: process.env.BUILD_TIME ?? null,
-    },
-  });
-}
+export const GET = () => healthResponse();
