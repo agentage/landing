@@ -4,22 +4,23 @@ import {
   REST_API_BASE_URL,
   REST_API_VERSION,
   REST_RATE_LIMIT_PER_MIN,
+  REST_VAULTS_ALIAS_NOTE,
 } from '@/lib/mcp-docs';
 import { API_ENDPOINTS } from '@/lib/api-endpoints';
 
-// REST API reference. Six live read-only endpoints (vault list + stats, notes
-// list/read, search, export) plus the north-star draft write contracts,
+// REST API reference. Twelve live routes under /v1/memories (memory list/
+// create/stats/delete, note list/read/write/edit/delete, search, export),
 // rendered as an interactive list from lib/api-endpoints.ts. Facts (base URL,
-// version, rate limit) come from lib/mcp-docs.ts.
+// version, rate limit, deprecation note) come from lib/mcp-docs.ts.
 export const restApiDoc: DocPage = {
   slug: 'rest-api',
   title: 'REST API',
-  lede: 'Read your vaults over plain HTTPS - six read-only endpoints, using the same OAuth token your MCP clients already use. No SDK, no API key.',
+  lede: 'Read and write your memories over plain HTTPS, using the same OAuth token your MCP clients already use. No SDK, no API key.',
   keywords: [
     'REST API',
-    'vaults API',
-    'list vaults',
-    'GET /v1/vaults',
+    'memories API',
+    'list memories',
+    'GET /v1/memories',
     'OAuth 2.1 bearer',
     'agentage REST API',
   ],
@@ -35,7 +36,13 @@ export const restApiDoc: DocPage = {
         },
         {
           type: 'p',
-          md: 'Six read-only endpoints under `/v1`: list and inspect vaults, list and read notes, search, and export. Writing notes stays on the [MCP server](/docs/mcp-server) - this API only reads.',
+          md: 'Twelve endpoints under `/v1`: list, create, inspect, and retire memories; list, read, write, edit, and delete notes; search; and export. Every route twins one of the six frozen `memory__*` MCP tools, so field names, defaults, and limits match the tool contract you already know.',
+        },
+        {
+          type: 'callout',
+          variant: 'warning',
+          title: 'The vaults noun is deprecated',
+          md: REST_VAULTS_ALIAS_NOTE,
         },
       ],
     },
@@ -54,7 +61,7 @@ export const restApiDoc: DocPage = {
         },
         {
           type: 'p',
-          md: `The token is the same one issued when you connect any MCP client (OAuth 2.1 with PKCE, sign-in at ${MCP_AUTH_ORIGIN}). Which vaults you see is decided by the token, not by request parameters - a token scoped to one vault lists only that vault.`,
+          md: `The token is the same one issued when you connect any MCP client (OAuth 2.1 with PKCE, sign-in at ${MCP_AUTH_ORIGIN}). Which memories you see is decided by the token, not by request parameters - a token scoped to one memory lists only that memory. Reads need the \`memory:read\` scope; writes need \`memory:write\`.`,
         },
       ],
     },
@@ -64,11 +71,25 @@ export const restApiDoc: DocPage = {
       blocks: [
         {
           type: 'p',
-          md: 'Every endpoint, grouped by resource. Click a row to expand its contract - parameters, a curl example, the 200 response, response fields, and error codes. `Live` endpoints are callable today; `Planned` rows are draft contracts from the north-star spec and are not callable yet.',
+          md: 'Every endpoint, grouped by resource. Click a row to expand its contract - parameters, a curl example, the 200 response, response fields, and error codes.',
         },
         {
           type: 'endpoints',
           groups: API_ENDPOINTS,
+        },
+      ],
+    },
+    {
+      id: 'writes',
+      title: 'Writes and concurrency',
+      blocks: [
+        {
+          type: 'p',
+          md: "Every write (`POST`/`DELETE` on memories, `PUT`/`PATCH`/`DELETE` on notes) accepts an optional `If-Match: <rev>` header for optimistic concurrency. Send the `rev` you last read; a stale value fails the write with `409 CONFLICT` instead of silently overwriting someone else's change.",
+        },
+        {
+          type: 'p',
+          md: "`rev` is the memory's HEAD sha. Read it from `GET /v1/memories/{memory}`, or from the `rev` field every write returns - chain writes without a re-fetch.",
         },
       ],
     },
@@ -87,7 +108,7 @@ export const restApiDoc: DocPage = {
         },
         {
           type: 'p',
-          md: 'Codes: `UNAUTHENTICATED` (401), `FORBIDDEN` (403), `NOT_FOUND` (404), `BAD_REQUEST` (400), `RATE_LIMITED` (429), `UPSTREAM_UNAVAILABLE` (503).',
+          md: 'Codes: `UNAUTHENTICATED` (401), `FORBIDDEN` (403), `NOT_FOUND` (404), `BAD_REQUEST` (400), `CONFLICT` (409), `RATE_LIMITED` (429), `UPSTREAM_UNAVAILABLE` (503).',
         },
       ],
     },
@@ -98,7 +119,7 @@ export const restApiDoc: DocPage = {
         {
           type: 'p',
           md: [
-            '- Read-only: this API never modifies a vault.',
+            '- Reads need the `memory:read` scope; writes need `memory:write`.',
             `- Rate limited to ${REST_RATE_LIMIT_PER_MIN} requests per minute per IP.`,
             '- Rate-limit responses carry IETF draft-7 headers `ratelimit` and `ratelimit-policy` (not `X-RateLimit-*`); a 429 also sends `Retry-After`.',
             '- The `/v1` contract is frozen: fields are only ever added, never renamed or removed. Breaking changes would ship as `/v2`.',
@@ -113,8 +134,7 @@ export const restApiDoc: DocPage = {
         {
           type: 'p',
           md: [
-            '- Not a way to write notes - reads are here, but writes stay on the [MCP server](/docs/mcp-server) (`memory__write/edit/delete`).',
-            '- Not a sync channel - vault contents sync over git (Obsidian plugin, CLI).',
+            '- Not a sync channel - memory contents sync over git (Obsidian plugin, CLI).',
             '- No API keys - OAuth 2.1 bearer only.',
           ].join('\n'),
         },

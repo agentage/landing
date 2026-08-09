@@ -12,22 +12,35 @@ export const MCP_AUTH_NOTE =
   'OAuth 2.1 with PKCE and dynamic client registration - sign in once in the browser, no API key.';
 
 // --- REST API (v1) --------------------------------------------------------
-// Single source of truth for the read-only REST endpoints documented at
-// /docs/rest-api. Reuses the same OAuth token as the MCP server.
+// Single source of truth for the REST endpoints (reads and writes) documented
+// at /docs/rest-api. Reuses the same OAuth token as the MCP server.
 export const REST_API_BASE_URL = 'https://api.agentage.io';
 export const REST_API_VERSION = 'v1';
 export const REST_RATE_LIMIT_PER_MIN = 60;
 export const REST_AUTH_NOTE =
-  'OAuth 2.1 bearer token - the same token issued when you connect any MCP client. No API key.';
+  'OAuth 2.1 bearer token - the same token issued when you connect any MCP client. No API key. memory:read gates reads, memory:write gates writes.';
 
-// The six live read-only endpoints, for the compact llms-full.txt REST section.
+// The pre-rename noun still answers as a deprecated alias (RFC 8594 headers), not removed.
+export const REST_VAULTS_ALIAS_SUNSET = 'Sun, 08 Feb 2027 00:00:00 GMT';
+export const REST_VAULTS_ALIAS_NOTE = `\`/v1/vaults/*\` still resolves, as a deprecated alias of \`/v1/memories/*\`, sunsetting ${REST_VAULTS_ALIAS_SUNSET}. It is a path alias, not a shape-compat layer: responses already use the new memories field names. Every response on the alias carries \`Deprecation: true\`, \`Sunset: ${REST_VAULTS_ALIAS_SUNSET}\`, and \`Link: </v1/memories>; rel="successor-version"\`.`;
+
+// The 12 live routes under /v1/memories, for the compact llms-full.txt REST section.
 export const REST_LIVE_ENDPOINTS: ReadonlyArray<readonly [string, string]> = [
-  ['GET /v1/vaults', 'List the vaults your token can see.'],
-  ['GET /v1/vaults/{vault}', 'Vault stats: counts, size, last activity.'],
-  ['GET /v1/vaults/{vault}/notes', 'List notes, paginated, optionally by folder.'],
-  ['GET /v1/vaults/{vault}/notes/{path}', 'Read one note: frontmatter + markdown body.'],
-  ['GET /v1/vaults/{vault}/search', 'Keyword search, ranked, snippets only.'],
-  ['GET /v1/vaults/{vault}/export', 'Stream the vault as a cloneable git bundle.'],
+  ['GET /v1/memories', 'List the memories your token can see.'],
+  ['POST /v1/memories', 'Create a memory. Idempotent on an existing name.'],
+  ['GET /v1/memories/{memory}', 'Memory stats: counts, size, rev, last activity.'],
+  ['DELETE /v1/memories/{memory}', 'Retire a memory (recoverable).'],
+  [
+    'GET /v1/memories/{memory}/notes',
+    'List notes and folders, paginated, filterable by folder/type/tags.',
+  ],
+  ['GET /v1/memories/{memory}/notes/{path}', 'Read one note: frontmatter + markdown body.'],
+  ['PUT /v1/memories/{memory}/notes/{path}', 'Create or replace a note.'],
+  ['PATCH /v1/memories/{memory}/notes/{path}', 'Edit a note: replace, append, or str_replace.'],
+  ['DELETE /v1/memories/{memory}/notes/{path}', 'Delete a note (recoverable).'],
+  ['GET /v1/memories/{memory}/search', 'Keyword search, ranked, snippets only.'],
+  ['GET /v1/memories/{memory}/export', 'Stream one memory as a cloneable git bundle.'],
+  ['GET /v1/memories/export', 'Stream every visible memory as one zip.'],
 ];
 
 // --- CLI (@agentage/cli) --------------------------------------------------
@@ -255,9 +268,11 @@ ${TOOL_SCOPE_NOTE}
 
 ## REST API
 
-A read-only HTTP surface at \`${REST_API_BASE_URL}\`. Auth: ${REST_AUTH_NOTE} Rate limited to ${REST_RATE_LIMIT_PER_MIN} requests per minute per IP.
+An HTTP surface at \`${REST_API_BASE_URL}\`, reads and writes over \`/v1/memories\`. Auth: ${REST_AUTH_NOTE} Rate limited to ${REST_RATE_LIMIT_PER_MIN} requests per minute per IP.
 
 ${restEndpoints}
+
+${REST_VAULTS_ALIAS_NOTE}
 
 Full reference: ${siteUrl}/docs/rest-api
 
