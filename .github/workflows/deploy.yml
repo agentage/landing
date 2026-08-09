@@ -148,7 +148,10 @@ jobs:
           # rolling update). Convergence-gating here also keeps the prune step safe.
           for i in $(seq 1 60); do
             commit=$(curl -fsS "https://${SITE_FQDN}/health" 2>/dev/null | grep -o '"commit":"[^"]*"' | cut -d'"' -f4)
-            [ "$commit" = "${{ github.sha }}" ] && { ok=1; break; }
+            # Prefix match: the estate envelope reports the 7-char short sha in
+            # `commit` (the full one is in `version`), so an equality test against
+            # github.sha fails a deploy that actually succeeded.
+            case "${{ github.sha }}" in "${commit:-__none__}"*) ok=1; break ;; esac
             sleep 5
           done
           echo "Smoke: https://${SITE_FQDN}/health -> ${commit:-none}"
