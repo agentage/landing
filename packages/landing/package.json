@@ -19,7 +19,7 @@
     "clsx": "^2.1.1",
     "gray-matter": "^4.0.3",
     "jose": "^6.2.8",
-    "lucide-react": "^1.28.0",
+    "lucide-react": "^1.29.0",
     "next": "^16.3.0",
     "next-mdx-remote": "^6.0.0",
     "react": "^19.2.8",
@@ -37,7 +37,7 @@
     "@types/node": "^26.1.2",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
-    "postcss": "^8.5.25",
+    "postcss": "^8.5.26",
     "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3"
   }
