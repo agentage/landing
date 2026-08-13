@@ -35,6 +35,8 @@ COPY --from=build --chown=node:node /app/packages/landing/public ./packages/land
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
 ENV NODE_ENV=production
+# Pairs with experimental.serverSourceMaps so runtime traces resolve to src.
+ENV NODE_OPTIONS=--enable-source-maps
 # Build provenance, baked late so a changing SHA only busts this layer.
 ARG COMMIT_SHA=""
 ARG BUILD_TIME=""
