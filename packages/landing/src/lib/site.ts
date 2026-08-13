@@ -11,6 +11,13 @@ export const SITE_URL = links(process.env.NEXT_PUBLIC_SITE_FQDN).site;
 export const API_URL = links(process.env.NEXT_PUBLIC_SITE_FQDN).api;
 export const DASHBOARD_URL = links(process.env.NEXT_PUBLIC_SITE_FQDN).dashboard;
 
+export function errorReportEndpoint(apiUrl: string): string {
+  return `${apiUrl.replace(/\/+$/, '')}/errors/report`;
+}
+
+// Browser error collector on the backend - same build-baked host as the waitlist calls.
+export const ERROR_REPORT_URL = errorReportEndpoint(API_URL);
+
 // The MCP catalog is its own host (catalog.<fqdn>) under /mcp. No `catalog` origin
 // in shared links() yet, so derive it from the apex - build-baked per environment,
 // same as DASHBOARD_URL (prod -> catalog.agentage.io, dev -> catalog.dev.agentage.io).

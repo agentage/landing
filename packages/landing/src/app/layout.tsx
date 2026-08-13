@@ -3,6 +3,7 @@ import './globals.css';
 import { Header } from './header';
 import { Footer } from './footer';
 import { Analytics } from './analytics';
+import { ErrorReporter } from './error-reporter';
 import { GITHUB_URL, SITE_NAME, SITE_TAGLINE, SITE_URL } from '../lib/site';
 
 // SEO title/description front-load the winnable wedge (files-first markdown +
@@ -108,6 +109,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="flex-1 pt-4">{children}</main>
         <Footer />
         <Analytics />
+        <ErrorReporter />
       </body>
     </html>
   );
