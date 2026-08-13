@@ -11,6 +11,8 @@ const API_URL =
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Server maps make prod stack traces point at src, not the minified bundle.
+  experimental: { serverSourceMaps: true },
   async redirects() {
     return [
       // Short link to the generic connect guide.
