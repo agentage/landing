@@ -1,4 +1,7 @@
 import { defineConfig } from '@playwright/test';
+
+// Estate test-traffic contract: the edge classifier keys on this exact header to keep e2e out of real-user metrics.
+const CLIENT_TYPE_HEADER = 'x-client-type';
 import { fileURLToPath } from 'node:url';
 
 // Run from the repo root so the webServer can build the libs + start the site.
@@ -15,6 +18,7 @@ export default defineConfig({
     baseURL,
     headless: true,
     trace: 'on-first-retry',
+    extraHTTPHeaders: { [CLIENT_TYPE_HEADER]: 'test' },
   },
   // Auto-start the site unless LANDING_BASE_URL targets an already-running one.
   webServer: process.env.LANDING_BASE_URL
