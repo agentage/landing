@@ -146,8 +146,10 @@ jobs:
           # Assert /health serves THIS commit - a hero-text grep passes against the
           # OLD container (2026-08-06: green runs left prod stale, prune raced the
           # rolling update). Convergence-gating here also keeps the prune step safe.
+          # Internal synthetic traffic: the edge classifier tags it user_type=service.
+          svc_hdr=(-H 'X-Client-Type: service')
           for i in $(seq 1 60); do
-            commit=$(curl -fsS "https://${SITE_FQDN}/health" 2>/dev/null | grep -o '"commit":"[^"]*"' | cut -d'"' -f4)
+            commit=$(curl "${svc_hdr[@]}" -fsS "https://${SITE_FQDN}/health" 2>/dev/null | grep -o '"commit":"[^"]*"' | cut -d'"' -f4)
             # Prefix match: the estate envelope reports the 7-char short sha in
             # `commit` (the full one is in `version`), so an equality test against
             # github.sha fails a deploy that actually succeeded.
@@ -156,8 +158,8 @@ jobs:
           done
           echo "Smoke: https://${SITE_FQDN}/health -> ${commit:-none}"
           [ -n "${ok:-}" ] || { echo "::error::${SITE_FQDN} never served commit ${{ github.sha }} (last: ${commit:-none})"; exit 1; }
-          curl -fsS "https://${SITE_FQDN}/" | grep -q "One memory" || { echo "::error::apex hero missing"; exit 1; }
-          robots=$(curl -fsS "https://${SITE_FQDN}/robots.txt")
+          curl "${svc_hdr[@]}" -fsS "https://${SITE_FQDN}/" | grep -q "One memory" || { echo "::error::apex hero missing"; exit 1; }
+          robots=$(curl "${svc_hdr[@]}" -fsS "https://${SITE_FQDN}/robots.txt")
           echo "$robots" | grep -qi "Sitemap:" || { echo "::error::prod robots missing Sitemap"; exit 1; }
           echo "$robots" | grep -qiE '^[[:space:]]*Disallow:[[:space:]]*/[[:space:]]*$' && { echo "::error::prod robots blanket-disallow"; exit 1; }
           echo "✅ prod serving + indexable"

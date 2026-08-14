@@ -61,12 +61,19 @@ const asString = (v: unknown): string | undefined => (typeof v === 'string' ? v 
 // One JWKSet per JWKS URL: jose caches the fetched keys on the instance and only
 // refetches on a cooldown, so reuse is what keeps verification local (no per-call
 // fetch). Module-level, safe per node process.
+// Server-to-server hops to the AS re-enter through the public edge, so they must
+// classify as user_type=service, never as user/bot traffic.
+export const SERVICE_CLIENT_HEADERS = { 'x-client-type': 'service' } as const;
+
 const jwksByUrl = new Map<string, ReturnType<typeof createRemoteJWKSet>>();
 
 function jwksFor(jwksUrl: string): ReturnType<typeof createRemoteJWKSet> {
   let set = jwksByUrl.get(jwksUrl);
   if (!set) {
-    set = createRemoteJWKSet(new URL(jwksUrl), { timeoutDuration: 4000 });
+    set = createRemoteJWKSet(new URL(jwksUrl), {
+      timeoutDuration: 4000,
+      headers: { ...SERVICE_CLIENT_HEADERS },
+    });
     jwksByUrl.set(jwksUrl, set);
   }
   return set;
@@ -95,7 +102,7 @@ async function mintSessionJwt(authBase: string, cookie: string): Promise<MintRes
   let res: Response;
   try {
     res = await fetch(`${authBase}/api/auth/token`, {
-      headers: { cookie, accept: 'application/json' },
+      headers: { cookie, accept: 'application/json', ...SERVICE_CLIENT_HEADERS },
       cache: 'no-store',
     });
   } catch {
