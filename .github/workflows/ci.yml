@@ -36,7 +36,7 @@ jobs:
             - ⏳ Type check
             - ⏳ Lint
             - ⏳ Format check
-            - ⏳ Unit tests
+            - ⏳ Unit tests + coverage
             - ⏳ Build
             - ⏳ Landing e2e
 
@@ -86,10 +86,10 @@ jobs:
         id: format
         if: always() && steps.install.outcome == 'success'
         run: npm run format:check
-      - name: Unit tests
+      - name: Unit tests + coverage
         id: test
         if: always() && steps.install.outcome == 'success'
-        run: npm run test
+        run: npm run test:coverage
       - name: Build
         id: build
         if: always() && steps.install.outcome == 'success'
@@ -122,7 +122,7 @@ jobs:
             - ${{ steps.type-check.outcome == 'success' && '✅' || (steps.type-check.outcome == 'skipped' && '⏭️' || '❌') }} Type check
             - ${{ steps.lint.outcome == 'success' && '✅' || (steps.lint.outcome == 'skipped' && '⏭️' || '❌') }} Lint
             - ${{ steps.format.outcome == 'success' && '✅' || (steps.format.outcome == 'skipped' && '⏭️' || '❌') }} Format check
-            - ${{ steps.test.outcome == 'success' && '✅' || (steps.test.outcome == 'skipped' && '⏭️' || '❌') }} Unit tests
+            - ${{ steps.test.outcome == 'success' && '✅' || (steps.test.outcome == 'skipped' && '⏭️' || '❌') }} Unit tests + coverage
             - ${{ steps.build.outcome == 'success' && '✅' || (steps.build.outcome == 'skipped' && '⏭️' || '❌') }} Build
             - ${{ steps.e2e.outcome == 'success' && '✅' || (steps.e2e.outcome == 'skipped' && '⏭️' || '❌') }} Landing e2e
 
