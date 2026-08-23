@@ -148,9 +148,13 @@ export interface DocNavItem {
   comingSoon?: boolean;
   /** Nested leaves under this item, e.g. the per-client pages under "Connect a client". */
   items?: DocNavItem[];
+  /** Start the nested list collapsed (long or secondary lists). */
+  defaultCollapsed?: boolean;
 }
 
 export interface DocNavGroup {
   title: string;
   items: DocNavItem[];
+  /** Start the group collapsed (secondary areas). */
+  defaultCollapsed?: boolean;
 }

@@ -4,6 +4,7 @@ import { clientNavItems } from './content/clients';
 // Sidebar nav, grouped by product area. Items with a `slug` link to a real page;
 // `comingSoon` items are intentional stubs - add the page, give it a slug, drop
 // the flag. An item may carry nested `items` (one level) for its sub-pages.
+// Groups and nested parents are collapsible; `defaultCollapsed` starts them shut.
 export const docsNav: DocNavGroup[] = [
   {
     title: 'Get started',
@@ -16,7 +17,7 @@ export const docsNav: DocNavGroup[] = [
     title: 'Memory',
     items: [
       // The generic guide is the parent; each client page nests under it.
-      { label: 'Connect a client', slug: 'connect', items: clientNavItems },
+      { label: 'Connect a client', slug: 'connect', items: clientNavItems, defaultCollapsed: true },
       { label: 'Prompt examples', slug: 'prompt-examples' },
       { label: 'MCP tools', slug: 'mcp-tools' },
       { label: 'REST API', slug: 'rest-api' },
@@ -31,13 +32,16 @@ export const docsNav: DocNavGroup[] = [
   },
   {
     title: 'Tools',
+    defaultCollapsed: true,
     items: [
-      { label: 'CLI', slug: 'cli' },
-      { label: 'Local API', slug: 'local-api' },
+      { label: 'CLI', comingSoon: true },
+      { label: 'Local API', comingSoon: true },
+      { label: 'Obsidian plugin', comingSoon: true },
+      { label: 'VS Code extension', comingSoon: true },
     ],
   },
   {
     title: 'Resources',
-    items: [{ label: 'Troubleshoot', comingSoon: true }],
+    items: [{ label: 'Troubleshoot', slug: 'troubleshoot' }],
   },
 ];
