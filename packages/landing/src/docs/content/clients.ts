@@ -10,8 +10,8 @@ import {
   VSCODE_ADD_URL,
 } from '@/lib/mcp-docs';
 
-// One entry per MCP client. Each becomes its own doc page (a "Connect your
-// client" leaf) and a sidebar nav item. Setup copy mirrors the canonical
+// One entry per MCP client. Each becomes its own doc page nested under
+// "Connect a client" in the sidebar. Setup copy mirrors the canonical
 // CLIENT_GUIDES in agentage/landing .../lib/mcp-docs.ts.
 interface ClientDef {
   /** URL slug + nav order. */
@@ -159,7 +159,7 @@ export const clientDocs: DocPage[] = CLIENTS.map((c) => ({
   ],
 }));
 
-/** Sidebar items for the "Connect your client" group. */
+/** Sidebar leaves nested under the "Connect a client" item. */
 export const clientNavItems: DocNavItem[] = CLIENTS.map((c) => ({ label: c.nav, slug: c.slug }));
 
 /** Markdown list of client links, for the MCP server hub page. */

@@ -146,6 +146,8 @@ export interface DocNavItem {
   /** Slug of a real page, or undefined for a not-yet-written stub. */
   slug?: string;
   comingSoon?: boolean;
+  /** Nested leaves under this item, e.g. the per-client pages under "Connect a client". */
+  items?: DocNavItem[];
 }
 
 export interface DocNavGroup {
