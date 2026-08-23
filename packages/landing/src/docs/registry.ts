@@ -6,14 +6,12 @@ import { clientDocs } from './content/clients';
 import { promptExamplesDoc } from './content/prompt-examples';
 import { restApiDoc } from './content/rest-api';
 import { mcpToolsDoc } from './content/mcp-tools';
-import { cliDoc } from './content/cli';
-import { localApiDoc } from './content/local-api';
-import { obsidianDoc } from './content/obsidian';
-import { vsCodeExtensionDoc } from './content/vs-code-extension';
 import { troubleshootDoc } from './content/troubleshoot';
 
 // Every doc page, keyed by slug. Add a page = import it + add it here; the route
-// and sitemap pick it up automatically (nav is wired in nav.ts).
+// and sitemap pick it up automatically (nav is wired in nav.ts). The tools pages
+// (content/{cli,local-api,obsidian,vs-code-extension}.ts) stay unregistered while
+// their nav entries are `comingSoon` stubs - re-import them to bring them back.
 const PAGES: DocPage[] = [
   overviewDoc,
   mcpServerDoc,
@@ -22,10 +20,6 @@ const PAGES: DocPage[] = [
   promptExamplesDoc,
   restApiDoc,
   mcpToolsDoc,
-  cliDoc,
-  localApiDoc,
-  obsidianDoc,
-  vsCodeExtensionDoc,
   troubleshootDoc,
 ];
 
