@@ -17,6 +17,7 @@ export const docsNav: DocNavGroup[] = [
     items: [
       // The generic guide is the parent; each client page nests under it.
       { label: 'Connect a client', slug: 'connect', items: clientNavItems },
+      { label: 'Prompt examples', slug: 'prompt-examples' },
       { label: 'MCP tools', slug: 'mcp-tools' },
       { label: 'REST API', slug: 'rest-api' },
     ],
