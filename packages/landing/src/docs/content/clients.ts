@@ -78,7 +78,9 @@ Then run \`/mcp\` and complete the OAuth sign-in. A connector you add in [Claude
     nav: 'VS Code',
     title: 'VS Code',
     lede: 'Install the memory server in VS Code with one click or a small config file.',
-    setup: `**One-click:** [Install in VS Code](${VSCODE_ADD_URL})
+    setup: `**Prefer an extension?** The [VS Code extension](/docs/vs-code-extension) registers the same server for you, and also covers Cursor, Windsurf, and VSCodium. The steps below are the manual alternative - use one or the other, not both.
+
+**One-click:** [Install in VS Code](${VSCODE_ADD_URL})
 
 **Manual:** add the server to \`.vscode/mcp.json\` (or run the \`MCP: Add Server\` command):
 

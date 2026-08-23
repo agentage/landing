@@ -8,6 +8,9 @@ import { restApiDoc } from './content/rest-api';
 import { mcpToolsDoc } from './content/mcp-tools';
 import { cliDoc } from './content/cli';
 import { localApiDoc } from './content/local-api';
+import { obsidianDoc } from './content/obsidian';
+import { vsCodeExtensionDoc } from './content/vs-code-extension';
+import { troubleshootDoc } from './content/troubleshoot';
 
 // Every doc page, keyed by slug. Add a page = import it + add it here; the route
 // and sitemap pick it up automatically (nav is wired in nav.ts).
@@ -21,6 +24,9 @@ const PAGES: DocPage[] = [
   mcpToolsDoc,
   cliDoc,
   localApiDoc,
+  obsidianDoc,
+  vsCodeExtensionDoc,
+  troubleshootDoc,
 ];
 
 const BY_SLUG = new Map(PAGES.map((p) => [p.slug, p]));

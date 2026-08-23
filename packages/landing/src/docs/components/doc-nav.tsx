@@ -18,6 +18,7 @@ import {
   Library,
   LifeBuoy,
   Server,
+  Puzzle,
   Search,
   type LucideIcon,
 } from 'lucide-react';
@@ -44,6 +45,8 @@ const ICONS: Record<string, LucideIcon> = {
   'Catalog API': Library,
   CLI: Terminal,
   'Local API': Server,
+  'Obsidian plugin': Puzzle,
+  'VS Code extension': Code,
   Troubleshoot: LifeBuoy,
 };
 

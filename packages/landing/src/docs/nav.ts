@@ -34,10 +34,12 @@ export const docsNav: DocNavGroup[] = [
     items: [
       { label: 'CLI', slug: 'cli' },
       { label: 'Local API', slug: 'local-api' },
+      { label: 'Obsidian plugin', slug: 'obsidian' },
+      { label: 'VS Code extension', slug: 'vs-code-extension' },
     ],
   },
   {
     title: 'Resources',
-    items: [{ label: 'Troubleshoot', comingSoon: true }],
+    items: [{ label: 'Troubleshoot', slug: 'troubleshoot' }],
   },
 ];
