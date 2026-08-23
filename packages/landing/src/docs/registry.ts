@@ -3,6 +3,7 @@ import { overviewDoc } from './content/overview';
 import { mcpServerDoc } from './content/mcp-server';
 import { connectDoc } from './content/connect';
 import { clientDocs } from './content/clients';
+import { promptExamplesDoc } from './content/prompt-examples';
 import { restApiDoc } from './content/rest-api';
 import { mcpToolsDoc } from './content/mcp-tools';
 import { cliDoc } from './content/cli';
@@ -15,6 +16,7 @@ const PAGES: DocPage[] = [
   mcpServerDoc,
   connectDoc,
   ...clientDocs,
+  promptExamplesDoc,
   restApiDoc,
   mcpToolsDoc,
   cliDoc,
