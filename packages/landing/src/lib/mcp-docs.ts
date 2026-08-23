@@ -1,5 +1,6 @@
 // Single source of truth for "how to connect" content, shared by the docs
 // page, llms.txt, llms-full.txt, and the /docs.md mirror.
+import { docUrl } from '../docs/host-routing';
 
 export const MCP_ENDPOINT = 'memory.agentage.io/mcp';
 export const MCP_ENDPOINT_URL = `https://${MCP_ENDPOINT}`;
@@ -223,7 +224,8 @@ export const CLIENT_GUIDES: ReadonlyArray<{
   },
 ];
 
-export function getDocsMarkdown(siteUrl: string): string {
+// `docsBase` is the docs origin (docs.<fqdn> in prod, <site>/docs locally).
+export function getDocsMarkdown(docsBase: string): string {
   const guides = CLIENT_GUIDES.map(({ client, steps }) => {
     // Indent continuation lines (e.g. fenced code blocks) so they stay inside
     // the numbered list item.
@@ -274,12 +276,12 @@ ${restEndpoints}
 
 ${REST_VAULTS_ALIAS_NOTE}
 
-Full reference: ${siteUrl}/docs/rest-api
+Full reference: ${docUrl(docsBase, 'rest-api')}
 
 ## Limitations
 
 ${limitations}
 
-HTML version: ${siteUrl}/docs
+HTML version: ${docUrl(docsBase, '')}
 `;
 }

@@ -19,6 +19,8 @@ export interface Links {
   dashboard: string;
   /** backend API base — https://api.agentage.io/api */
   api: string;
+  /** docs base - https://docs.agentage.io (local dev has no subdomains: <site>/docs) */
+  docs: string;
 }
 
 const normalize = (fqdn?: string): string =>
@@ -39,13 +41,21 @@ export const links = (siteFqdn?: string): Links => {
       site: `http://localhost:${SITE_PORT}`,
       dashboard: `http://localhost:${DASHBOARD_PORT}`,
       api: `http://localhost:${API_PORT}/api`,
+      docs: `http://localhost:${SITE_PORT}/docs`,
     };
   }
   return {
     site: `https://${host}`,
     dashboard: `https://dashboard.${host}`,
     api: `https://api.${host}/api`,
+    docs: `https://docs.${host}`,
   };
+};
+
+/** Dedicated docs hostname, or undefined locally where docs stay under <site>/docs. */
+export const docsHost = (siteFqdn?: string): string | undefined => {
+  const host = normalize(siteFqdn);
+  return isLocal(host) ? undefined : `docs.${host}`;
 };
 
 /** The bare apex is production; a `dev.` prefix or localhost is development. */

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { SITE_NAME } from '../lib/site';
+import { DOCS_URL, SITE_NAME } from '../lib/site';
+import { docUrl } from './host-routing';
 import type { DocPage } from './types';
 
 // Keywords shared by every docs page; per-page `keywords` are merged on top.
@@ -13,13 +14,15 @@ const BASE_KEYWORDS = [
   'memory.agentage.io',
 ];
 
-export const docPath = (doc: DocPage): string => (doc.slug === '' ? '/docs' : `/docs/${doc.slug}`);
+// Absolute, because docs are canonical on their own host (docs.<fqdn>) while
+// metadataBase still points at the apex.
+export const docCanonical = (doc: DocPage): string => docUrl(DOCS_URL, doc.slug);
 
 // Full, crawl-ready metadata for a docs page: title, description, merged
 // keywords, self-canonical, and OpenGraph (the file-based OG image still
 // applies). Used by both the index route and the [slug] route.
 export function docMetadata(doc: DocPage): Metadata {
-  const path = docPath(doc);
+  const url = docCanonical(doc);
   // Bare page title; the root layout template appends " - Agentage Memory".
   // A "docs" distinction is preserved for content pages.
   const title = doc.slug === '' ? 'Docs' : `${doc.title} - docs`;
@@ -28,11 +31,11 @@ export function docMetadata(doc: DocPage): Metadata {
     title,
     description: doc.lede,
     keywords,
-    alternates: { canonical: path },
+    alternates: { canonical: url },
     openGraph: {
       title,
       description: doc.lede,
-      url: path,
+      url,
       type: 'article',
       siteName: SITE_NAME,
       locale: 'en_US',

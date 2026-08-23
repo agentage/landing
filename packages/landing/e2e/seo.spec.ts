@@ -5,7 +5,7 @@
  * (host = the target under test; robots is noindex unless pointed at prod).
  */
 import { test, expect } from '@playwright/test';
-import { body, pick, targetHost, isProdTarget } from './support';
+import { body, pick, targetHost, isProdTarget, docsBase, docsUrl } from './support';
 
 test.describe('Landing - SEO/PWA', { tag: '@p0' }, () => {
   test('home canonical + og:url point at the target host', async ({ request }) => {
@@ -18,10 +18,10 @@ test.describe('Landing - SEO/PWA', { tag: '@p0' }, () => {
     expect(new URL(ogUrl!).host).toBe(targetHost());
   });
 
-  test('/docs is self-canonical', async ({ request }) => {
+  test('/docs canonicalizes to the docs origin', async ({ request }) => {
     const canon = pick(await body(request, '/docs'), /<link rel="canonical" href="([^"]+)"/i);
     expect(canon, 'docs canonical present').toBeTruthy();
-    expect(new URL(canon!).pathname).toBe('/docs');
+    expect(canon).toBe(docsBase());
   });
 
   test('title + meta description are present', async ({ request }) => {
@@ -115,11 +115,14 @@ test.describe('Landing - SEO/PWA', { tag: '@p0' }, () => {
     expect(xml).toContain('<urlset');
     const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
     expect(locs.length, 'sitemap has <loc> entries').toBeGreaterThan(3);
+    // Docs entries live on the docs origin; everything else on the target host.
+    const docsHost = new URL(docsBase()).host;
     for (const loc of locs)
-      expect(new URL(loc).host, `sitemap <loc> host: ${loc}`).toBe(targetHost());
-    const paths = locs.map((l) => new URL(l).pathname);
-    for (const p of ['/', '/docs', '/blog', '/blog/agentage-memory-is-open']) {
-      expect(paths, `sitemap lists ${p}`).toContain(p);
+      expect([targetHost(), docsHost], `sitemap <loc> host: ${loc}`).toContain(new URL(loc).host);
+    const sitePaths = locs.filter((l) => !l.startsWith(docsBase())).map((l) => new URL(l).pathname);
+    for (const p of ['/', '/blog', '/blog/agentage-memory-is-open']) {
+      expect(sitePaths, `sitemap lists ${p}`).toContain(p);
     }
+    expect(locs, 'sitemap lists the docs index').toContain(docsUrl(''));
   });
 });

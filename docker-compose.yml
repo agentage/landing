@@ -53,6 +53,15 @@ services:
         - traefik.http.middlewares.landing-secure-headers.headers.contentTypeNosniff=true
         - traefik.http.middlewares.landing-secure-headers.headers.customFrameOptionsValue=SAMEORIGIN
         - traefik.http.middlewares.landing-secure-headers.headers.referrerPolicy=strict-origin-when-cross-origin
+        # docs.<apex> -> same landing service; the app's middleware serves the
+        # docs tree at that host's root (priority 26, above the apex catch-all).
+        - traefik.http.routers.landing-docs-https.rule=Host(`docs.${SITE_FQDN}`)
+        - traefik.http.routers.landing-docs-https.priority=26
+        - traefik.http.routers.landing-docs-https.entrypoints=https
+        - traefik.http.routers.landing-docs-https.tls=true
+        - traefik.http.routers.landing-docs-https.tls.certresolver=letsencrypt
+        - traefik.http.routers.landing-docs-https.service=landing
+        - traefik.http.routers.landing-docs-https.middlewares=landing-secure-headers
         # www -> apex 308 redirect (preserves path). $$ escapes the backref
         # through envsubst + docker stack deploy, leaving Traefik a literal ${1}.
         - traefik.http.routers.landing-www-https.rule=Host(`www.${SITE_FQDN}`)

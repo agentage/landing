@@ -11,6 +11,10 @@ export const SITE_URL = links(process.env.NEXT_PUBLIC_SITE_FQDN).site;
 export const API_URL = links(process.env.NEXT_PUBLIC_SITE_FQDN).api;
 export const DASHBOARD_URL = links(process.env.NEXT_PUBLIC_SITE_FQDN).dashboard;
 
+// Docs base for canonical/OG/JSON-LD. Its own host in prod (docs.<fqdn>, served by
+// this same container), the site's /docs path locally - so docUrl() works on both.
+export const DOCS_URL = links(process.env.NEXT_PUBLIC_SITE_FQDN).docs;
+
 export function errorReportEndpoint(apiUrl: string): string {
   return `${apiUrl.replace(/\/+$/, '')}/errors/report`;
 }
@@ -29,6 +33,11 @@ export const CATALOG_URL = SITE_URL.startsWith('https://')
 // correct URLs without a rebuild.
 export function getSiteUrl(): string {
   return links(process.env.SITE_FQDN).site;
+}
+
+// Runtime docs base, same reasoning as getSiteUrl (sitemap/llms emit docs-origin URLs).
+export function getDocsUrl(): string {
+  return links(process.env.SITE_FQDN).docs;
 }
 
 export const SITE_NAME = 'Agentage Memory';
