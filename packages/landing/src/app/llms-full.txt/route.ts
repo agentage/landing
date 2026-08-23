@@ -1,4 +1,4 @@
-import { SITE_NAME, SITE_TAGLINE, getSiteUrl } from '../../lib/site';
+import { SITE_NAME, SITE_TAGLINE, getDocsUrl, getSiteUrl } from '../../lib/site';
 import { getAllPosts, getPost, formatPostDate } from '../../lib/blog';
 import { getDocsMarkdown } from '../../lib/mcp-docs';
 
@@ -30,7 +30,7 @@ This file contains the full public content of ${SITE_URL} in one document: docs,
 
 ---
 
-${getDocsMarkdown(SITE_URL)}
+${getDocsMarkdown(getDocsUrl())}
 
 ---
 

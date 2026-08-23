@@ -1,7 +1,7 @@
-import { SITE_NAME, getSiteUrl } from '../../lib/site';
+import { SITE_NAME, getDocsUrl, getSiteUrl } from '../../lib/site';
 import { getAllPosts } from '../../lib/blog';
 import { docPages } from '../../docs/registry';
-import { docMdHref } from '../../docs/nav-order';
+import { docMdUrl, docUrl } from '../../docs/host-routing';
 import {
   MCP_AUTH_NOTE,
   MCP_ENDPOINT_URL,
@@ -14,6 +14,8 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const SITE_URL = getSiteUrl();
+  // Docs live on their own host in prod, so their links are docs-origin URLs.
+  const DOCS = getDocsUrl();
   const posts = await getAllPosts();
 
   const blogSection = posts
@@ -24,7 +26,7 @@ export async function GET() {
 
   // Per-page markdown mirrors - append .md to any docs URL.
   const docPagesMd = docPages()
-    .map((p) => `- [${p.title}](${SITE_URL}${docMdHref(p.slug)}): ${p.lede}`)
+    .map((p) => `- [${p.title}](${docMdUrl(DOCS, p.slug)}): ${p.lede}`)
     .join('\n');
 
   const body = `# ${SITE_NAME}
@@ -38,12 +40,12 @@ ${SITE_NAME} is the shared memory layer for AI tools. The canonical store is you
 - MCP endpoint: ${MCP_ENDPOINT_URL} (Streamable HTTP)
 - Auth: ${MCP_AUTH_NOTE}
 - Claude Code: \`${CLAUDE_CODE_COMMAND}\`
-- Other clients (Claude, ChatGPT, VS Code): add a custom connector pointing at the endpoint; see [Docs](${SITE_URL}/docs).
+- Other clients (Claude, ChatGPT, VS Code): add a custom connector pointing at the endpoint; see [Docs](${docUrl(DOCS, '')}).
 - Tools exposed once connected:
 ${tools}
 
 ## Docs
-- [Setup & MCP tools](${SITE_URL}/docs): connect Claude, ChatGPT, Cursor, and Obsidian to one shared memory; the six memory__* MCP tools (search, read, write, edit, list, delete). Markdown: [/docs.md](${SITE_URL}/docs.md)
+- [Setup & MCP tools](${docUrl(DOCS, '')}): connect Claude, ChatGPT, Cursor, and Obsidian to one shared memory; the six memory__* MCP tools (search, read, write, edit, list, delete). Markdown: [/docs.md](${docMdUrl(DOCS, '')})
 
 Per-page Markdown mirrors (append .md to any docs URL):
 ${docPagesMd}

@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { SITE_URL } from '@/lib/site';
+import { DOCS_URL } from '@/lib/site';
 import { docsNav } from '../nav';
-import { docHref, navEntryFor } from '../nav-order';
+import { navEntryFor } from '../nav-order';
+import { docUrl } from '../host-routing';
 
 // "Docs / <group> / <page>" trail above the h1 on a doc sub-page, plus a
 // BreadcrumbList for rich results. The group is a nav heading (no page of its
@@ -15,10 +16,11 @@ export function DocBreadcrumbs({
   title: string;
 }): React.JSX.Element {
   const group = navEntryFor(slug, docsNav)?.groupTitle;
-  const items: { name: string; href?: string }[] = [
-    { name: 'Docs', href: '/docs' },
+  // `url` is the canonical docs-origin URL for JSON-LD; the visible trail links stay relative.
+  const items: { name: string; url?: string }[] = [
+    { name: 'Docs', url: docUrl(DOCS_URL, '') },
     ...(group ? [{ name: group }] : []),
-    { name: title, href: docHref(slug) },
+    { name: title, url: docUrl(DOCS_URL, slug) },
   ];
 
   // Google requires `item` on every intermediate ListItem, so item-less nav
@@ -27,12 +29,12 @@ export function DocBreadcrumbs({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: items
-      .filter((item) => item.href)
+      .filter((item) => item.url)
       .map((item, i) => ({
         '@type': 'ListItem',
         position: i + 1,
         name: item.name,
-        item: `${SITE_URL}${item.href}`,
+        item: item.url,
       })),
   };
 

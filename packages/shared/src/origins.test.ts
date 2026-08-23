@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { links, environment, isNoindexHost } from './origins.js';
+import { links, environment, isNoindexHost, docsHost } from './origins.js';
 
 describe('links', () => {
   it('derives the site origin from a prod apex', () => {
@@ -15,6 +15,13 @@ describe('links', () => {
     expect(dev.api).toBe('https://api.dev.agentage.io/api');
   });
 
+  it('derives the docs base as its own host, falling back to <site>/docs locally', () => {
+    expect(links('agentage.io').docs).toBe('https://docs.agentage.io');
+    expect(links('dev.agentage.io').docs).toBe('https://docs.dev.agentage.io');
+    expect(links('localhost').docs).toBe('http://localhost:3000/docs');
+    expect(links(undefined).docs).toBe('http://localhost:3000/docs');
+  });
+
   it('splits dashboard + API by port for local dev', () => {
     expect(links('localhost').dashboard).toBe('http://localhost:3002');
     expect(links('localhost').api).toBe('http://localhost:3001/api');
@@ -27,6 +34,19 @@ describe('links', () => {
   it('falls back to localhost for local dev (empty / localhost)', () => {
     for (const v of [undefined, '', 'localhost', 'localhost:3000']) {
       expect(links(v).site).toBe('http://localhost:3000');
+    }
+  });
+});
+
+describe('docsHost', () => {
+  it('prefixes the apex with docs.', () => {
+    expect(docsHost('agentage.io')).toBe('docs.agentage.io');
+    expect(docsHost('https://dev.agentage.io/')).toBe('docs.dev.agentage.io');
+  });
+
+  it('is undefined locally (no subdomains, so no host split)', () => {
+    for (const v of [undefined, '', 'localhost', 'localhost:3000', '127.0.0.1']) {
+      expect(docsHost(v), String(v)).toBeUndefined();
     }
   });
 });

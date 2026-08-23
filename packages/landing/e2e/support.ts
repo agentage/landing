@@ -18,6 +18,15 @@ export const targetHost = (): string =>
 // True only when pointed at the production apex (not localhost / a dev. host).
 export const isProdTarget = (): boolean => !/^(localhost|127\.0\.0\.1|dev\.)/.test(targetHost());
 
+// Docs base the target renders into canonical/sitemap URLs: their own host once a
+// real FQDN is configured, the site's /docs path locally. Mirrors links().docs.
+export const docsBase = (): string =>
+  isProdTarget() ? `https://docs.${targetHost()}` : `http://${targetHost()}/docs`;
+
+// URL of a doc page under docsBase ('' is the index).
+export const docsUrl = (slug: string): string =>
+  slug === '' ? docsBase() : `${docsBase()}/${slug}`;
+
 // Raw response body for a path (uses the config baseURL).
 export const body = async (request: APIRequestContext, path: string): Promise<string> =>
   (await request.get(path)).text();

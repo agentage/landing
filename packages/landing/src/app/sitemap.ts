@@ -1,13 +1,17 @@
 import type { MetadataRoute } from 'next';
-import { getSiteUrl } from '../lib/site';
+import { getDocsUrl, getSiteUrl } from '../lib/site';
 import { getAllPosts } from '../lib/blog';
 import { docSlugs } from '../docs/registry';
+import { docUrl } from '../docs/host-routing';
 
 // Dynamic so the runtime SITE_FQDN is read per request, not baked at build.
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteUrl();
+  // Docs are canonical on their own host; one sitemap still lists both (robots.txt
+  // cross-submission), so every doc <loc> is a docs-origin URL.
+  const docsBase = getDocsUrl();
   const posts = await getAllPosts();
 
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
@@ -19,7 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Every docs sub-page (Overview is /docs below; these are the rest).
   const docEntries: MetadataRoute.Sitemap = docSlugs().map((slug) => ({
-    url: `${baseUrl}/docs/${slug}`,
+    url: docUrl(docsBase, slug),
     lastModified: new Date(),
     changeFrequency: 'weekly',
     priority: 0.7,
@@ -33,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${baseUrl}/docs`,
+      url: docUrl(docsBase, ''),
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
