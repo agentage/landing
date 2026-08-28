@@ -65,6 +65,15 @@ export const docsHostAction = (pathname: string, slugs: readonly string[]): Docs
   return { kind: 'rewrite', pathname: `/docs${path}` };
 };
 
+// Advertised short links onto a doc page. Resolved here rather than in
+// next.config `redirects()`, which runs before middleware and so added a hop
+// through the non-canonical /docs/<slug> URL on the way to the docs host.
+const SHORT_LINKS: Readonly<Record<string, string>> = { '/connect': 'connect' };
+
+/** Doc slug a legacy short link points at, or undefined when it is not one. */
+export const shortLinkDocSlug = (pathname: string): string | undefined =>
+  SHORT_LINKS[trimSlash(pathname)];
+
 /** Docs-host path an apex /docs URL redirects to, or undefined to serve it as-is. */
 export const apexDocsRedirectPath = (pathname: string): string | undefined => {
   if (pathname === '/docs') return '/';

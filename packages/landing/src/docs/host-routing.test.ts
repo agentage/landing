@@ -6,6 +6,7 @@ import {
   docsHostAction,
   docsHostRouting,
   isSharedPath,
+  shortLinkDocSlug,
 } from './host-routing';
 import { docSlugs } from './registry';
 
@@ -126,6 +127,30 @@ describe('docsHostAction', () => {
     for (const p of ['/blog', '/contacts', '/privacy', '/terms']) {
       expect(docsHostAction(p, real), p).toEqual({ kind: 'apex', pathname: p });
     }
+  });
+});
+
+describe('shortLinkDocSlug', () => {
+  it('resolves /connect to the connect doc, trailing slash included', () => {
+    expect(shortLinkDocSlug('/connect')).toBe('connect');
+    expect(shortLinkDocSlug('/connect/')).toBe('connect');
+  });
+
+  it('is undefined for everything else', () => {
+    for (const p of ['/', '/connects', '/docs/connect', '/blog', '/connect.md']) {
+      expect(shortLinkDocSlug(p), p).toBeUndefined();
+    }
+  });
+
+  // The apex sends /connect to the docs host; on the docs host it is a plain doc
+  // slug, so it serves directly instead of taking a second hop.
+  it('names a slug the docs host serves without a redirect', () => {
+    const slug = shortLinkDocSlug('/connect')!;
+    expect(docSlugs()).toContain(slug);
+    expect(docsHostAction(`/${slug}`, docSlugs())).toEqual({
+      kind: 'rewrite',
+      pathname: `/docs/${slug}`,
+    });
   });
 });
 

@@ -1,5 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { apexDocsRedirectPath, docsHostAction, docsHostRouting } from '@/docs/host-routing';
+import {
+  apexDocsRedirectPath,
+  docsHostAction,
+  docsHostRouting,
+  shortLinkDocSlug,
+} from '@/docs/host-routing';
 import { docSlugs } from '@/docs/registry';
 
 // SITE_FQDN is the runtime signal; NEXT_PUBLIC_SITE_FQDN is the build-baked sentinel
@@ -9,14 +14,12 @@ const siteFqdn = (): string | undefined =>
 
 export function middleware(req: NextRequest): NextResponse {
   const routing = docsHostRouting(siteFqdn());
-  // No split configured (local dev, unconfigured container) or an unknown Host:
-  // serve exactly as before - the deploy e2e gate curls the image on localhost.
-  if (!routing) return NextResponse.next();
-
   const host = (req.headers.get('host') ?? '').toLowerCase().split(':')[0];
   const { pathname, search } = req.nextUrl;
 
-  if (host === routing.docsHost) {
+  // The docs host owns its own paths first, so a short link that is also a doc
+  // slug (/connect) serves directly there instead of taking a redirect hop.
+  if (routing && host === routing.docsHost) {
     const action = docsHostAction(pathname, docSlugs());
     // Not a doc: it is an apex page (the shared header/footer link to those).
     if (action.kind === 'apex') {
@@ -27,6 +30,21 @@ export function middleware(req: NextRequest): NextResponse {
     url.pathname = action.pathname;
     return NextResponse.rewrite(url);
   }
+
+  // Advertised short link: one hop to the docs host from the apex, same-host
+  // otherwise (local dev / unknown Host keep the old /docs/<slug> behavior).
+  const shortLink = shortLinkDocSlug(pathname);
+  if (shortLink) {
+    const onApex = routing && (host === routing.apexHost || host === `www.${routing.apexHost}`);
+    const target = onApex
+      ? `https://${routing.docsHost}/${shortLink}${search}`
+      : `/docs/${shortLink}${search}`;
+    return NextResponse.redirect(new URL(target, req.url), 308);
+  }
+
+  // No split configured (local dev, unconfigured container) or an unknown Host:
+  // serve exactly as before - the deploy e2e gate curls the image on localhost.
+  if (!routing) return NextResponse.next();
 
   if (host === routing.apexHost || host === `www.${routing.apexHost}`) {
     const target = apexDocsRedirectPath(pathname);
