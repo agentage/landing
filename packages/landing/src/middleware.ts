@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { apexDocsRedirectPath, docsHostRouting, docsRewritePath } from '@/docs/host-routing';
+import { apexDocsRedirectPath, docsHostAction, docsHostRouting } from '@/docs/host-routing';
+import { docSlugs } from '@/docs/registry';
 
 // SITE_FQDN is the runtime signal; NEXT_PUBLIC_SITE_FQDN is the build-baked sentinel
 // that docker/runtime-env.sh rewrites, so the split works either way.
@@ -16,10 +17,14 @@ export function middleware(req: NextRequest): NextResponse {
   const { pathname, search } = req.nextUrl;
 
   if (host === routing.docsHost) {
-    const target = docsRewritePath(pathname);
-    if (!target) return NextResponse.next();
+    const action = docsHostAction(pathname, docSlugs());
+    // Not a doc: it is an apex page (the shared header/footer link to those).
+    if (action.kind === 'apex') {
+      return NextResponse.redirect(`https://${routing.apexHost}${action.pathname}${search}`, 308);
+    }
+    if (action.kind === 'serve') return NextResponse.next();
     const url = req.nextUrl.clone();
-    url.pathname = target;
+    url.pathname = action.pathname;
     return NextResponse.rewrite(url);
   }
 
