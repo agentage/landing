@@ -3,10 +3,12 @@ import {
   apexDocsRedirectPath,
   docMdUrl,
   docUrl,
+  docsHostAction,
   docsHostRouting,
-  docsRewritePath,
   isSharedPath,
+  shortLinkDocSlug,
 } from './host-routing';
+import { docSlugs } from './registry';
 
 describe('docsHostRouting', () => {
   it('splits the apex and the docs host off one FQDN', () => {
@@ -52,22 +54,103 @@ describe('isSharedPath', () => {
   });
 });
 
-describe('docsRewritePath', () => {
+describe('docsHostAction', () => {
+  const SLUGS = ['rest-api', 'mcp-server', 'connect'];
+
   it('serves the docs tree at the docs-host root', () => {
-    expect(docsRewritePath('/')).toBe('/docs');
-    expect(docsRewritePath('/rest-api')).toBe('/docs/rest-api');
-    expect(docsRewritePath('/rest-api.md')).toBe('/docs/rest-api.md');
+    expect(docsHostAction('/', SLUGS)).toEqual({ kind: 'rewrite', pathname: '/docs' });
+    expect(docsHostAction('/rest-api', SLUGS)).toEqual({
+      kind: 'rewrite',
+      pathname: '/docs/rest-api',
+    });
+    expect(docsHostAction('/rest-api.md', SLUGS)).toEqual({
+      kind: 'rewrite',
+      pathname: '/docs/rest-api.md',
+    });
+    expect(docsHostAction('/rest-api/', SLUGS)).toEqual({
+      kind: 'rewrite',
+      pathname: '/docs/rest-api',
+    });
   });
 
   it('never double-prefixes an already docs-scoped path', () => {
     for (const p of ['/docs', '/docs/rest-api', '/docs.md', '/docs-md/rest-api']) {
-      expect(docsRewritePath(p), p).toBeUndefined();
+      expect(docsHostAction(p, SLUGS), p).toEqual({ kind: 'serve' });
     }
   });
 
   it('passes shared paths straight through', () => {
-    expect(docsRewritePath('/_next/static/chunk.js')).toBeUndefined();
-    expect(docsRewritePath('/robots.txt')).toBeUndefined();
+    for (const p of ['/_next/static/chunk.js', '/robots.txt', '/sitemap.xml', '/health']) {
+      expect(docsHostAction(p, SLUGS), p).toEqual({ kind: 'serve' });
+    }
+  });
+
+  // The shared header/footer link to these with host-relative hrefs; without the
+  // fallback they were rewritten into the docs tree and 404'd on the docs host.
+  it('sends the apex pages linked from the shared header/footer back to the apex', () => {
+    for (const p of ['/blog', '/contacts', '/privacy', '/terms']) {
+      expect(docsHostAction(p, SLUGS), p).toEqual({ kind: 'apex', pathname: p });
+    }
+  });
+
+  it('sends unknown paths to the apex, whose 404 page has working nav', () => {
+    for (const p of ['/nope', '/blog/some-post', '/unsubscribe']) {
+      expect(docsHostAction(p, SLUGS), p).toEqual({ kind: 'apex', pathname: p });
+    }
+  });
+
+  it('keeps the path verbatim for the apex hand-off (query is added by the caller)', () => {
+    expect(docsHostAction('/unsubscribe/', SLUGS)).toEqual({
+      kind: 'apex',
+      pathname: '/unsubscribe/',
+    });
+  });
+
+  it('follows the registry: an unregistered slug is not docs content', () => {
+    expect(docsHostAction('/rest-api', [])).toEqual({ kind: 'apex', pathname: '/rest-api' });
+    expect(docsHostAction('/troubleshoot', [...SLUGS, 'troubleshoot'])).toEqual({
+      kind: 'rewrite',
+      pathname: '/docs/troubleshoot',
+    });
+  });
+
+  // Against the real registry, so adding a doc page cannot silently start 308ing it.
+  it('rewrites every registered doc and hands the apex pages back', () => {
+    const real = docSlugs();
+    expect(real.length).toBeGreaterThan(3);
+    for (const slug of real) {
+      expect(docsHostAction(`/${slug}`, real), slug).toEqual({
+        kind: 'rewrite',
+        pathname: `/docs/${slug}`,
+      });
+    }
+    for (const p of ['/blog', '/contacts', '/privacy', '/terms']) {
+      expect(docsHostAction(p, real), p).toEqual({ kind: 'apex', pathname: p });
+    }
+  });
+});
+
+describe('shortLinkDocSlug', () => {
+  it('resolves /connect to the connect doc, trailing slash included', () => {
+    expect(shortLinkDocSlug('/connect')).toBe('connect');
+    expect(shortLinkDocSlug('/connect/')).toBe('connect');
+  });
+
+  it('is undefined for everything else', () => {
+    for (const p of ['/', '/connects', '/docs/connect', '/blog', '/connect.md']) {
+      expect(shortLinkDocSlug(p), p).toBeUndefined();
+    }
+  });
+
+  // The apex sends /connect to the docs host; on the docs host it is a plain doc
+  // slug, so it serves directly instead of taking a second hop.
+  it('names a slug the docs host serves without a redirect', () => {
+    const slug = shortLinkDocSlug('/connect')!;
+    expect(docSlugs()).toContain(slug);
+    expect(docsHostAction(`/${slug}`, docSlugs())).toEqual({
+      kind: 'rewrite',
+      pathname: `/docs/${slug}`,
+    });
   });
 });
 

@@ -15,8 +15,8 @@ const nextConfig: NextConfig = {
   experimental: { serverSourceMaps: true },
   async redirects() {
     return [
-      // Short link to the generic connect guide.
-      { source: '/connect', destination: '/docs/connect', permanent: true },
+      // /connect is handled in middleware, not here: config redirects run first, so
+      // this one added a hop through the non-canonical /docs/connect URL.
       // The MCP directory lives on its own host; keep the advertised apex path working.
       { source: '/mcp', destination: 'https://catalog.agentage.io/mcp', permanent: true },
       {
