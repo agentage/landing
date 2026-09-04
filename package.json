@@ -32,10 +32,10 @@
     "url": "https://github.com/agentage/landing.git"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^16.3.3",
+    "@next/eslint-plugin-next": "^16.3.4",
     "@playwright/test": "^1.62.1",
-    "@types/node": "^26.3.0",
-    "@typescript-eslint/eslint-plugin": "^8.68.0",
+    "@types/node": "^26.4.0",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
     "@typescript-eslint/parser": "^8.61.0",
     "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^10.9.1",
