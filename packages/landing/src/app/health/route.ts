@@ -1,7 +1,7 @@
-import { healthResponse } from '@agentage/observability/health';
+import { health } from '@agentage/observability/health';
 
 // Never prerender, or commit/buildTime are baked at build instead of read from the
 // running container.
 export const dynamic = 'force-dynamic';
 
-export const GET = () => healthResponse();
+export const GET = health();
