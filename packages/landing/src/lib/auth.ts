@@ -6,9 +6,8 @@ import { createRemoteJWKSet, jwtVerify, errors as joseErrors } from 'jose';
 // short-lived session JWT (GET /api/auth/token), then VERIFIES that JWT LOCALLY
 // against the AS JWKS - the platform two-token model: the AS is hit at most once per
 // token lifetime per cookie, and the trust anchor is a signature, not live
-// introspection. The three-way outcome mirrors agentage/mcp-catalog lib/auth.ts. We
-// never parse a cookie name - the prod cookie is `__Secure-` prefixed, so name
-// matching is fragile; the AS reads it.
+// introspection. The three-way outcome mirrors agentage/mcp-catalog lib/auth.ts. The AS
+// reads the cookie itself; we only suffix-match the session pair to key our cache.
 
 // Explicit AUTH_URL wins; otherwise derive the sibling AS host from the site FQDN.
 // Landing runs on the apex (agentage.io / dev.agentage.io), so the AS is the
@@ -84,13 +83,32 @@ interface TokenEntry {
   expMs: number;
 }
 
-// Cache the MINTED token per raw cookie until its exp so the AS is hit once per
+// Cache the MINTED token per session cookie until its exp so the AS is hit once per
 // token lifetime; verification itself runs locally on every call.
 const tokenCache = new Map<string, TokenEntry>();
 
+const MAX_CACHE_ENTRIES = 1000;
+
+// Key on the session pair only: analytics cookies churn the raw header and would miss eviction.
+export function sessionCacheKey(cookieHeader: string): string {
+  const pair = cookieHeader
+    .split(';')
+    .map((p) => p.trim())
+    .find((p) => p.split('=')[0].endsWith('session_token'));
+  return pair ?? cookieHeader;
+}
+
+function cacheToken(key: string, entry: TokenEntry, now: number): void {
+  if (tokenCache.size >= MAX_CACHE_ENTRIES) {
+    for (const [k, v] of tokenCache) if (v.expMs <= now) tokenCache.delete(k);
+    if (tokenCache.size >= MAX_CACHE_ENTRIES) tokenCache.clear();
+  }
+  tokenCache.set(key, entry);
+}
+
 // Sign-out drops the cached token so a replayed pre-sign-out cookie stops resolving a user.
 export function evictSession(cookie: string): void {
-  tokenCache.delete(cookie);
+  tokenCache.delete(sessionCacheKey(cookie.trim()));
 }
 
 // Test hook: drop cached tokens AND memoized JWKS between cases.
@@ -155,12 +173,13 @@ export async function getSession(cookieHeader: string | null): Promise<Session |
   if (!authBase) return null;
 
   const now = Date.now();
-  const hit = tokenCache.get(cookie);
+  const key = sessionCacheKey(cookie);
+  const hit = tokenCache.get(key);
   let token: string;
   if (hit && hit.expMs - REMINT_SKEW_MS > now) {
     token = hit.token;
   } else {
-    tokenCache.delete(cookie);
+    tokenCache.delete(key);
     const minted = await mintSessionJwt(authBase, cookie);
     if (minted.kind === 'transient') {
       throw new SessionUnavailableError('auth service temporarily unavailable');
@@ -174,9 +193,9 @@ export async function getSession(cookieHeader: string | null): Promise<Session |
     throw new SessionUnavailableError('auth service temporarily unavailable');
   }
   if (verified.kind === 'invalid') {
-    tokenCache.delete(cookie);
+    tokenCache.delete(key);
     return null;
   }
-  if (verified.expMs > now) tokenCache.set(cookie, { token, expMs: verified.expMs });
+  if (verified.expMs > now) cacheToken(key, { token, expMs: verified.expMs }, now);
   return verified.claims;
 }
