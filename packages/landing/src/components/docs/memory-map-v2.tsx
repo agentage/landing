@@ -39,8 +39,7 @@ export function MemoryMapV2(): React.JSX.Element {
         <text {...T} x="165" y="340" textAnchor="middle" fontSize="11.5">
           Your files
         </text>
-        <Chip idp={P} x={70} y={352} w={94} icon="obsidian" label="Obsidian" />
-        <Chip idp={P} x={172} y={352} w={56} icon="term" label="CLI" iconScale={0.5} />
+        <Chip idp={P} x={118} y={352} w={94} icon="obsidian" label="Obsidian" />
         <text {...S} x="165" y="394" textAnchor="middle">
           plain .md on your disk
         </text>
