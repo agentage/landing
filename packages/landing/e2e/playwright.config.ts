@@ -11,6 +11,7 @@ const baseURL = process.env.LANDING_BASE_URL ?? `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: '.',
+  testIgnore: 'post-deploy/**',
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: [['list'], ['html', { open: 'never' }]],

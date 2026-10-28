@@ -88,6 +88,11 @@ interface TokenEntry {
 // token lifetime; verification itself runs locally on every call.
 const tokenCache = new Map<string, TokenEntry>();
 
+// Sign-out drops the cached token so a replayed pre-sign-out cookie stops resolving a user.
+export function evictSession(cookie: string): void {
+  tokenCache.delete(cookie);
+}
+
 // Test hook: drop cached tokens AND memoized JWKS between cases.
 export function _clearSessionCache(): void {
   tokenCache.clear();

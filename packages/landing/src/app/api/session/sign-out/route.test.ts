@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from './route';
+import * as auth from '@/lib/auth';
 
 const CLEAR_COOKIE =
   '__Secure-better-auth.session_token=; Max-Age=0; Domain=.agentage.io; Path=/; Secure; HttpOnly';
@@ -52,5 +53,18 @@ describe('POST /api/session/sign-out', () => {
       cookie: 'sess=1',
       origin: 'https://auth.agentage.io',
     });
+  });
+
+  it('evicts the cached session token on a successful sign-out only', async () => {
+    const evict = vi.spyOn(auth, 'evictSession');
+    const ok = { ok: true, headers: { getSetCookie: () => [] } } as unknown as Response;
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ...ok, ok: false }));
+    await POST(signOutReq('https://agentage.io', 'sess=9'));
+    expect(evict).not.toHaveBeenCalled();
+
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(ok));
+    await POST(signOutReq('https://agentage.io', 'sess=9'));
+    expect(evict).toHaveBeenCalledWith('sess=9');
+    evict.mockRestore();
   });
 });

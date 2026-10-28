@@ -171,3 +171,45 @@ jobs:
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker system prune -af" && exit 0
           sleep 45
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker system prune -af" || echo "::warning::post-deploy prune skipped (another prune in progress)"
+
+  post-deploy-e2e:
+    name: 🎭 Post-deploy sign-out (live)
+    # Real-browser sign-out against the live apex with an ephemeral e2e-<run-id>-*@agentage.test
+    # user (open signup, no secrets; reaped by agentage/auth's sweep). Red fails the Deploy run.
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    env:
+      LANDING_BASE_URL: https://agentage.io
+      E2E_RUN_ID: ${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      - name: Sign-out e2e (vs prod)
+        run: npm run test:e2e:post-deploy
+      - name: Upload report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: post-deploy-report
+          path: |
+            packages/landing/e2e/post-deploy/playwright-report/
+            playwright-report/
+            packages/*/test-results/
+          retention-days: 7
