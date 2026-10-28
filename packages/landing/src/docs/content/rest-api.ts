@@ -134,7 +134,7 @@ export const restApiDoc: DocPage = {
         {
           type: 'p',
           md: [
-            '- Not a sync channel - memory contents sync over git (Obsidian plugin, CLI).',
+            '- Not a sync channel - memory contents sync over git (Obsidian plugin).',
             '- No API keys - OAuth 2.1 bearer only.',
           ].join('\n'),
         },

@@ -87,7 +87,7 @@ export const troubleshootDoc: DocPage = {
       blocks: [
         {
           type: 'p',
-          md: 'The CLI and the Obsidian plugin keep a local copy of your memory and sync it over git. When the same note changed in two places and the two versions cannot be merged automatically, the conflict is flagged rather than silently resolved.',
+          md: 'The Obsidian plugin keeps a local copy of your memory and syncs it over git. When the same note changed in two places and the two versions cannot be merged automatically, the conflict is flagged rather than silently resolved.',
         },
         {
           type: 'p',

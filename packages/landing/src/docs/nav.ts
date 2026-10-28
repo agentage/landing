@@ -35,7 +35,6 @@ export const docsNav: DocNavGroup[] = [
     defaultCollapsed: true,
     items: [
       { label: 'CLI', comingSoon: true },
-      { label: 'Local API', comingSoon: true },
       { label: 'Obsidian plugin', comingSoon: true },
       { label: 'VS Code extension', comingSoon: true },
     ],
