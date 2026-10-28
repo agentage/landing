@@ -47,7 +47,8 @@ export async function POST(req: Request): Promise<Response> {
   try {
     upstream = await fetch(`${authBase}/api/auth/sign-out`, {
       method: 'POST',
-      headers: { cookie, accept: 'application/json', ...SERVICE_CLIENT_HEADERS },
+      // Better Auth CSRF-403s a cookie POST with no trusted Origin; the AS's own origin is trusted.
+      headers: { cookie, origin: authBase, accept: 'application/json', ...SERVICE_CLIENT_HEADERS },
     });
   } catch {
     return Response.json({ error: 'auth_unavailable' }, { status: 502, headers: NO_STORE });
