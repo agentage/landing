@@ -1,4 +1,4 @@
-import { resolveAuthBase, SERVICE_CLIENT_HEADERS } from '@/lib/auth';
+import { evictSession, resolveAuthBase, SERVICE_CLIENT_HEADERS } from '@/lib/auth';
 
 // Sign-out proxy. The browser never POSTs the AS cross-origin: instead it POSTs here
 // same-origin, we forward the Cookie to the AS sign-out, and RELAY the AS Set-Cookie
@@ -53,6 +53,8 @@ export async function POST(req: Request): Promise<Response> {
   } catch {
     return Response.json({ error: 'auth_unavailable' }, { status: 502, headers: NO_STORE });
   }
+
+  if (upstream.ok) evictSession(cookie);
 
   const headers = new Headers(NO_STORE);
   for (const setCookie of upstream.headers.getSetCookie()) {
